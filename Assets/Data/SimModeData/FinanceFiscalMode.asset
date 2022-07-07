@@ -10,7 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
-  m_Name: AgrFarmMode
+  m_Name: FinanceFiscalMode
   m_EditorClassIdentifier: 
   m_indicatorData:
-  - {fileID: 11400000, guid: 3a3f7eec51654614595877cda8157f06, type: 2}
+  - {fileID: 11400000, guid: 8d1e2f7bb92040a438d7cbaa83609cc4, type: 2}
+  - {fileID: 11400000, guid: 382762b5d78efe049a9f25409e16c6ea, type: 2}
+  - {fileID: 11400000, guid: a497a3a13448c1341885c28a22930ba0, type: 2}

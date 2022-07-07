@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
-  m_Name: AgrFarmMode
+  m_Script: {fileID: 11500000, guid: 548bcdd72e6e03e47814eb2a0b60a57e, type: 3}
+  m_Name: TransportBuildingButton
   m_EditorClassIdentifier: 
-  m_indicatorData:
-  - {fileID: 11400000, guid: 3a3f7eec51654614595877cda8157f06, type: 2}
+  m_sprite: {fileID: 21300000, guid: 15b64278c5e4c3a4a87b5e2de947934a, type: 3}
+  m_modeData: {fileID: 11400000, guid: c39a3487f285bc24da0154056df21636, type: 2}

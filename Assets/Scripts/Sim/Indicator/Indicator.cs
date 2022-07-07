@@ -39,6 +39,7 @@ namespace Zavala.Indicators
         public void InitIndicator(IndicatorData newData) {
             m_cutoffType = newData.CutoffType;
             m_cutoffValue = newData.CutoffValue;
+            m_title.text = newData.Title;
 
             m_title.color = newData.Color;
             m_slider.fillRect.GetComponent<Image>().color = newData.Color;

@@ -8,10 +8,14 @@ namespace Zavala
     [CreateAssetMenu(fileName = "NewIndicatorData", menuName = "Data/IndicatorData")]
     public class IndicatorData : ScriptableObject
     {
+        [SerializeField] private string m_title;
         [SerializeField] private float m_cutoffValue;
         [SerializeField] private CutoffType m_cutoffType;
         [SerializeField] private Color m_color;
 
+        public string Title {
+            get { return m_title; }
+        }
         public float CutoffValue {
             get { return m_cutoffValue; }
         }

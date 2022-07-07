@@ -28,21 +28,21 @@ namespace Zavala
         }
 
         private void LoadSimButtons(SimButtonData[] simButtonData) {
-            //Debug.Log("[TabMgr] Loading Sim Buttons");
 
             int buttonIndex = 0;
 
-            foreach (SimButtonData buttonData in simButtonData) {
-                m_simButtons[buttonIndex].Icon.sprite = buttonData.Sprite;
-                m_simButtons[buttonIndex].SetCurrData(buttonData);
+            bool isUnlocked = true; // TODO: centralize this and make unique for each mode
 
-                //Debug.Log("[TabMgr] Sim Button Index " + buttonIndex + " loaded");
+            foreach (SimButtonData buttonData in simButtonData) {
+                m_simButtons[buttonIndex].Icon.sprite = isUnlocked ? buttonData.Sprite : m_defaultLockIcon;
+                m_simButtons[buttonIndex].SetCurrData(buttonData);
+                m_simButtons[buttonIndex].gameObject.SetActive(true);
 
                 buttonIndex++;
             }
 
             while (buttonIndex < m_simButtons.Length) {
-                m_simButtons[buttonIndex].Icon.sprite = m_defaultLockIcon;
+                m_simButtons[buttonIndex].gameObject.SetActive(false);
                 buttonIndex++;
             }
         }
