@@ -1,0 +1,25 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Zavala.Indicators;
+
+namespace Zavala
+{
+    [CreateAssetMenu(fileName = "NewIndicatorData", menuName = "Data/IndicatorData")]
+    public class IndicatorData : ScriptableObject
+    {
+        [SerializeField] private float m_cutoffValue;
+        [SerializeField] private CutoffType m_cutoffType;
+        [SerializeField] private Color m_color;
+
+        public float CutoffValue {
+            get { return m_cutoffValue; }
+        }
+        public CutoffType CutoffType {
+            get { return m_cutoffType; }
+        }
+        public Color Color {
+            get { return m_color; }
+        }
+    }
+}
