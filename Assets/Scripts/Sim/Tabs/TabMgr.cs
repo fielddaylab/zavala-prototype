@@ -11,11 +11,19 @@ namespace Zavala
         [SerializeField] private SimButton[] m_simButtons;
         [SerializeField] private Sprite m_defaultLockIcon;
 
+        [SerializeField] private Button m_drawerButton;
+        private bool m_drawerOpen;
+        private static float DRAWER_OPEN_POS = -350f;
+        private static float DRAWER_CLOSE_POS = -485f;
+
         private void Start() {
             InitTabs();
 
             // open first tab
             m_simTabs[0].GetComponent<Button>().onClick.Invoke();
+
+            m_drawerOpen = true;
+            m_drawerButton.onClick.AddListener(ToggleDrawer);
         }
 
 
@@ -45,6 +53,18 @@ namespace Zavala
                 m_simButtons[buttonIndex].gameObject.SetActive(false);
                 buttonIndex++;
             }
+        }
+
+        private void ToggleDrawer() {
+            m_drawerOpen = !m_drawerOpen;
+            this.gameObject.SetActive(m_drawerOpen);
+
+            Vector3 currScale = m_drawerButton.GetComponent<RectTransform>().localScale;
+            m_drawerButton.GetComponent<RectTransform>().localScale = new Vector3(-currScale.x, currScale.y, currScale.z);
+
+            Vector3 currPos = m_drawerButton.GetComponent<RectTransform>().localPosition;
+            float newX = m_drawerOpen ? DRAWER_OPEN_POS : DRAWER_CLOSE_POS;
+            m_drawerButton.GetComponent<RectTransform>().localPosition = new Vector3(newX, currPos.y, currPos.z);
         }
     }
 }
