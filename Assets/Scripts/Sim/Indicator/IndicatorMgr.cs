@@ -8,6 +8,8 @@ namespace Zavala
 {
     public class IndicatorMgr : MonoBehaviour
     {
+        public static IndicatorMgr Instance;
+
         #region Inspector 
 
         [SerializeField] private Indicator[] m_indicators;
@@ -21,6 +23,15 @@ namespace Zavala
         #region Unity Callbacks
 
         private void Awake() {
+            if (Instance == null) {
+                Instance = this;
+            }
+            else if (this != Instance) {
+                Debug.Log("Warning! Multiple instances of IndicatorMgr detected. Removing duplicate.");
+                Destroy(gameObject);
+                return;
+            }
+
             EventMgr.SetNewIndicators?.AddListener(HandleNewIndicators);
             EventMgr.IndicatorUpdated?.AddListener(HandleIndicatorUpdated);
             m_submitButton.interactable = false;
@@ -88,6 +99,10 @@ namespace Zavala
 
             //Debug.Log("[IndicatorMgr] All indicators meet their cutoffs");
             m_submitButton.interactable = true;
+        }
+
+        public void SetIndicatorValue(int indicatorIndex, float sliderVal) {
+            m_indicators[indicatorIndex].Slider.value = sliderVal;
         }
     }
 }

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_indicatorData:
   - {fileID: 11400000, guid: 4139fcf9e8b94f9408ff5ecc8b45435f, type: 2}
+  m_modeID: agr-phosph

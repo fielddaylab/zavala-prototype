@@ -26,7 +26,7 @@ namespace Zavala
         }
 
         private void HandleClick() {
-            EventMgr.SetNewIndicators?.Invoke(m_currSimButtonData.ModeData.IndicatorData);
+            EventMgr.SetNewMode?.Invoke(m_currSimButtonData.ModeData);
         }
     }
 }

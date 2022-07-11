@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_indicatorData:
   - {fileID: 11400000, guid: f2f9d5e6f5572f944874d9eb9e1f12c6, type: 2}
+  m_modeID: policy-campaign

@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class SimModeUI : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("SimModeUI")]
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    [SerializeField] protected string m_id;
+
+    public string ID {
+        get { return m_id; }
     }
 }

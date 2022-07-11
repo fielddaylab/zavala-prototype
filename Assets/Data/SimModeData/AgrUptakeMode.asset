@@ -15,3 +15,4 @@ MonoBehaviour:
   m_indicatorData:
   - {fileID: 11400000, guid: fc0303c7d3815f546a1beb9d6ff701d1, type: 2}
   - {fileID: 11400000, guid: f2cb0fbab0b9e4841ad8a188a45a5037, type: 2}
+  m_modeID: agr-uptake

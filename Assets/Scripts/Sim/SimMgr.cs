@@ -16,11 +16,14 @@ namespace Zavala.Sim
     public class SimMgr : MonoBehaviour
     {
         [SerializeField] private Button m_submitButton;
+        [SerializeField] private SimModeUI[] m_simModeGroups;
 
         void Start() {
             m_submitButton.onClick.AddListener(delegate { EventMgr.SimCanvasSubmitted?.Invoke(); });
 
             UpdateInteractMode(InteractMode.Farm);
+
+            EventMgr.SetNewMode?.AddListener(OnNewModeSet);
         }
 
         void OnDestroy() {
@@ -30,6 +33,20 @@ namespace Zavala.Sim
         // TEMP
         private void UpdateInteractMode(InteractMode newMode) {
             EventMgr.InteractModeUpdated?.Invoke(newMode);
+        }
+
+        private void OnNewModeSet(SimModeData data) {
+            EventMgr.SetNewIndicators?.Invoke(data.IndicatorData);
+            foreach(SimModeUI simGroup in m_simModeGroups) {
+                if (simGroup.ID == data.ID) {
+                    simGroup.gameObject.SetActive(true);
+                }
+                else {
+                    simGroup.gameObject.SetActive(false);
+                }
+            }
+
+            // TODO: activate/de-activate selectively?
         }
     }
 }

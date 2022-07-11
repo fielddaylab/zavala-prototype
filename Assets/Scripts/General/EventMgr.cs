@@ -15,6 +15,13 @@ namespace Zavala
 
         #endregion // Interact Events
 
+        #region Sim Events
+
+        public class SimEvent : UnityEvent<SimModeData> { }
+        public static SimEvent SetNewMode = new SimEvent();
+
+        #endregion // Sim Events
+
         #region Indicator Events
 
         public static UnityEvent IndicatorUpdated = new UnityEvent();
@@ -30,6 +37,12 @@ namespace Zavala
         public static UnityEvent ResultsCanvasOkayed = new UnityEvent();
 
         #endregion // Canvas Events
+
+        #region AgrFarm Events
+
+        public static UnityEvent FarmMoved = new UnityEvent();
+
+        #endregion // AgrFarm Events
 
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);
