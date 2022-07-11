@@ -50,7 +50,19 @@ namespace Zavala
 
         public static AgrPhosphEvent AgrPhosphFarmExcessAdjusted = new AgrPhosphEvent();
 
-        #endregion // AgrFarm Events
+        #endregion // AgrPhosph Events
+
+        #region AgrUptake Events
+
+        public class AgrUptakeEvent : UnityEvent<float> { }
+
+        public static AgrUptakeEvent AgrUptakeFarmExcessAdjusted = new AgrUptakeEvent();
+        public static AgrUptakeEvent AgrUptakeSinkAmtAdjusted = new AgrUptakeEvent();
+
+        public static UnityEvent AgrUptakeStorageAdded = new UnityEvent();
+        public static UnityEvent AgrUptakeStorageRemoved = new UnityEvent();
+
+        #endregion // AgrUptake Events
 
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);

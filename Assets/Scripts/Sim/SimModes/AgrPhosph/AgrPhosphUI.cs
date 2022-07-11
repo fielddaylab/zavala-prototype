@@ -6,10 +6,9 @@ namespace Zavala
 {
     public class AgrPhosphUI : SimModeUI
     {
-        //[Header("AgrPhosphUI")]
+        [Header("AgrPhosphUI")]
 
         [SerializeField] private AgrPhosphInteractable[] m_farms;
-        //[SerializeField] private Lake[] m_lakes;
 
         private void Awake() {
             EventMgr.AgrPhosphFarmExcessAdjusted.AddListener(OnExcessAdjusted);
