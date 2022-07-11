@@ -40,9 +40,11 @@ namespace Zavala.Sim
             foreach(SimModeUI simGroup in m_simModeGroups) {
                 if (simGroup.ID == data.ID) {
                     simGroup.gameObject.SetActive(true);
+                    simGroup.Open();
                 }
                 else {
                     simGroup.gameObject.SetActive(false);
+                    // simMode.Close();
                 }
             }
 

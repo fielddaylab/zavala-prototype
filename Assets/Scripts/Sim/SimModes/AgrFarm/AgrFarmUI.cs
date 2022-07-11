@@ -21,7 +21,7 @@ namespace Zavala
             EventMgr.FarmMoved.AddListener(OnFarmMoved);
         }
 
-        private void Start() {
+        public override void Open() {
             CalcOutbreaks();
         }
 

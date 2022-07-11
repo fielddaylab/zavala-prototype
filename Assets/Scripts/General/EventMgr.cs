@@ -44,6 +44,14 @@ namespace Zavala
 
         #endregion // AgrFarm Events
 
+        #region AgrPhosph Events
+
+        public class AgrPhosphEvent : UnityEvent<float> { }
+
+        public static AgrPhosphEvent AgrPhosphFarmExcessAdjusted = new AgrPhosphEvent();
+
+        #endregion // AgrFarm Events
+
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);
         }

@@ -104,5 +104,9 @@ namespace Zavala
         public void SetIndicatorValue(int indicatorIndex, float sliderVal) {
             m_indicators[indicatorIndex].Slider.value = sliderVal;
         }
+
+        public void AdjustIndicatorValue(int indicatorIndex, float delta) {
+            m_indicators[indicatorIndex].Slider.value += delta;
+        }
     }
 }

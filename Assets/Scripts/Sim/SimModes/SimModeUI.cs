@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimModeUI : MonoBehaviour
+public abstract class SimModeUI : MonoBehaviour
 {
     [Header("SimModeUI")]
 
@@ -11,4 +11,6 @@ public class SimModeUI : MonoBehaviour
     public string ID {
         get { return m_id; }
     }
+
+    public abstract void Open();
 }
