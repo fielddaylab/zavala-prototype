@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Zavala.Interact;
+using Zavala.Transport;
 
 namespace Zavala
 {
@@ -61,6 +62,17 @@ namespace Zavala
 
         public static UnityEvent AgrUptakeStorageAdded = new UnityEvent();
         public static UnityEvent AgrUptakeStorageRemoved = new UnityEvent();
+
+        #endregion // AgrUptake Events
+
+        #region TransportBuilding Events
+
+        public class TransportBuildingEvent : UnityEvent<BuildDetails> { }
+
+        public static TransportBuildingEvent StructureBuilt = new TransportBuildingEvent();
+        public static TransportBuildingEvent StructureRemoved = new TransportBuildingEvent();
+
+        //public static UnityEvent AgrUptakeStorageRemoved = new UnityEvent();
 
         #endregion // AgrUptake Events
 
