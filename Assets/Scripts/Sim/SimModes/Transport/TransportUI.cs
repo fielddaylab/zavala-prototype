@@ -7,6 +7,12 @@ namespace Zavala
 {
     public class TransportUI : SimModeUI
     {
+
+        private static int PRIVATE_SPENDING_INDEX = 0;
+        private static int GOVT_SPENDING_INDEX = 1;
+        private static int OUTBREAK_INDEX = 2;
+
+
         public override void Open() {
             InitIndicatorVals();
 
@@ -14,7 +20,9 @@ namespace Zavala
         }
 
         private void InitIndicatorVals() {
-            // TODO: this
+            IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0);
+            IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0);
+            IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.9f);
         }
     }
 }
