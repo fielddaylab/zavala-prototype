@@ -26,7 +26,7 @@ namespace Zavala
         private void InitIndicatorVals() {
             // Algal Outbreaks
 
-            float maxContribution = 1f / m_farms.Length;
+            float maxContribution = 1f / m_farms.Length / 2f;
             float totalOutbreaks = 0;
 
             foreach (AgrUptakeFarm farm in m_farms) {
@@ -46,15 +46,18 @@ namespace Zavala
         #region Handlers 
 
         private void OnExcessAdjusted(float delta) {
-            float maxContribution = 1f / m_farms.Length; // TODO: balance this
+            float maxContribution = 1f / m_farms.Length / 2f;
             float totalDelta = delta * maxContribution;
 
             // adjust excess phosphorous inversely
             IndicatorMgr.Instance.AdjustIndicatorValue(0, -totalDelta);
+
+            // decrease algal outbreaks near farm
+            IndicatorMgr.Instance.AdjustIndicatorValue(1, totalDelta);
         }
 
         private void OnSinkAmtAdjusted(float delta) {
-            float maxContribution = 1f / m_sinks.Length; // TODO: balance this
+            float maxContribution = 1f / m_sinks.Length / 2f;
             float totalDelta = delta * maxContribution;
 
             // adjust excess phosphorous inversely
@@ -62,7 +65,7 @@ namespace Zavala
         }
 
         private void OnStorageAdded() {
-            float maxContribution = 1f / m_farms.Length / 2f; // TODO: balance this
+            float maxContribution = 1f / m_farms.Length / 3f;
             float totalDelta = maxContribution;
 
             // adjust excess phosphorous inversely
@@ -70,7 +73,7 @@ namespace Zavala
         }
 
         private void OnStorageRemoved() {
-            float maxContribution = 1f / m_farms.Length / 2f; // TODO: balance this
+            float maxContribution = 1f / m_farms.Length / 3f;
             float totalDelta = maxContribution;
 
             // adjust excess phosphorous inversely
