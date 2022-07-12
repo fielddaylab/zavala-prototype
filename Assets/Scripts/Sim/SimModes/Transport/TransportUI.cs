@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Interact;
 
-public class TransportUI : MonoBehaviour
+namespace Zavala
 {
-    // Start is called before the first frame update
-    void Start()
+    public class TransportUI : SimModeUI
     {
-        
-    }
+        public override void Open() {
+            InitIndicatorVals();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
+        }
+
+        private void InitIndicatorVals() {
+            // TODO: this
+        }
     }
 }

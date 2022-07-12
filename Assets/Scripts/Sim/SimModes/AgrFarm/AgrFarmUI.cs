@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Interact;
 
 namespace Zavala
 {
@@ -23,6 +24,8 @@ namespace Zavala
 
         public override void Open() {
             CalcOutbreaks();
+
+            EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
         public float GetNearestLakeDist(Vector2 farmPos) {

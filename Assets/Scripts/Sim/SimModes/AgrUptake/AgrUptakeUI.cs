@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Interact;
 
 namespace Zavala
 {
@@ -21,6 +22,8 @@ namespace Zavala
 
         public override void Open() {
             InitIndicatorVals();
+
+            EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
         private void InitIndicatorVals() {

@@ -21,9 +21,11 @@ namespace Zavala
 
             // open first tab
             m_simTabs[0].GetComponent<Button>().onClick.Invoke();
+            m_simTabs[0].GetComponent<Button>().Select();
 
             m_drawerOpen = true;
             m_drawerButton.onClick.AddListener(ToggleDrawer);
+            EventMgr.SetNewMode?.AddListener(OnNewModeSet);
         }
 
 
@@ -66,5 +68,13 @@ namespace Zavala
             float newX = m_drawerOpen ? DRAWER_OPEN_POS : DRAWER_CLOSE_POS;
             m_drawerButton.GetComponent<RectTransform>().localPosition = new Vector3(newX, currPos.y, currPos.z);
         }
+
+        #region Handlers
+
+        private void OnNewModeSet(SimModeData data) {
+            ToggleDrawer();
+        }
+
+        #endregion // Handlers
     }
 }

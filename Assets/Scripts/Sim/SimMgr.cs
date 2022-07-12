@@ -21,7 +21,7 @@ namespace Zavala.Sim
         void Start() {
             m_submitButton.onClick.AddListener(delegate { EventMgr.SimCanvasSubmitted?.Invoke(); });
 
-            UpdateInteractMode(InteractMode.Farm);
+            UpdateInteractMode(InteractMode.Default);
 
             EventMgr.SetNewMode?.AddListener(OnNewModeSet);
         }
