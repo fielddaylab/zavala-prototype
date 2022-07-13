@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using Zavala.Interact;
 using Zavala.Transport;
 using Zavala.Fiscal;
+using Zavala.Exchange;
 
 namespace Zavala
 {
@@ -88,6 +89,15 @@ namespace Zavala
         public static FinanceFiscalEvent FiscalSliderChanged = new FinanceFiscalEvent();
 
         #endregion // FinanceFiscal Events
+
+        #region FinanceExchange Events
+
+        public class FinanceExchangeEvent : UnityEvent<ExchangeDetails> { }
+
+        public static FinanceExchangeEvent ExchangeBuilt = new FinanceExchangeEvent();
+        public static FinanceExchangeEvent ExchangeRemoved = new FinanceExchangeEvent();
+
+        #endregion // FinanceExchange Events
 
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);

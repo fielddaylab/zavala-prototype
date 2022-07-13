@@ -3,33 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Transport;
+using Zavala.Exchange;
 
 namespace Zavala.Interact
 {
     public enum InteractMode
     {
         Default,
-        //Phosphorous,
         Transport_Rail,
         Transport_Highway,
         Transport_Road,
         Transport_Bridge,
-        Transport_Remove
+        Transport_Remove,
+        Finance_Exchange_Basic,
+        Finance_Exchange_Digester,
+        Finance_Exchange_Remove
         // etc.
     }
 
     public class InteractMgr : MonoBehaviour
     {
+        [Header("Shared")]
+
+        [SerializeField] private Texture2D m_removeCursor;
+
         private Texture2D m_defaultCursor = null;
+        private InteractMode m_interactMode;
+
+
+        [Header("Transport")]
+
         [SerializeField] private Texture2D m_drawCursor;
         [SerializeField] private Texture2D m_bridgeCursor;
-        [SerializeField] private Texture2D m_removeCursor;
 
         [SerializeField] private Sprite m_railIcon;
         [SerializeField] private Sprite m_highwayIcon;
         [SerializeField] private Sprite m_roadIcon;
-
-        private InteractMode m_interactMode;
 
         [SerializeField] private GameObject m_linePrefab;
         [SerializeField] private GameObject m_bridgePrefab;
@@ -47,11 +56,25 @@ namespace Zavala.Interact
         private static float BRIDGE_COST = 20;
 
 
+        [Header("Exchange")]
+
+        [SerializeField] private Texture2D m_exchangeBasicCursor;
+        [SerializeField] private Texture2D m_exchangeDigestCursor;
+
+        [SerializeField] private GameObject m_exchangeBasicPrefab, m_exchangeDigestPrefab;
+        [SerializeField] private GameObject m_exchangeContainer;
+
+        private static float EXCHANGE_BASIC_COST = 20;
+        private static float EXCHANGE_DIGEST_COST = 30;
+        private static float EXCHANGE_BASIC_JOBS = 10;
+        private static float EXCHANGE_DIGEST_JOBS = 12;
+
 
         #region Unity Callbacks
 
         private void Awake() {
             EventMgr.InteractModeUpdated.AddListener(HandleInteractModeUpdated);
+            EventMgr.SimCanvasSubmitted.AddListener(HandleSimCanvasSubmitted);
 
             m_startDrawPos = m_endDrawPos = UNASSIGNED_V2;
         }
@@ -88,7 +111,7 @@ namespace Zavala.Interact
                         bool reducesOutbreaks = (TouchesOutput(m_startDrawPos) && TouchesSink(m_endDrawPos))
                             || (TouchesSink(m_startDrawPos) && TouchesOutput(m_endDrawPos));
 
-                        AssignDetails(m_interactMode, m_currLine.GetComponent<TransportStructure>(), reducesOutbreaks);
+                        AssignBuildDetails(m_interactMode, m_currLine.GetComponent<TransportStructure>(), reducesOutbreaks);
                         m_currLine.GetComponent<TransportStructure>().Build();
 
                         m_startDrawPos = m_endDrawPos = UNASSIGNED_V2;
@@ -102,7 +125,7 @@ namespace Zavala.Interact
                     var bridge = Instantiate(m_bridgePrefab, m_bridgesContainer.transform);
                     bridge.transform.localPosition = Input.mousePosition;
 
-                    AssignDetails(m_interactMode, bridge.GetComponent<TransportStructure>(), false);
+                    AssignBuildDetails(m_interactMode, bridge.GetComponent<TransportStructure>(), false);
                     bridge.GetComponent<TransportStructure>().Build();
                 }
             }
@@ -113,6 +136,38 @@ namespace Zavala.Interact
 
                     if (removableCollider != null) {
                         removableCollider.GetComponent<TransportStructure>().Remove();
+                    }
+                }
+            }
+
+            if (m_interactMode == InteractMode.Finance_Exchange_Basic) {
+                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                    // build an exchange
+                    var exchange = Instantiate(m_exchangeBasicPrefab, m_exchangeContainer.transform);
+                    exchange.transform.localPosition = Input.mousePosition;
+
+                    AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
+                    exchange.GetComponent<FinanceExchangeStructure>().Build();
+                }
+            }
+
+            if (m_interactMode == InteractMode.Finance_Exchange_Digester) {
+                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                    // build an exchange digester
+                    var exchange = Instantiate(m_exchangeDigestPrefab, m_exchangeContainer.transform);
+                    exchange.transform.localPosition = Input.mousePosition;
+
+                    AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
+                    exchange.GetComponent<FinanceExchangeStructure>().Build();
+                }
+            }
+
+            if (m_interactMode == InteractMode.Finance_Exchange_Remove) {
+                if (Input.GetMouseButtonDown(0)) {
+                    Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
+
+                    if (removableCollider != null) {
+                        removableCollider.GetComponent<FinanceExchangeStructure>().Remove();
                     }
                 }
             }
@@ -142,6 +197,7 @@ namespace Zavala.Interact
 
             return hitCollider;
         }
+
 
         private bool TouchesSink(Vector2 pos) {
             Collider2D hitCollider = Physics2D.OverlapPoint(pos, 1 << LayerMask.NameToLayer("Sink"));
@@ -187,14 +243,26 @@ namespace Zavala.Interact
                     break;
                 case InteractMode.Transport_Remove:
                     newCursor = m_removeCursor;
+                    offset = new Vector2(newCursor.width/2, newCursor.height/2);
+                    break;
+                case InteractMode.Finance_Exchange_Basic:
+                    newCursor = m_exchangeBasicCursor;
                     offset = new Vector2(0, newCursor.height);
+                    break;
+                case InteractMode.Finance_Exchange_Digester:
+                    newCursor = m_exchangeDigestCursor;
+                    offset = new Vector2(0, newCursor.height);
+                    break;
+                case InteractMode.Finance_Exchange_Remove:
+                    newCursor = m_removeCursor;
+                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
             }
 
             Cursor.SetCursor(newCursor, offset, CursorMode.ForceSoftware);
         }
         
-        private void AssignDetails(InteractMode inMode, TransportStructure structure, bool reduces) {
+        private void AssignBuildDetails(InteractMode inMode, TransportStructure structure, bool reduces) {
             switch (inMode) {
                 default:
                     break;
@@ -217,6 +285,23 @@ namespace Zavala.Interact
             }
         }
 
+        private void AssignExchangeDetails(InteractMode inMode, FinanceExchangeStructure exchangeStructure) {
+            switch (inMode) {
+                default:
+                    break;
+                case InteractMode.Default:
+                    break;
+                case InteractMode.Finance_Exchange_Basic:
+                    exchangeStructure.SetDetails(EXCHANGE_BASIC_COST, ExchangeType.Basic, EXCHANGE_BASIC_JOBS);
+                    break;
+                case InteractMode.Finance_Exchange_Digester:
+                    exchangeStructure.SetDetails(EXCHANGE_DIGEST_COST, ExchangeType.Digester, EXCHANGE_DIGEST_JOBS);
+                    break;
+                case InteractMode.Finance_Exchange_Remove:
+                    break;
+            }
+        }
+
         #region Event Handlers
 
         private void HandleInteractModeUpdated(InteractMode newMode) {
@@ -224,6 +309,12 @@ namespace Zavala.Interact
             Debug.Log("[InteractMgr] New interact mode received: " + newMode);
 
             UpdateCursor(newMode);
+        }
+
+        private void HandleSimCanvasSubmitted() {
+            m_interactMode = InteractMode.Default;
+
+            UpdateCursor(m_interactMode);
         }
 
         #endregion // Event Handlers
