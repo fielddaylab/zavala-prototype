@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Zavala.Interact;
 using Zavala.Transport;
+using Zavala.Fiscal;
 
 namespace Zavala
 {
@@ -72,9 +73,15 @@ namespace Zavala
         public static TransportBuildingEvent StructureBuilt = new TransportBuildingEvent();
         public static TransportBuildingEvent StructureRemoved = new TransportBuildingEvent();
 
-        //public static UnityEvent AgrUptakeStorageRemoved = new UnityEvent();
+        #endregion // TransportBuilding Events
 
-        #endregion // AgrUptake Events
+        #region FinanceFiscal Events
+
+        public class FinanceFiscalEvent : UnityEvent<FiscalChange> { }
+
+        public static FinanceFiscalEvent FiscalSliderChanged = new FinanceFiscalEvent();
+
+        #endregion // FinanceFiscal Events
 
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);

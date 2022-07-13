@@ -16,6 +16,7 @@ namespace Zavala.Indicators
     {
         [SerializeField] private TMP_Text m_title;
         [SerializeField] private Slider m_slider;
+        [SerializeField] private Image m_sliderBG;
         [SerializeField] private Image m_cutoff;
 
         private CutoffType m_cutoffType;
@@ -43,6 +44,7 @@ namespace Zavala.Indicators
 
             m_title.color = newData.Color;
             m_slider.fillRect.GetComponent<Image>().color = newData.Color;
+            m_sliderBG.color = newData.BGColor;
 
             // Set cutoff image
             Vector3 currScale = m_cutoff.rectTransform.localScale;

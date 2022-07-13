@@ -16,3 +16,4 @@ MonoBehaviour:
   m_cutoffValue: 0.7
   m_cutoffType: 0
   m_color: {r: 0.605026, g: 0.24448201, b: 0.7735849, a: 1}
+  m_bgColor: {r: 0.8313726, g: 0.8313726, b: 0.8313726, a: 1}

@@ -399,6 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_title: {fileID: 4953802705590898235}
   m_slider: {fileID: 598412910302080950}
+  m_sliderBG: {fileID: 598412910450535474}
   m_cutoff: {fileID: 598412911471066118}
 --- !u!1 &5263109508000950818
 GameObject:

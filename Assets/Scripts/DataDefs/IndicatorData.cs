@@ -12,6 +12,7 @@ namespace Zavala
         [SerializeField] private float m_cutoffValue;
         [SerializeField] private CutoffType m_cutoffType;
         [SerializeField] private Color m_color;
+        [SerializeField] private Color m_bgColor;
 
         public string Title {
             get { return m_title; }
@@ -24,6 +25,9 @@ namespace Zavala
         }
         public Color Color {
             get { return m_color; }
+        }
+        public Color BGColor {
+            get { return m_bgColor; }
         }
     }
 }
