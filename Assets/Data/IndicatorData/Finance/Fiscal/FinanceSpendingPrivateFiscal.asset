@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c696fb3da040e46b84d1fbf0dd8fa2, type: 3}
   m_Name: FinanceSpendingPrivateFiscal
   m_EditorClassIdentifier: 
-  m_title: Private Spending
+  m_title: 
   m_cutoffValue: 0.75
   m_cutoffType: 0
   m_color: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}

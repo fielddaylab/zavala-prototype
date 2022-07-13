@@ -26,6 +26,7 @@ namespace Zavala
             m_drawerOpen = true;
             m_drawerButton.onClick.AddListener(ToggleDrawer);
             EventMgr.SetNewMode?.AddListener(OnNewModeSet);
+            EventMgr.ModeUnlocked?.AddListener(OnModeUnlocked);
         }
 
 
@@ -41,10 +42,8 @@ namespace Zavala
 
             int buttonIndex = 0;
 
-            bool isUnlocked = true; // TODO: centralize this and make unique for each mode
-
             foreach (SimButtonData buttonData in simButtonData) {
-                m_simButtons[buttonIndex].Icon.sprite = isUnlocked ? buttonData.Sprite : m_defaultLockIcon;
+                m_simButtons[buttonIndex].Icon.sprite = UnlockMgr.Instance.IsSimUnlocked(buttonData.ModeData.ID) ? buttonData.Sprite : m_defaultLockIcon;
                 m_simButtons[buttonIndex].SetCurrData(buttonData);
                 m_simButtons[buttonIndex].gameObject.SetActive(true);
 
@@ -69,10 +68,18 @@ namespace Zavala
             m_drawerButton.GetComponent<RectTransform>().localPosition = new Vector3(newX, currPos.y, currPos.z);
         }
 
+        private void RefreshLocks() {
+            Debug.Log("Refreshing Locks");
+        }
+
         #region Handlers
 
         private void OnNewModeSet(SimModeData data) {
             ToggleDrawer();
+        }
+
+        private void OnModeUnlocked() {
+            RefreshLocks();
         }
 
         #endregion // Handlers

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c696fb3da040e46b84d1fbf0dd8fa2, type: 3}
   m_Name: FinanceAlgalFiscal
   m_EditorClassIdentifier: 
-  m_title: Algal Outbreaks
+  m_title: 
   m_cutoffValue: 0.1
   m_cutoffType: 1
-  m_color: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
+  m_color: {r: 0.81960785, g: 0.8156863, b: 0.19607843, a: 1}
   m_bgColor: {r: 0, g: 0, b: 0, a: 0}

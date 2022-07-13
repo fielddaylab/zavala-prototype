@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
   m_Name: AgrFarmMode
   m_EditorClassIdentifier: 
+  m_modeID: agr-farm
   m_indicatorData:
   - {fileID: 11400000, guid: 3a3f7eec51654614595877cda8157f06, type: 2}
-  m_modeID: agr-farm

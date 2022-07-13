@@ -10,6 +10,12 @@ namespace Zavala
 {
     public class EventMgr : MonoBehaviour
     {
+        #region Unlock Events
+
+        public static UnityEvent ModeUnlocked = new UnityEvent();
+
+        #endregion // Unlock Events
+
         #region Interact Events
 
         public class InteractEvent : UnityEvent<InteractMode> { }

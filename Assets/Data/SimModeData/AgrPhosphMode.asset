@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
   m_Name: AgrPhosphMode
   m_EditorClassIdentifier: 
+  m_modeID: agr-phosph
   m_indicatorData:
   - {fileID: 11400000, guid: 4139fcf9e8b94f9408ff5ecc8b45435f, type: 2}
-  m_modeID: agr-phosph
