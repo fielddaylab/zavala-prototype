@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Sim;
 
 namespace Zavala
 {
@@ -12,6 +13,8 @@ namespace Zavala
         [SerializeField] private AgrUptakeFarm[] m_farms;
         [SerializeField] private AgrUptakeSink[] m_sinks;
 
+        private int m_numStorage;
+
         private void Awake() {
             base.Awake();
 
@@ -20,6 +23,8 @@ namespace Zavala
 
             EventMgr.AgrUptakeStorageAdded.AddListener(OnStorageAdded);
             EventMgr.AgrUptakeStorageRemoved.AddListener(OnStorageRemoved);
+
+            m_numStorage = 0;
         }
 
         private void OnEnable() {
@@ -83,6 +88,8 @@ namespace Zavala
 
             // adjust excess phosphorous inversely
             IndicatorMgr.Instance.AdjustIndicatorValue(0, -totalDelta);
+
+            m_numStorage++;
         }
 
         private void OnStorageRemoved() {
@@ -91,9 +98,48 @@ namespace Zavala
 
             // adjust excess phosphorous inversely
             IndicatorMgr.Instance.AdjustIndicatorValue(0, totalDelta);
+
+            m_numStorage--;
         }
 
         protected override void OnSimCanvasSubmitted() {
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numStorage; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildStorage);
+            }
+
+            foreach (var farm in m_farms) {
+                switch (farm.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
+                        break;
+                }
+            }
+
+            foreach (var sink in m_sinks) {
+                switch (sink.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        // all start at 0, so can only increase
+                        //EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
+                        break;
+                }
+            }
+
             EventMgr.SimStageActions?.Invoke();
         }
 
