@@ -21,4 +21,4 @@ MonoBehaviour:
   m_unlocksModes:
   - transport-building
   m_unlockModeText: + Transportation infrastructure
-  m_hatColor: {r: 0.9811321, g: 0.90262765, b: 0.124955505, a: 1}
+  m_hatColor: {r: 0.8000001, g: 0.26666668, b: 0.26666668, a: 1}
