@@ -43,7 +43,9 @@ namespace Zavala
             int buttonIndex = 0;
 
             foreach (SimButtonData buttonData in simButtonData) {
-                m_simButtons[buttonIndex].Icon.sprite = UnlockMgr.Instance.IsSimUnlocked(buttonData.ModeData.ID) ? buttonData.Sprite : m_defaultLockIcon;
+                bool isUnlocked = UnlockMgr.Instance.IsSimUnlocked(buttonData.ModeData.ID);
+                m_simButtons[buttonIndex].Icon.sprite = isUnlocked ? buttonData.Sprite : m_defaultLockIcon;
+                m_simButtons[buttonIndex].GetComponent<Button>().interactable = isUnlocked;
                 m_simButtons[buttonIndex].SetCurrData(buttonData);
                 m_simButtons[buttonIndex].gameObject.SetActive(true);
 

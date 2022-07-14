@@ -6,6 +6,7 @@ using Zavala.Interact;
 using Zavala.Transport;
 using Zavala.Fiscal;
 using Zavala.Exchange;
+using Zavala.Strategy;
 
 namespace Zavala
 {
@@ -96,6 +97,15 @@ namespace Zavala
 
         public static FinanceExchangeEvent ExchangeBuilt = new FinanceExchangeEvent();
         public static FinanceExchangeEvent ExchangeRemoved = new FinanceExchangeEvent();
+
+        #endregion // FinanceExchange Events
+
+        #region PolicyCampaign Events
+
+        public class PolicyCampaignEvent : UnityEvent<StratDetails> { }
+
+        public static PolicyCampaignEvent StratDeployed = new PolicyCampaignEvent();
+        public static PolicyCampaignEvent StratRemoved = new PolicyCampaignEvent();
 
         #endregion // FinanceExchange Events
 

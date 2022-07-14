@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Transport;
 using Zavala.Exchange;
+using Zavala.Strategy;
 
 namespace Zavala.Interact
 {
@@ -17,7 +18,10 @@ namespace Zavala.Interact
         Transport_Remove,
         Finance_Exchange_Basic,
         Finance_Exchange_Digester,
-        Finance_Exchange_Remove
+        Finance_Exchange_Remove,
+        Politics_Campaign_Stop,
+        Politics_Campaign_Video,
+        Politics_Campaign_Remove
         // etc.
     }
 
@@ -68,6 +72,15 @@ namespace Zavala.Interact
         private static float EXCHANGE_DIGEST_COST = 30;
         private static float EXCHANGE_BASIC_JOBS = 10;
         private static float EXCHANGE_DIGEST_JOBS = 12;
+
+
+        [Header("Policy")]
+
+        [SerializeField] private Texture2D m_stopCursor;
+        [SerializeField] private Texture2D m_videoCursor;
+
+        [SerializeField] private GameObject m_stopPrefab, m_videoPrefab;
+        [SerializeField] private GameObject m_campaigningsContainer;
 
 
         #region Unity Callbacks
@@ -171,6 +184,39 @@ namespace Zavala.Interact
                     }
                 }
             }
+
+
+            if (m_interactMode == InteractMode.Politics_Campaign_Stop) {
+                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                    // plan a stop
+                    var stop = Instantiate(m_stopPrefab, m_campaigningsContainer.transform);
+                    stop.transform.localPosition = Input.mousePosition;
+
+                    AssignStratDetails(m_interactMode, stop.GetComponent<PoliticsCampaignStrategy>());
+                    stop.GetComponent<PoliticsCampaignStrategy>().Build();
+                }
+            }
+
+            if (m_interactMode == InteractMode.Politics_Campaign_Video) {
+                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                    // run ad campaign
+                    var video = Instantiate(m_videoPrefab, m_campaigningsContainer.transform);
+                    video.transform.localPosition = Input.mousePosition;
+
+                    AssignStratDetails(m_interactMode, video.GetComponent<PoliticsCampaignStrategy>());
+                    video.GetComponent<PoliticsCampaignStrategy>().Build();
+                }
+            }
+
+            if (m_interactMode == InteractMode.Politics_Campaign_Remove) {
+                if (Input.GetMouseButtonDown(0)) {
+                    Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
+
+                    if (removableCollider != null) {
+                        removableCollider.GetComponent<PoliticsCampaignStrategy>().Remove();
+                    }
+                }
+            }
         }
 
         private void Stretch(GameObject obj, Vector3 initialPosition, Vector3 finalPosition, bool mirrorZ) {
@@ -257,6 +303,18 @@ namespace Zavala.Interact
                     newCursor = m_removeCursor;
                     offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
+                case InteractMode.Politics_Campaign_Stop:
+                    newCursor = m_stopCursor;
+                    offset = new Vector2(0, newCursor.height);
+                    break;
+                case InteractMode.Politics_Campaign_Video:
+                    newCursor = m_videoCursor;
+                    offset = new Vector2(0, newCursor.height);
+                    break;
+                case InteractMode.Politics_Campaign_Remove:
+                    newCursor = m_removeCursor;
+                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
+                    break;
             }
 
             Cursor.SetCursor(newCursor, offset, CursorMode.ForceSoftware);
@@ -289,8 +347,6 @@ namespace Zavala.Interact
             switch (inMode) {
                 default:
                     break;
-                case InteractMode.Default:
-                    break;
                 case InteractMode.Finance_Exchange_Basic:
                     exchangeStructure.SetDetails(EXCHANGE_BASIC_COST, ExchangeType.Basic, EXCHANGE_BASIC_JOBS);
                     break;
@@ -302,11 +358,25 @@ namespace Zavala.Interact
             }
         }
 
+        private void AssignStratDetails(InteractMode inMode, PoliticsCampaignStrategy strat) {
+            switch (inMode) {
+                default:
+                    break;
+                case InteractMode.Politics_Campaign_Stop:
+                    strat.SetDetails(StratType.Stop);
+                    break;
+                case InteractMode.Politics_Campaign_Video:
+                    strat.SetDetails(StratType.Video);
+                    break;
+                case InteractMode.Politics_Campaign_Remove:
+                    break;
+            }
+        }
+
         #region Event Handlers
 
         private void HandleInteractModeUpdated(InteractMode newMode) {
             m_interactMode = newMode;
-            Debug.Log("[InteractMgr] New interact mode received: " + newMode);
 
             UpdateCursor(newMode);
         }
