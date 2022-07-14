@@ -7,6 +7,7 @@ using Zavala.Transport;
 using Zavala.Fiscal;
 using Zavala.Exchange;
 using Zavala.Strategy;
+using Zavala.Sim;
 
 namespace Zavala
 {
@@ -31,6 +32,19 @@ namespace Zavala
         public static SimEvent SetNewMode = new SimEvent();
 
         #endregion // Sim Events
+
+        #region SimAction Events
+
+        public class SimActionEvent : UnityEvent<SimAction> { }
+        public static SimActionEvent RegisterAction = new SimActionEvent();
+        public static SimActionEvent RemoveAction = new SimActionEvent();
+
+        public static UnityEvent SimStageActions = new UnityEvent();
+
+        public class SimPostActionEvent : UnityEvent<List<SimAction>> { }
+        public static SimPostActionEvent SimPostActions = new SimPostActionEvent();
+
+        #endregion // Sim Action Events
 
         #region Indicator Events
 

@@ -19,7 +19,17 @@ namespace Zavala
         private static float OUTBREAK_MOD = 0.8f;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.FiscalSliderChanged?.AddListener(OnFiscalSliderChanged);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -49,6 +59,10 @@ namespace Zavala
                     break;
             }
             IndicatorMgr.Instance.AdjustIndicatorValue(OUTBREAK_INDEX, -change.Delta * OUTBREAK_MOD);
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

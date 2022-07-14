@@ -8,9 +8,23 @@ namespace Zavala.Sim
 {
     public enum SimAction
     {
+        Null,
+        // used for factions
         MoveFarm,
-        BuildRoad
-        // etc.
+        LowerPhosphorousOutput,
+        RaisePhosphorousOutput,
+        IncreaseUptake,
+        BuildStorage,
+
+        BuildRail,
+        BuildHighway,
+        BuildRoad,
+
+        BuildBasicExchange,
+        BuildDigesterExchange,
+
+        DistrictStop,
+        RunAds
     }
 
     public class SimMgr : MonoBehaviour

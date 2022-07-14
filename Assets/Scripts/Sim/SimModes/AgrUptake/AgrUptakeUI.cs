@@ -13,11 +13,21 @@ namespace Zavala
         [SerializeField] private AgrUptakeSink[] m_sinks;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.AgrUptakeFarmExcessAdjusted.AddListener(OnExcessAdjusted);
             EventMgr.AgrUptakeSinkAmtAdjusted.AddListener(OnSinkAmtAdjusted);
 
             EventMgr.AgrUptakeStorageAdded.AddListener(OnStorageAdded);
             EventMgr.AgrUptakeStorageRemoved.AddListener(OnStorageRemoved);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -81,6 +91,10 @@ namespace Zavala
 
             // adjust excess phosphorous inversely
             IndicatorMgr.Instance.AdjustIndicatorValue(0, totalDelta);
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

@@ -17,9 +17,19 @@ namespace Zavala
 
 
         private void Awake() {
+            base.Awake();
+
             m_distWindow = m_maxDist - m_minDist;
 
             EventMgr.FarmMoved.AddListener(OnFarmMoved);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -68,6 +78,10 @@ namespace Zavala
 
         private void OnFarmMoved() {
             CalcOutbreaks();
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Event Handlers

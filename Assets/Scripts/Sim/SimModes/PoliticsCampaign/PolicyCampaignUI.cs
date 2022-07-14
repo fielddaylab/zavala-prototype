@@ -11,8 +11,18 @@ namespace Zavala
         private static float SUPPORT_MOD = 0.15f;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.StratDeployed?.AddListener(OnStratDeployed);
             EventMgr.StratRemoved?.AddListener(OnStratRemoved);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -71,6 +81,10 @@ namespace Zavala
                     IndicatorMgr.Instance.AdjustIndicatorValue(0, indicatorAdjustment);
                     break;
             }
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

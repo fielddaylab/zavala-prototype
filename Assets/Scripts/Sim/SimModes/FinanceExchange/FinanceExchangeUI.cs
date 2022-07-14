@@ -17,8 +17,18 @@ namespace Zavala.Exchange
         private static float JOBS_MOD = 0.01f;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.ExchangeBuilt?.AddListener(OnExchangeBuilt);
             EventMgr.ExchangeRemoved?.AddListener(OnExchangeRemoved);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -118,6 +128,10 @@ namespace Zavala.Exchange
             float jobsAmt = details.Jobs * JOBS_MOD;
 
             ModifyJobs(details.Type, -jobsAmt);
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

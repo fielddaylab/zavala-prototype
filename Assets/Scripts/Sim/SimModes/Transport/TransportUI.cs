@@ -17,8 +17,18 @@ namespace Zavala
         private static float OUTBREAK_MOD = 0.005f;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.StructureBuilt?.AddListener(OnStructureBuilt);
             EventMgr.StructureRemoved?.AddListener(OnStructureRemoved);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -114,6 +124,10 @@ namespace Zavala
             if (details.Reduces) {
                 ModifyOutbreak(details.Type, outbreakAmt);
             }
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

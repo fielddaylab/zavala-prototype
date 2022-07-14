@@ -14,14 +14,13 @@ namespace Zavala
             m_simCanvas.gameObject.SetActive(true);
             m_resultsCanvas.gameObject.SetActive(false);
 
-            EventMgr.SimCanvasSubmitted.AddListener(HandleSimCanvasSubmitted);
+            EventMgr.SimStageActions.AddListener(HandleSimStageActions);
             EventMgr.ResultsCanvasOkayed.AddListener(HandleResultsCanvasOkayed);
         }
 
-        private void HandleSimCanvasSubmitted() {
+        private void HandleSimStageActions() {
             // close sim canvas
             m_simCanvas.gameObject.SetActive(false);
-
 
             // open results canvas
             m_resultsCanvas.gameObject.SetActive(true);

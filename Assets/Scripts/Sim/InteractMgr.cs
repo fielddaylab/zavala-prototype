@@ -21,8 +21,7 @@ namespace Zavala.Interact
         Finance_Exchange_Remove,
         Politics_Campaign_Stop,
         Politics_Campaign_Video,
-        Politics_Campaign_Remove
-        // etc.
+        Politics_Campaign_Remove,
     }
 
     public class InteractMgr : MonoBehaviour

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Sim;
 
 namespace Zavala
 {
@@ -12,7 +13,17 @@ namespace Zavala
         [SerializeField] private AgrPhosphInteractable[] m_farms;
 
         private void Awake() {
+            base.Awake();
+
             EventMgr.AgrPhosphFarmExcessAdjusted.AddListener(OnExcessAdjusted);
+        }
+
+        private void OnEnable() {
+            base.OnEnable();
+        }
+
+        private void OnDisable() {
+            base.OnDisable();
         }
 
         public override void Open() {
@@ -41,6 +52,26 @@ namespace Zavala
             float totalDelta = delta * maxContribution;
 
             IndicatorMgr.Instance.AdjustIndicatorValue(0, totalDelta);
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            m_completedActions.Clear();
+
+            foreach(var farm in m_farms) {
+                switch (farm.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
+                        break;
+                }
+            }
+            EventMgr.SimStageActions?.Invoke();
         }
 
         #endregion // Handlers

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zavala.Sim;
 
 namespace Zavala
 {
@@ -10,11 +11,15 @@ namespace Zavala
     {
         private RectTransform rectTransform;
         private Vector3 lastValidPos;
+        private Vector3 startPos;
+        private bool hasMoved;
 
         private void Start() {
             rectTransform = GetComponent<RectTransform>();
 
-            lastValidPos = rectTransform.anchoredPosition;
+            lastValidPos = startPos = rectTransform.anchoredPosition;
+
+            hasMoved = false;
         }
 
         public void OnDrag(PointerEventData eventData) {
@@ -31,6 +36,14 @@ namespace Zavala
 
                 // update algal outbreaks
                 EventMgr.FarmMoved?.Invoke();
+
+                if (lastValidPos != startPos && !hasMoved) {
+                    EventMgr.RegisterAction?.Invoke(SimAction.MoveFarm);
+                    hasMoved = true;
+                }
+                else if ((lastValidPos == startPos) && hasMoved) {
+                    EventMgr.RemoveAction?.Invoke(SimAction.MoveFarm);
+                }
             }
             else {
                 rectTransform.anchoredPosition = lastValidPos;
