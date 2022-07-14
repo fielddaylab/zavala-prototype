@@ -108,5 +108,9 @@ namespace Zavala
         public void AdjustIndicatorValue(int indicatorIndex, float delta) {
             m_indicators[indicatorIndex].Slider.value += delta;
         }
+
+        public float GetIndicatorValue(int indicatorIndex) {
+            return m_indicators[indicatorIndex].Slider.value;
+        }
     }
 }

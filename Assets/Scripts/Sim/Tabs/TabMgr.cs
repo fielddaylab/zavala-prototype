@@ -70,10 +70,6 @@ namespace Zavala
             m_drawerButton.GetComponent<RectTransform>().localPosition = new Vector3(newX, currPos.y, currPos.z);
         }
 
-        private void RefreshLocks() {
-            Debug.Log("Refreshing Locks");
-        }
-
         private void ForceOpenDrawer() {
             if (m_drawerOpen) { return; }
             ToggleDrawer();

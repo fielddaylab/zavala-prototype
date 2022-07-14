@@ -63,6 +63,8 @@ namespace Zavala
 
         public abstract void Open();
 
+        public abstract void Close();
+
         protected abstract void OnSimCanvasSubmitted();
 
     }

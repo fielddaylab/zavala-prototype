@@ -32,6 +32,27 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+            if (m_completedActions == null) { return; }
+
+            m_completedActions.Clear();
+
+            foreach (var farm in m_farms) {
+                switch (farm.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
+                        break;
+                }
+            }
+        }
+
         private void InitIndicatorVals() {
             float maxContribution = 1f / m_farms.Length;
             float totalOutbreaks = 0;
@@ -55,22 +76,8 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
-            m_completedActions.Clear();
+            Close();
 
-            foreach(var farm in m_farms) {
-                switch (farm.GetActionState()) {
-                    default:
-                        break;
-                    case -1:
-                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
-                        break;
-                    case 0:
-                        break;
-                    case 1:
-                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
-                        break;
-                }
-            }
             EventMgr.SimStageActions?.Invoke();
         }
 

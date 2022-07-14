@@ -30,7 +30,7 @@ namespace Zavala.Sim
         BuildDigesterExchange,
 
         DistrictStop,
-        RunAds
+        DistrictAd
     }
 
     public class SimMgr : MonoBehaviour
@@ -59,15 +59,22 @@ namespace Zavala.Sim
 
         private void OnNewModeSet(SimModeData data) {
             EventMgr.SetNewIndicators?.Invoke(data.IndicatorData);
+
+            SimModeUI toOpen = null;
+
             foreach(SimModeUI simGroup in m_simModeGroups) {
                 if (simGroup.ID == data.ID) {
-                    simGroup.gameObject.SetActive(true);
-                    simGroup.Open();
+                    toOpen = simGroup;
                 }
                 else {
                     simGroup.gameObject.SetActive(false);
-                    // simMode.Close();
+                    simGroup.Close();
                 }
+            }
+
+            if (toOpen != null) {
+                toOpen.gameObject.SetActive(true);
+                toOpen.Open();
             }
 
             m_currMode = data;

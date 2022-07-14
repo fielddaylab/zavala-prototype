@@ -38,6 +38,10 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+
+        }
+
         public float GetNearestLakeDist(Vector2 farmPos) {
             //Lake nearestLake;
             float nearestDist = Mathf.Infinity;
@@ -81,6 +85,8 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
+            Close();
+
             EventMgr.SimStageActions?.Invoke();
         }
 

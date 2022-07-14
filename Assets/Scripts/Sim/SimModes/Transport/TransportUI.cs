@@ -19,6 +19,8 @@ namespace Zavala
 
         private int m_numRails, m_numHighways, m_numRoads, m_numBridges;
 
+        private float m_finalPrivateAmt, m_finalGovtAmt, m_finalOutbreakAmt;
+
         private void Awake() {
             base.Awake();
 
@@ -26,6 +28,8 @@ namespace Zavala
             EventMgr.StructureRemoved?.AddListener(OnStructureRemoved);
 
             m_numRails = m_numHighways = m_numRoads = m_numBridges = 0;
+
+            m_finalGovtAmt = m_finalPrivateAmt = m_finalOutbreakAmt = -1;
         }
 
         private void OnEnable() {
@@ -42,10 +46,40 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+            if (m_completedActions == null) { return; }
+
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numRails; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildRail);
+            }
+            for (int i = 0; i < m_numHighways; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildHighway);
+            }
+            for (int i = 0; i < m_numRoads; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildRoad);
+            }
+            for (int i = 0; i < m_numBridges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildBridge);
+            }
+
+            m_finalPrivateAmt = IndicatorMgr.Instance.GetIndicatorValue(PRIVATE_SPENDING_INDEX);
+            m_finalGovtAmt = IndicatorMgr.Instance.GetIndicatorValue(GOVT_SPENDING_INDEX);
+            m_finalOutbreakAmt = IndicatorMgr.Instance.GetIndicatorValue(OUTBREAK_INDEX);
+        }
+
         private void InitIndicatorVals() {
-            IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0);
-            IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0);
-            IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.9f);
+            if (m_finalPrivateAmt == -1) {
+                IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0);
+                IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0);
+                IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.9f);
+            }
+            else {
+                IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, m_finalPrivateAmt);
+                IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, m_finalGovtAmt);
+                IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, m_finalOutbreakAmt);
+            }
         }
 
         private void PayForStructure(BuildType type, float indicatorExpense) {
@@ -140,20 +174,7 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
-            m_completedActions.Clear();
-
-            for (int i = 0; i < m_numRails; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildRail);
-            }
-            for (int i = 0; i < m_numHighways; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildHighway);
-            }
-            for (int i = 0; i < m_numRoads; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildRoad);
-            }
-            for (int i = 0; i < m_numBridges; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildBridge);
-            }
+            Close();
 
             EventMgr.SimStageActions?.Invoke();
         }

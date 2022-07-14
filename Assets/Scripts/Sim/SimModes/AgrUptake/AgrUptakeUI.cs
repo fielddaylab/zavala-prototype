@@ -41,6 +41,47 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+            if (m_completedActions == null) { return; }
+            
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numStorage; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildStorage);
+            }
+
+            foreach (var farm in m_farms) {
+                switch (farm.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
+                        break;
+                }
+            }
+
+            foreach (var sink in m_sinks) {
+                switch (sink.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        // all start at 0, so can only increase
+                        //EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
+                        break;
+                }
+            }
+        }
+
         private void InitIndicatorVals() {
             // Algal Outbreaks
 
@@ -103,42 +144,7 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
-            m_completedActions.Clear();
-
-            for (int i = 0; i < m_numStorage; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildStorage);
-            }
-
-            foreach (var farm in m_farms) {
-                switch (farm.GetActionState()) {
-                    default:
-                        break;
-                    case -1:
-                        EventMgr.RegisterAction.Invoke(SimAction.LowerPhosphorousOutput);
-                        break;
-                    case 0:
-                        break;
-                    case 1:
-                        EventMgr.RegisterAction.Invoke(SimAction.RaisePhosphorousOutput);
-                        break;
-                }
-            }
-
-            foreach (var sink in m_sinks) {
-                switch (sink.GetActionState()) {
-                    default:
-                        break;
-                    case -1:
-                        // all start at 0, so can only increase
-                        //EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
-                        break;
-                    case 0:
-                        break;
-                    case 1:
-                        EventMgr.RegisterAction.Invoke(SimAction.IncreaseUptake);
-                        break;
-                }
-            }
+            Close();
 
             EventMgr.SimStageActions?.Invoke();
         }

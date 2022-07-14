@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Sim;
 using Zavala.Strategy;
 
 namespace Zavala
@@ -10,11 +11,15 @@ namespace Zavala
     {
         private static float SUPPORT_MOD = 0.15f;
 
+        private int m_numStops, m_numVideos;
+
         private void Awake() {
             base.Awake();
 
             EventMgr.StratDeployed?.AddListener(OnStratDeployed);
             EventMgr.StratRemoved?.AddListener(OnStratRemoved);
+
+            m_numStops = m_numVideos = 0;
         }
 
         private void OnEnable() {
@@ -31,8 +36,21 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+            if (m_completedActions == null) { return; }
+
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numStops; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.DistrictStop);
+            }
+            for (int i = 0; i < m_numVideos; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.DistrictAd);
+            }
+        }
+
         private void InitIndicatorVals() {
-            IndicatorMgr.Instance.SetIndicatorValue(0, 0.2f);
+            IndicatorMgr.Instance.SetIndicatorValue(0, 0.2f + (m_numStops + m_numVideos) * 0.5f * SUPPORT_MOD);
         }
 
         #region Handlers 
@@ -50,12 +68,14 @@ namespace Zavala
                     indicatorAdjustment = stratDetails.District.SupportYield * SUPPORT_MOD;
                     IndicatorMgr.Instance.AdjustIndicatorValue(0, indicatorAdjustment);
                     stratDetails.District.AddSupport();
+                    m_numStops++;
                     break;
                 case StratType.Video:
                     //if (stratDetails.District.IsSupporting()) {
                     indicatorAdjustment = stratDetails.District.SupportYield * SUPPORT_MOD;
                     IndicatorMgr.Instance.AdjustIndicatorValue(0, indicatorAdjustment);
                     stratDetails.District.AddSupport();
+                    m_numVideos++;
                     break;
             }
         }
@@ -73,17 +93,21 @@ namespace Zavala
                     //if (!stratDetails.District.IsSupporting()) {
                     indicatorAdjustment = -stratDetails.District.SupportYield * SUPPORT_MOD;
                     IndicatorMgr.Instance.AdjustIndicatorValue(0, indicatorAdjustment);
+                    m_numStops--;
                     break;
                 case StratType.Video:
                     stratDetails.District.RemoveSupport();
                     //if (!stratDetails.District.IsSupporting()) {
                     indicatorAdjustment = -stratDetails.District.SupportYield * SUPPORT_MOD;
                     IndicatorMgr.Instance.AdjustIndicatorValue(0, indicatorAdjustment);
+                    m_numVideos--;
                     break;
             }
         }
 
         protected override void OnSimCanvasSubmitted() {
+            Close();
+
             EventMgr.SimStageActions?.Invoke();
         }
 

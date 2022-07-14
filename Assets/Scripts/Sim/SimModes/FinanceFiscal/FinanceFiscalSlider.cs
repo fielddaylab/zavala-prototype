@@ -34,6 +34,8 @@ namespace Zavala.Fiscal
         private float m_startVal;
         private float m_prevVal;
 
+        private float m_aggregateDelta;
+
         public Slider Slider {
             get { return m_slider; }
         }
@@ -43,11 +45,16 @@ namespace Zavala.Fiscal
         public FiscalType Type {
             get { return m_type; }
         }
+        public float AggregateDelta {
+            get { return m_aggregateDelta; }
+        }
 
         private void Awake() {
             m_slider.onValueChanged.AddListener(HandleSliderValChanged);
 
             m_prevVal = m_startVal = m_slider.value;
+
+            m_aggregateDelta = 0;
         }
 
         public int GetActionState() {
@@ -71,6 +78,8 @@ namespace Zavala.Fiscal
             EventMgr.FiscalSliderChanged?.Invoke(newChange);
 
             m_prevVal = newVal;
+
+            m_aggregateDelta = newVal - m_startVal;
         }
 
         #endregion // Handlers

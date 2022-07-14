@@ -17,7 +17,12 @@ namespace Zavala.Exchange
         private static float OUTBREAK_MOD = 0.0075f;
         private static float JOBS_MOD = 0.01f;
 
-        private int m_numBasicExchanges, m_numDigesterExchanges;
+        private static float EXCHANGE_BASIC_COST = 20;
+        private static float EXCHANGE_DIGEST_COST = 30;
+        private static float EXCHANGE_BASIC_JOBS = 10;
+        private static float EXCHANGE_DIGEST_JOBS = 12;
+
+        private int m_numBasicExchanges, m_numDigesterExchanges = 0;
 
         private void Awake() {
             base.Awake();
@@ -42,11 +47,36 @@ namespace Zavala.Exchange
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
+        public override void Close() {
+            if (m_completedActions == null) { return; }
+
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numBasicExchanges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildBasicExchange);
+            }
+            for (int i = 0; i < m_numDigesterExchanges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildDigesterExchange);
+            }
+        }
+
         private void InitIndicatorVals() {
             IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0);
             IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0);
             IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.9f);
             IndicatorMgr.Instance.SetIndicatorValue(JOBS_INDEX, 0);
+
+            ExchangeDetails defaultBasicDetails = new ExchangeDetails(EXCHANGE_BASIC_COST, ExchangeType.Basic, EXCHANGE_BASIC_JOBS);
+            ExchangeDetails defaultDigesterDetails = new ExchangeDetails(EXCHANGE_DIGEST_COST, ExchangeType.Digester, EXCHANGE_DIGEST_JOBS);
+
+            for (int i = 0; i < m_numBasicExchanges; i++) {
+                OnExchangeBuilt(defaultBasicDetails);
+                m_numBasicExchanges--;
+            }
+            for (int i = 0; i < m_numDigesterExchanges; i++) {
+                OnExchangeBuilt(defaultDigesterDetails);
+                m_numDigesterExchanges--;
+            }
         }
 
         private void PayForExchange(ExchangeType type, float indicatorExpense) {
@@ -140,14 +170,7 @@ namespace Zavala.Exchange
         }
 
         protected override void OnSimCanvasSubmitted() {
-            m_completedActions.Clear();
-
-            for (int i = 0; i < m_numBasicExchanges; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildBasicExchange);
-            }
-            for (int i = 0; i < m_numDigesterExchanges; i++) {
-                EventMgr.RegisterAction.Invoke(SimAction.BuildDigesterExchange);
-            }
+            Close();
 
             EventMgr.SimStageActions?.Invoke();
         }

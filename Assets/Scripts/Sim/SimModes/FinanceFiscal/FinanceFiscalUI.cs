@@ -21,6 +21,7 @@ namespace Zavala
         private static float GOVT_MOD = 0.8f;
         private static float OUTBREAK_MOD = 0.8f;
 
+
         private void Awake() {
             base.Awake();
 
@@ -41,30 +42,9 @@ namespace Zavala
             EventMgr.InteractModeUpdated?.Invoke(InteractMode.Default);
         }
 
-        private void InitIndicatorVals() {
-            IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0.5f);
-            IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0.5f);
-            IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.6f);
-        }
+        public override void Close() {
+            if (m_completedActions == null) { return; }
 
-        #region Handlers 
-
-        private void OnFiscalSliderChanged(FiscalChange change) {
-
-            switch (change.Type) {
-                default:
-                    break;
-                case FiscalType.Private:
-                    IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, change.Delta * PRIVATE_MOD);
-                    break;
-                case FiscalType.Govt:
-                    IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, change.Delta * GOVT_MOD);
-                    break;
-            }
-            IndicatorMgr.Instance.AdjustIndicatorValue(OUTBREAK_INDEX, -change.Delta * OUTBREAK_MOD);
-        }
-
-        protected override void OnSimCanvasSubmitted() {
             m_completedActions.Clear();
 
             foreach (var slider in m_sliders) {
@@ -91,6 +71,43 @@ namespace Zavala
                         break;
                 }
             }
+        }
+
+        private void InitIndicatorVals() {
+            IndicatorMgr.Instance.SetIndicatorValue(PRIVATE_SPENDING_INDEX, 0.5f);
+            IndicatorMgr.Instance.SetIndicatorValue(GOVT_SPENDING_INDEX, 0.5f);
+            IndicatorMgr.Instance.SetIndicatorValue(OUTBREAK_INDEX, 0.6f);
+
+            foreach (var slider in m_sliders) {
+                if (slider.Type == FiscalType.Private) {
+                    IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, slider.AggregateDelta * PRIVATE_MOD);
+                }
+                else {
+                    IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, slider.AggregateDelta * GOVT_MOD);
+                }
+                IndicatorMgr.Instance.AdjustIndicatorValue(OUTBREAK_INDEX, -slider.AggregateDelta * OUTBREAK_MOD);
+            }
+        }
+
+        #region Handlers 
+
+        private void OnFiscalSliderChanged(FiscalChange change) {
+
+            switch (change.Type) {
+                default:
+                    break;
+                case FiscalType.Private:
+                    IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, change.Delta * PRIVATE_MOD);
+                    break;
+                case FiscalType.Govt:
+                    IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, change.Delta * GOVT_MOD);
+                    break;
+            }
+            IndicatorMgr.Instance.AdjustIndicatorValue(OUTBREAK_INDEX, -change.Delta * OUTBREAK_MOD);
+        }
+
+        protected override void OnSimCanvasSubmitted() {
+            Close();
 
             EventMgr.SimStageActions?.Invoke();
         }
