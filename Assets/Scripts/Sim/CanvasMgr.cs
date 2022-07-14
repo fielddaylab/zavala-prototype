@@ -12,6 +12,7 @@ namespace Zavala
         private void Awake() {
             // Activate sim screen
             m_simCanvas.gameObject.SetActive(true);
+            m_resultsCanvas.gameObject.SetActive(true);
             m_resultsCanvas.gameObject.SetActive(false);
 
             EventMgr.SimStageActions.AddListener(HandleSimStageActions);

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
   m_Name: AgrUptakeMode
   m_EditorClassIdentifier: 
+  m_modeID: agr-uptake
   m_indicatorData:
   - {fileID: 11400000, guid: fc0303c7d3815f546a1beb9d6ff701d1, type: 2}
   - {fileID: 11400000, guid: f2cb0fbab0b9e4841ad8a188a45a5037, type: 2}
-  m_modeID: agr-uptake
+  m_unlocksModes:
+  - transport-building

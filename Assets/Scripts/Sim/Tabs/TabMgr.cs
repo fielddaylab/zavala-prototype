@@ -74,6 +74,11 @@ namespace Zavala
             Debug.Log("Refreshing Locks");
         }
 
+        private void ForceOpenDrawer() {
+            if (m_drawerOpen) { return; }
+            ToggleDrawer();
+        }
+
         #region Handlers
 
         private void OnNewModeSet(SimModeData data) {
@@ -81,7 +86,11 @@ namespace Zavala
         }
 
         private void OnModeUnlocked() {
-            RefreshLocks();
+            ForceOpenDrawer();
+
+            // open first tab
+            m_simTabs[0].GetComponent<Button>().onClick.Invoke();
+            m_simTabs[0].GetComponent<Button>().Select();
         }
 
         #endregion // Handlers

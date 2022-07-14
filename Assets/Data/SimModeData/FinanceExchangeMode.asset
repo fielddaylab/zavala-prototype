@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
   m_Name: FinanceExchangeMode
   m_EditorClassIdentifier: 
+  m_modeID: finance-exchange
   m_indicatorData:
   - {fileID: 11400000, guid: 6997c9b64f89b4344b2b5b69f4703e5a, type: 2}
   - {fileID: 11400000, guid: 81f310c90cf61de4396c350c0f5cd4e2, type: 2}
   - {fileID: 11400000, guid: bb10a34d1d7b5ab439eba4dc9a7e2690, type: 2}
   - {fileID: 11400000, guid: 4d17f9928e0bb494eb74dcbe26d5b870, type: 2}
-  m_modeID: finance-exchange
+  m_unlocksModes:
+  - policy-campaign

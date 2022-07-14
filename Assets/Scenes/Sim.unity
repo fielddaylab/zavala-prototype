@@ -3949,7 +3949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_startUnlocked:
   - agr-farm
-  m_unlockAll: 1
+  m_unlockAll: 0
 --- !u!4 &1635648241
 Transform:
   m_ObjectHideFlags: 0

@@ -32,6 +32,8 @@ namespace Zavala.Sim
         [SerializeField] private Button m_submitButton;
         [SerializeField] private SimModeUI[] m_simModeGroups;
 
+        private SimModeData m_currMode;
+
         void Start() {
             m_submitButton.onClick.AddListener(delegate { EventMgr.SimCanvasSubmitted?.Invoke(); });
 
@@ -62,7 +64,9 @@ namespace Zavala.Sim
                 }
             }
 
-            // TODO: activate/de-activate selectively?
+            m_currMode = data;
+
+            ResultsMgr.Instance.LoadSimData(m_currMode);
         }
     }
 }

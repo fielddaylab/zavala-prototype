@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4827575cdfed7ae429247ee5c7a9a24a, type: 3}
   m_Name: TransportBuildingMode
   m_EditorClassIdentifier: 
+  m_modeID: transport-building
   m_indicatorData:
   - {fileID: 11400000, guid: c5da1934c122ee04290a630d1b0ac7dc, type: 2}
   - {fileID: 11400000, guid: 4859aa511f604714486d2c9d21671854, type: 2}
   - {fileID: 11400000, guid: bec20176479af54489f3966aaf992028, type: 2}
-  m_modeID: transport-building
+  m_unlocksModes:
+  - finance-fiscal
