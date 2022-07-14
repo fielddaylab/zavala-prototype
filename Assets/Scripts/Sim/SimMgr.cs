@@ -19,6 +19,12 @@ namespace Zavala.Sim
         BuildRail,
         BuildHighway,
         BuildRoad,
+        BuildBridge,
+
+        IncreaseGovernmentPolicy,
+        IncreasePrivatePolicy,
+        DecreaseGovernmentPolicy,
+        DecreasePrivatePolicy,
 
         BuildBasicExchange,
         BuildDigesterExchange,

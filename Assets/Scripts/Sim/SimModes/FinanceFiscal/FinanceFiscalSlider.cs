@@ -31,6 +31,7 @@ namespace Zavala.Fiscal
 
         [SerializeField] private FiscalType m_type;
 
+        private float m_startVal;
         private float m_prevVal;
 
         public Slider Slider {
@@ -46,7 +47,19 @@ namespace Zavala.Fiscal
         private void Awake() {
             m_slider.onValueChanged.AddListener(HandleSliderValChanged);
 
-            m_prevVal = m_slider.value;
+            m_prevVal = m_startVal = m_slider.value;
+        }
+
+        public int GetActionState() {
+            if (m_slider.value == m_startVal) {
+                return 0; // even (no action)
+            }
+            else if (m_slider.value < m_startVal) {
+                return -1; // output was lowered
+            }
+            else {
+                return 1; // output was raised
+            }
         }
 
         #region Handlers 

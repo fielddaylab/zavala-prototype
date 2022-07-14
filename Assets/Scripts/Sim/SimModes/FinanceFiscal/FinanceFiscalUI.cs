@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Fiscal;
 using Zavala.Interact;
+using Zavala.Sim;
 
 namespace Zavala
 {
     public class FinanceFiscalUI : SimModeUI
     {
-        //[Header("FinanceFiscalUI")]
+        [Header("FinanceFiscalUI")]
+
+        [SerializeField] private FinanceFiscalSlider[] m_sliders;
         
         private static int PRIVATE_SPENDING_INDEX = 0;
         private static int GOVT_SPENDING_INDEX = 1;
@@ -62,6 +65,33 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
+            m_completedActions.Clear();
+
+            foreach (var slider in m_sliders) {
+                switch (slider.GetActionState()) {
+                    default:
+                        break;
+                    case -1:
+                        if (slider.Type == FiscalType.Private) {
+                            EventMgr.RegisterAction.Invoke(SimAction.DecreasePrivatePolicy);
+                        }
+                        else {
+                            EventMgr.RegisterAction.Invoke(SimAction.DecreaseGovernmentPolicy);
+                        }
+                        break;
+                    case 0:
+                        break;
+                    case 1:
+                        if (slider.Type == FiscalType.Private) {
+                            EventMgr.RegisterAction.Invoke(SimAction.IncreasePrivatePolicy);
+                        }
+                        else {
+                            EventMgr.RegisterAction.Invoke(SimAction.IncreaseGovernmentPolicy);
+                        }
+                        break;
+                }
+            }
+
             EventMgr.SimStageActions?.Invoke();
         }
 

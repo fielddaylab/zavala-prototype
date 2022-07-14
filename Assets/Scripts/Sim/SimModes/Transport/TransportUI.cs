@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Sim;
 using Zavala.Transport;
 
 namespace Zavala
@@ -16,11 +17,15 @@ namespace Zavala
         private static float EXPENSE_MOD = 0.01f;
         private static float OUTBREAK_MOD = 0.005f;
 
+        private int m_numRails, m_numHighways, m_numRoads, m_numBridges;
+
         private void Awake() {
             base.Awake();
 
             EventMgr.StructureBuilt?.AddListener(OnStructureBuilt);
             EventMgr.StructureRemoved?.AddListener(OnStructureRemoved);
+
+            m_numRails = m_numHighways = m_numRoads = m_numBridges = 0;
         }
 
         private void OnEnable() {
@@ -49,15 +54,19 @@ namespace Zavala
                     break;
                 case BuildType.Rail:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
+                    m_numRails++;
                     break;
                 case BuildType.Highway:
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numHighways++;
                     break;
                 case BuildType.Road:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
+                    m_numRoads++;
                     break;
                 case BuildType.Bridge:
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numBridges++;
                     break;
             }
         }
@@ -68,15 +77,19 @@ namespace Zavala
                     break;
                 case BuildType.Rail:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
+                    m_numRails--;
                     break;
                 case BuildType.Highway:
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numHighways--;
                     break;
                 case BuildType.Road:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
+                    m_numRoads--;
                     break;
                 case BuildType.Bridge:
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numBridges--;
                     break;
             }
         }
@@ -127,6 +140,21 @@ namespace Zavala
         }
 
         protected override void OnSimCanvasSubmitted() {
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numRails; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildRail);
+            }
+            for (int i = 0; i < m_numHighways; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildHighway);
+            }
+            for (int i = 0; i < m_numRoads; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildRoad);
+            }
+            for (int i = 0; i < m_numBridges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildBridge);
+            }
+
             EventMgr.SimStageActions?.Invoke();
         }
 
