@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Sim;
 
 namespace Zavala.Exchange
 {
@@ -16,11 +17,15 @@ namespace Zavala.Exchange
         private static float OUTBREAK_MOD = 0.0075f;
         private static float JOBS_MOD = 0.01f;
 
+        private int m_numBasicExchanges, m_numDigesterExchanges;
+
         private void Awake() {
             base.Awake();
 
             EventMgr.ExchangeBuilt?.AddListener(OnExchangeBuilt);
             EventMgr.ExchangeRemoved?.AddListener(OnExchangeRemoved);
+
+            m_numBasicExchanges = m_numDigesterExchanges = 0;
         }
 
         private void OnEnable() {
@@ -51,10 +56,12 @@ namespace Zavala.Exchange
                 case ExchangeType.Basic:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numBasicExchanges++;
                     break;
                 case ExchangeType.Digester:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numDigesterExchanges++;
                     break;
             }
         }
@@ -66,10 +73,12 @@ namespace Zavala.Exchange
                 case ExchangeType.Basic:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numBasicExchanges--;
                     break;
                 case ExchangeType.Digester:
                     IndicatorMgr.Instance.AdjustIndicatorValue(PRIVATE_SPENDING_INDEX, indicatorExpense);
                     IndicatorMgr.Instance.AdjustIndicatorValue(GOVT_SPENDING_INDEX, indicatorExpense);
+                    m_numDigesterExchanges--;
                     break;
             }
         }
@@ -131,6 +140,15 @@ namespace Zavala.Exchange
         }
 
         protected override void OnSimCanvasSubmitted() {
+            m_completedActions.Clear();
+
+            for (int i = 0; i < m_numBasicExchanges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildBasicExchange);
+            }
+            for (int i = 0; i < m_numDigesterExchanges; i++) {
+                EventMgr.RegisterAction.Invoke(SimAction.BuildDigesterExchange);
+            }
+
             EventMgr.SimStageActions?.Invoke();
         }
 
