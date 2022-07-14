@@ -17,5 +17,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c5da1934c122ee04290a630d1b0ac7dc, type: 2}
   - {fileID: 11400000, guid: 4859aa511f604714486d2c9d21671854, type: 2}
   - {fileID: 11400000, guid: bec20176479af54489f3966aaf992028, type: 2}
+  m_feedbackText: 'I''m a relevant character (Financial Analyst)! Here''s why this
+    plan will never work. But I''ll give you some new tech:'
   m_unlocksModes:
   - finance-fiscal
+  m_unlockModeText: + Fiscal policy adjustment
+  m_hatColor: {r: 0.24296904, g: 0.3383341, b: 0.7924528, a: 1}

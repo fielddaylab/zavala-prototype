@@ -15,4 +15,8 @@ MonoBehaviour:
   m_modeID: policy-campaign
   m_indicatorData:
   - {fileID: 11400000, guid: f2f9d5e6f5572f944874d9eb9e1f12c6, type: 2}
+  m_feedbackText: We at Wisconsin PBS are ready to say that the next governor of
+    Wisconsin will be...
   m_unlocksModes: []
+  m_unlockModeText: + [Future solutions?]
+  m_hatColor: {r: 0.23549305, g: 0.7173616, b: 0.7924528, a: 1}

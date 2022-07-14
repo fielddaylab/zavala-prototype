@@ -16,5 +16,9 @@ MonoBehaviour:
   m_indicatorData:
   - {fileID: 11400000, guid: fc0303c7d3815f546a1beb9d6ff701d1, type: 2}
   - {fileID: 11400000, guid: f2cb0fbab0b9e4841ad8a188a45a5037, type: 2}
+  m_feedbackText: 'I''m a relevant character (Transportation Enthusiast)! Here''s
+    why this plan will never work. But I''ll give you some new tech:'
   m_unlocksModes:
   - transport-building
+  m_unlockModeText: + Transportation infrastructure
+  m_hatColor: {r: 0.9811321, g: 0.90262765, b: 0.124955505, a: 1}

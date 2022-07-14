@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Sim;
@@ -14,6 +15,10 @@ namespace Zavala
 
         [SerializeField] private FactionsDisplay m_factionsDisplay;
         [SerializeField] private ActionsDisplay m_actionsDisplay;
+        [SerializeField] private NewTechDisplay m_newTechDisplay;
+        [SerializeField] private TMP_Text m_feedbackText;
+
+        [SerializeField] private Image m_hat;
 
         private SimModeData m_currSimModeData;
         
@@ -49,6 +54,9 @@ namespace Zavala
 
         public void LoadSimData(SimModeData data) {
             m_currSimModeData = data;
+            m_feedbackText.text = data.FeedbackText;
+            m_newTechDisplay.NewTechText.text = data.UnlockModeText;
+            m_hat.color = data.HatColor;
         }
         
         private void ApplyUnlocks() {

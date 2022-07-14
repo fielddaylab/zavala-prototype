@@ -17,5 +17,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d1e2f7bb92040a438d7cbaa83609cc4, type: 2}
   - {fileID: 11400000, guid: 382762b5d78efe049a9f25409e16c6ea, type: 2}
   - {fileID: 11400000, guid: a497a3a13448c1341885c28a22930ba0, type: 2}
+  m_feedbackText: 'I''m a relevant character (Communal Exchange Expert)! Here''s
+    why this plan will never work. But I''ll give you some new tech:'
   m_unlocksModes:
   - finance-exchange
+  m_unlockModeText: + Communal exchanges
+  m_hatColor: {r: 0.8396226, g: 0.5272443, b: 0.122774996, a: 1}

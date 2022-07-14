@@ -15,5 +15,9 @@ MonoBehaviour:
   m_modeID: agr-farm
   m_indicatorData:
   - {fileID: 11400000, guid: 3a3f7eec51654614595877cda8157f06, type: 2}
+  m_feedbackText: 'I''m a relevant character (Farmer)! Here''s why this plan will
+    never work. But I''ll give you some new tech:'
   m_unlocksModes:
   - agr-phosph
+  m_unlockModeText: + Phosphorus output adjustment
+  m_hatColor: {r: 0.32156864, g: 0.5647059, b: 0.28235295, a: 1}
