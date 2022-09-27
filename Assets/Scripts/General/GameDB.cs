@@ -10,13 +10,10 @@ namespace Zavala
 
         #region Inspector
 
-        [Header("UI Timer")]
+        [Header("UI")]
         public GameObject UITimerPrefabDefault;
-
-        [Space(5)]
-
-        [Header("UI Request")]
         public GameObject UIRequestPrefab;
+        public GameObject UIStoredProductPrefab;
 
         [Space(5)]
 

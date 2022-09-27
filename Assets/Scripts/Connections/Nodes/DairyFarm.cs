@@ -27,6 +27,21 @@ namespace Zavala
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
         }
 
+        private void StraightToStorage() {
+            // produce and add to storage
+            List<Resources.Type> newProducts = m_producesComponent.Produce();
+            if (newProducts == null) {
+                return;
+            }
+
+            for (int i = 0; i < newProducts.Count; i++) {
+                if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                    Debug.Log("[DairyFarm] Request fulfilled, but storage full!");
+                }
+            }
+        }
+
+
         #region Handlers
 
         private void HandleCycleCompleted(object sender, EventArgs e) {
@@ -34,6 +49,8 @@ namespace Zavala
 
             // Dairy Farms request 1 grain
             m_requestsComponent.QueueRequest(Resources.Type.Grain);
+
+            StraightToStorage(); // <- Debug: Produce product and add to storage
         }
 
         #endregion // Handlers

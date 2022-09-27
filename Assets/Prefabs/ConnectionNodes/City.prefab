@@ -212,7 +212,7 @@ MonoBehaviour:
   RequestTypes: 
   m_hasTimeout: 0
   m_requestTimeout: 0
-  m_offsetX: 0.5
+  m_iconOffsetZ: 0.25
 --- !u!114 &4694675410523403283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,6 +226,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ProduceTypes: 
+  m_producesMoney: 1
+  m_amt: 10
 --- !u!114 &5222434333637154152
 MonoBehaviour:
   m_ObjectHideFlags: 0

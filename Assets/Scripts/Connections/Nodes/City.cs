@@ -29,6 +29,20 @@ namespace Zavala
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
         }
 
+        private void StraightToStorage() {
+            // produce and add to storage
+            List<Resources.Type> newProducts = m_producesComponent.Produce();
+            if (newProducts == null) {
+                return;
+            }
+
+            for(int i = 0; i < newProducts.Count; i++) {
+                if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                    Debug.Log("[City] Request fulfilled, but storage full!");
+                }
+            }
+        }
+
 
         #region Handlers
 
@@ -37,10 +51,14 @@ namespace Zavala
 
             // Cities request 1 milk / population
             m_requestsComponent.QueueRequest(Resources.Type.Milk);
+
+            StraightToStorage(); // <- Debug: Produce product and add to storage
         }
 
         private void HandleRequestFulfilled(object sender, EventArgs e) {
             Debug.Log("[City] Request fulfilled");
+
+            StraightToStorage();
         }
 
         private void HandleRequestExpired(object sender, EventArgs e) {
