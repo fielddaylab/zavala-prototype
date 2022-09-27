@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using Zavala.Events;
 
 namespace Zavala.Resources
 {
@@ -26,12 +27,12 @@ namespace Zavala.Functionalities
         [SerializeField] private bool m_producesMoney;
         [SerializeField] private int m_amt;
 
-        public event EventHandler AttemptProduce;
+        // public event EventHandler AttemptProduce;
 
         public List<Resources.Type> Produce() {
             if (m_producesMoney) {
                 // add money to funds
-                Debug.Log("Added $" + m_amt + " to your funds!");
+                EventMgr.Instance.TriggerEvent(Events.ID.ProduceMoney, new Events.ProduceMoneyEventArgs(m_amt));
                 return null;
             }
 

@@ -49,8 +49,6 @@ namespace Zavala
 
             // Grain Farms request 1 Fertilizer (or 1 Manure?)
             m_requestsComponent.QueueRequest(Resources.Type.Manure);
-
-            StraightToStorage(); // <- Debug: produce and send straight to storage
         }
 
         #endregion // Handlers

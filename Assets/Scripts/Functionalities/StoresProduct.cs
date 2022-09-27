@@ -39,7 +39,7 @@ namespace Zavala.Functionalities
 
         public bool TryAddToStorage(Resources.Type productType) {
             if (m_storageList.Count >= MaxProducts) {
-                Debug.Log("Storage is full! Not adding to list.");
+                Debug.Log("[StoresProduct] Storage is full! Not adding to list.");
                 StorageExceeded?.Invoke(this, EventArgs.Empty);
                 return false;
             }

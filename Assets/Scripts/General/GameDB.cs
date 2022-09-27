@@ -35,19 +35,14 @@ namespace Zavala
             switch(type) {
                 case Resources.Type.Fertilizer:
                     return FertilizerIcon;
-                    break;
                 case Resources.Type.Grain:
                     return GrainIcon;
-                    break;
                 case Resources.Type.Milk:
                     return MilkIcon;
-                    break;
                 case Resources.Type.Manure:
                     return ManureIcon;
-                    break;
                 default:
                     return NoneIcon;
-                    break;
             }
         }
     }

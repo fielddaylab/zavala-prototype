@@ -49,8 +49,6 @@ namespace Zavala
 
             // Dairy Farms request 1 grain
             m_requestsComponent.QueueRequest(Resources.Type.Grain);
-
-            StraightToStorage(); // <- Debug: Produce product and add to storage
         }
 
         #endregion // Handlers
