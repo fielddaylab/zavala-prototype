@@ -1033,6 +1033,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2661373500395146553, guid: 04f22e18f648eae478224f3302718766,
+        type: 3}
+      propertyPath: m_hasTimeout
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2661373500395146553, guid: 04f22e18f648eae478224f3302718766,
+        type: 3}
+      propertyPath: m_requestTimeout
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5607112537235612656, guid: 04f22e18f648eae478224f3302718766,
         type: 3}
       propertyPath: CycleTime
@@ -3180,7 +3190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_LocalPosition.x

@@ -24,6 +24,8 @@ namespace Zavala
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
 
+            m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
+            m_requestsComponent.RequestExpired += HandleRequestExpired ;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
         }
 
@@ -35,6 +37,14 @@ namespace Zavala
 
             // Cities request 1 milk / population
             m_requestsComponent.QueueRequest(Resources.Type.Milk);
+        }
+
+        private void HandleRequestFulfilled(object sender, EventArgs e) {
+            Debug.Log("[City] Request fulfilled");
+        }
+
+        private void HandleRequestExpired(object sender, EventArgs e) {
+            Debug.Log("[City] Request expired");
         }
 
         #endregion // Handlers

@@ -18,18 +18,9 @@ namespace Zavala.Functionalities
             StartCycle(); // debug
         }
 
-        private void Update() {
-            if (m_uiTimer == null) {
-                return;
-            }
-            else {
-                m_uiTimer.Tick();
-            }
-        }
-
         public void StartCycle() {
             m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
-            m_uiTimer.Init(CycleTime);
+            m_uiTimer.Init(CycleTime, SettingsMgr.VisibleCycles);
             m_uiTimer.TimerCompleted += HandleTimerCompleted;
         }
 

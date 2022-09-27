@@ -17,9 +17,13 @@ namespace Zavala
 
         public event EventHandler TimerCompleted; // when the timer completes
 
-        public void Init(float totalTime) {
-            Image.enabled = SettingsMgr.VisibleCycles;
+        public void Init(float totalTime, bool visible) {
+            Image.enabled = visible;
             m_totalTime = m_currTime = totalTime;
+        }
+
+        private void Update() {
+            Tick();
         }
 
         public void Tick() {

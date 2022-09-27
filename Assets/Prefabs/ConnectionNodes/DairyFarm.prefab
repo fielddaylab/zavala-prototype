@@ -210,6 +210,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 02000000
+  m_hasTimeout: 0
+  m_requestTimeout: 0
+  m_offsetX: 0.5
 --- !u!114 &4718787402710229058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,8 +264,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CycleTime: 10
-  m_timerPrefab: {fileID: 711544486968203846, guid: f606cb7f8571a604b97fe69668993e30,
-    type: 3}
 --- !u!1 &2771330085608216508
 GameObject:
   m_ObjectHideFlags: 0
