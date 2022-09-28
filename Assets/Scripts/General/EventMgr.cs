@@ -13,7 +13,7 @@ namespace Zavala.Events
     {
         // Money
         ProduceMoney,
-        PlayerReceivedMoney,
+        PlayerUpdatedMoney,
         AttemptPurchase,
         PurchaseSuccessful,
         PurchaseFailure,
@@ -31,6 +31,15 @@ namespace Zavala.Events
         public int Amt { get; set; }
 
         public ProduceMoneyEventArgs(int amt) {
+            Amt = amt;
+        }
+    }
+
+    public class PurchaseSuccessfulEventArgs : EventArgs
+    {
+        public int Amt { get; set; }
+
+        public PurchaseSuccessfulEventArgs(int amt) {
             Amt = amt;
         }
     }
@@ -53,9 +62,9 @@ namespace Zavala.Events
         #region Money
 
         public event EventHandler<ProduceMoneyEventArgs> ProduceMoney;
-        public event EventHandler PlayerReceivedMoney;
+        public event EventHandler PlayerUpdatedMoney;
         public event EventHandler AttemptPurchase;
-        public event EventHandler PurchaseSuccessful;
+        public event EventHandler<PurchaseSuccessfulEventArgs> PurchaseSuccessful;
         public event EventHandler PurchaseFailure;
 
         #endregion // Money
@@ -75,14 +84,14 @@ namespace Zavala.Events
                 case Events.ID.ProduceMoney:
                     ProduceMoney?.Invoke(this, (ProduceMoneyEventArgs)args);
                     break;
-                case Events.ID.PlayerReceivedMoney:
-                    PlayerReceivedMoney?.Invoke(this, args);
+                case Events.ID.PlayerUpdatedMoney:
+                    PlayerUpdatedMoney?.Invoke(this, args);
                     break;
                 case Events.ID.AttemptPurchase:
                     AttemptPurchase?.Invoke(this, args);
                     break;
                 case Events.ID.PurchaseSuccessful:
-                    PurchaseSuccessful?.Invoke(this, args);
+                    PurchaseSuccessful?.Invoke(this, (PurchaseSuccessfulEventArgs)args);
                     break;
                 case Events.ID.PurchaseFailure:
                     PurchaseFailure?.Invoke(this, args);

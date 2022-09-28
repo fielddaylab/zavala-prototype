@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Zavala
 {
+    [RequireComponent(typeof(AddOn))]
     public class Digester : MonoBehaviour
     {
 

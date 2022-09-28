@@ -10,6 +10,7 @@ namespace Zavala.DataDefs
         [SerializeField] private Shop.Items.Type m_itemType;
         [SerializeField] private int m_cost;
         [SerializeField] private Sprite m_icon;
+        [SerializeField] private GameObject m_prefab;
 
         public Shop.Items.Type ItemType {
             get { return m_itemType; }
@@ -19,6 +20,9 @@ namespace Zavala.DataDefs
         }
         public Sprite Icon {
             get { return m_icon; }
+        }
+        public GameObject Prefab {
+            get { return m_prefab; }
         }
     }
 }

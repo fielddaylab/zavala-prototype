@@ -24,11 +24,14 @@ namespace Zavala
 
         public ShopItemData[] ShopItems;
 
+        private ShopItemData m_selectedItem;
+
 
         public void Init() {
             Instance = this;
 
-            EventMgr.Instance.PlayerReceivedMoney += HandlePlayerReceivedMoney;
+            EventMgr.Instance.PlayerUpdatedMoney += HandlePlayerUpdatedMoney;
+            EventMgr.Instance.InteractModeUpdated += HandleInteractModeUpdated;
 
             if (m_itemUIs.Length != ShopItems.Length) {
                 Debug.Log("[ShopMgr] Unequal number of data defs and ui slots!");
@@ -41,14 +44,25 @@ namespace Zavala
 
             m_toggleButton.onClick.AddListener(ToggleShopExpand);
             m_itemsContainer.SetActive(false);
+
+            m_selectedItem = null;
         }
 
-        public bool TryPurchase(ShopItemData itemData) {
-            // reduce m_moneyUnits
+        public bool TryPurchaseSelection() {
+            if (m_selectedItem.Cost <= PlayerMgr.Instance.GetMoney()) {
+                // player has enough money
+                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost));
+                UpdateText();
+                return true;
+            }
+            else {
+                // purchase failure
+                return false;
+            }
+        }
 
-            UpdateText();
-
-            return true;
+        public GameObject GetPurchasePrefab() {
+            return m_selectedItem.Prefab;
         }
 
 
@@ -81,13 +95,21 @@ namespace Zavala
         public void SelectShopItem(ShopItemData data) {
             Debug.Log("Selected " + data.ItemType.ToString());
 
+            m_selectedItem = data;
+
             EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(GetInteractMode(data.ItemType)));
         }
 
         #region Handlers
 
-        private void HandlePlayerReceivedMoney(object sender, EventArgs args) {
+        private void HandlePlayerUpdatedMoney(object sender, EventArgs args) {
             UpdateText();
+        }
+
+        private void HandleInteractModeUpdated(object sender, InteractModeEventArgs args) {
+            if (args.Mode == Mode.DefaultSelect || args.Mode == Mode.PhosphorousSelect) {
+                m_selectedItem = null;
+            }
         }
 
         #endregion // Handlers
@@ -95,16 +117,16 @@ namespace Zavala
         public static Interact.Mode GetInteractMode(Shop.Items.Type itemType) {
             switch (itemType) {
                 case Shop.Items.Type.Road:
-                    return Interact.Mode.PlaceRoad;
+                    return Interact.Mode.PlaceItem;
                     break;
                 case Shop.Items.Type.Digester:
-                    return Interact.Mode.PlaceDigester;
+                    return Interact.Mode.PlaceItem;
                     break;
                 case Shop.Items.Type.Skimmer:
-                    return Interact.Mode.PlaceSkimmer;
+                    return Interact.Mode.PlaceItem;
                     break;
                 case Shop.Items.Type.Storage:
-                    return Interact.Mode.PlaceStorage;
+                    return Interact.Mode.PlaceItem;
                     break;
                 default:
                     return Interact.Mode.DefaultSelect;

@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 33722072844804276}
   - component: {fileID: 23459177958940732}
   - component: {fileID: 65611263474854420}
+  - component: {fileID: 1292279887587844658}
+  - component: {fileID: 856244560297087030}
   m_Layer: 0
   m_Name: Digester
   m_TagString: Untagged
@@ -95,3 +97,27 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.90059257, y: 0.32410067, z: 0.9904976}
   m_Center: {x: -0.032833785, y: 0.3623877, z: -0.01924342}
+--- !u!114 &1292279887587844658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097627780168390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6814c5e94616f419880060ca2b18a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &856244560297087030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097627780168390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60b69cfc0a719c34dacb889fa5321331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

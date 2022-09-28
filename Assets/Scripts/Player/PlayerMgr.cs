@@ -19,15 +19,24 @@ namespace Zavala
             AddMoney(m_startingMoney);
 
             EventMgr.Instance.ProduceMoney += HandleProduceMoney;
+            EventMgr.Instance.PurchaseSuccessful += HandlePurchaseSuccessful;
         }
 
         private void AddMoney(int units) {
             m_moneyUnits += units;
             Debug.Log("[PlayerMgr] Added money!");
 
-            EventMgr.Instance.TriggerEvent(Events.ID.PlayerReceivedMoney, EventArgs.Empty);
+            EventMgr.Instance.TriggerEvent(Events.ID.PlayerUpdatedMoney, EventArgs.Empty);
         }
 
+        private void SpendMoney(int units) {
+            m_moneyUnits -= units;
+
+            EventMgr.Instance.TriggerEvent(Events.ID.PlayerUpdatedMoney, EventArgs.Empty);
+        }
+
+
+        // i.e. return money
         public int GetMoney() {
             return m_moneyUnits;
         }
@@ -36,6 +45,10 @@ namespace Zavala
 
         private void HandleProduceMoney(object sender, ProduceMoneyEventArgs args) {
             AddMoney(args.Amt);
+        }
+
+        private void HandlePurchaseSuccessful(object sender, PurchaseSuccessfulEventArgs args) {
+            SpendMoney(args.Amt);
         }
 
         #endregion // Handlers

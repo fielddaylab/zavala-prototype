@@ -100,7 +100,8 @@ GameObject:
   - component: {fileID: 7654319240052785948}
   - component: {fileID: 7760588402429967904}
   - component: {fileID: -150613178662610011}
-  m_Layer: 0
+  - component: {fileID: 6694986199899361739}
+  m_Layer: 6
   m_Name: GrainFarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -278,6 +279,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0fd85cb32d6682b47ac747618d2c3f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6694986199899361739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708391978254754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6814c5e94616f419880060ca2b18a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5249573324808159469

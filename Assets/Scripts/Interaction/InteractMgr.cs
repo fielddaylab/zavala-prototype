@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
+using Zavala.Tiles;
 
 // PLACEHOLDER from last iteration. Currently non-functional
 
@@ -10,10 +11,7 @@ namespace Zavala.Interact
     public enum Mode
     {
         DefaultSelect,
-        PlaceRoad,
-        PlaceDigester,
-        PlaceSkimmer,
-        PlaceStorage,
+        PlaceItem, // shop item
         PhosphorousSelect
     }
 
@@ -42,16 +40,10 @@ namespace Zavala.Interact
                 EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(Interact.Mode.DefaultSelect));
             }
 
-            switch(m_interactMode) {
+            switch (m_interactMode) {
                 case Interact.Mode.DefaultSelect:
                     break;
-                case Interact.Mode.PlaceRoad:
-                    break;
-                case Interact.Mode.PlaceSkimmer:
-                    break;
-                case Interact.Mode.PlaceDigester:
-                    break;
-                case Interact.Mode.PlaceStorage:
+                case Interact.Mode.PlaceItem:
                     break;
                 case Interact.Mode.PhosphorousSelect:
                     break;
@@ -59,133 +51,151 @@ namespace Zavala.Interact
                     break;
             }
 
-/*
-            if (drawing) {
-                if (!m_startDrawPos.Equals(UNASSIGNED_V2)) {
-                    // draw line from start to end point
-                    // Stretch(m_currLine.Image.gameObject, m_startDrawPos, Input.mousePosition, true);
-                }
 
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // check whether starting a new line or completing an existing one
-                    if (m_startDrawPos.Equals(UNASSIGNED_V2)) {
-                        // starting a new line
-                        m_startDrawPos = Input.mousePosition;
+            // detect for clicks
+            if (Input.GetMouseButtonDown(0)) {
+                Tile hoverTile = OverTile(Input.mousePosition);
 
-                        //m_currLine = Instantiate(m_linePrefab, m_linesContainer.transform).GetComponent<TransportLine>();
-                        //m_currLine.transform.localPosition = m_startDrawPos;
-                    }
-                    else {
-                        // completing a line
-                        m_endDrawPos = Input.mousePosition;
-
-                        // check if touches a farm and a sink (if so, reduce algal outbreak)
-                        bool reducesOutbreaks = (TouchesOutput(m_startDrawPos) && TouchesSink(m_endDrawPos))
-                            || (TouchesSink(m_startDrawPos) && TouchesOutput(m_endDrawPos));
-
-                        //AssignBuildDetails(m_interactMode, m_currLine.GetComponent<TransportStructure>(), reducesOutbreaks);
-                        //m_currLine.GetComponent<TransportStructure>().Build();
-
-                        m_startDrawPos = m_endDrawPos = UNASSIGNED_V2;
-                    }
+                if (hoverTile != null) {
+                    hoverTile.ClickTile();
                 }
             }
 
-            if (m_interactMode == Interact.Mode.Transport_Bridge) {
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // build a bridge
-                    var bridge = Instantiate(m_bridgePrefab, m_bridgesContainer.transform);
-                    bridge.transform.localPosition = Input.mousePosition;
+            /*
+                        if (drawing) {
+                            if (!m_startDrawPos.Equals(UNASSIGNED_V2)) {
+                                // draw line from start to end point
+                                // Stretch(m_currLine.Image.gameObject, m_startDrawPos, Input.mousePosition, true);
+                            }
 
-                    //AssignBuildDetails(m_interactMode, bridge.GetComponent<TransportStructure>(), false);
-                    //bridge.GetComponent<TransportStructure>().Build();
-                }
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // check whether starting a new line or completing an existing one
+                                if (m_startDrawPos.Equals(UNASSIGNED_V2)) {
+                                    // starting a new line
+                                    m_startDrawPos = Input.mousePosition;
+
+                                    //m_currLine = Instantiate(m_linePrefab, m_linesContainer.transform).GetComponent<TransportLine>();
+                                    //m_currLine.transform.localPosition = m_startDrawPos;
+                                }
+                                else {
+                                    // completing a line
+                                    m_endDrawPos = Input.mousePosition;
+
+                                    // check if touches a farm and a sink (if so, reduce algal outbreak)
+                                    bool reducesOutbreaks = (TouchesOutput(m_startDrawPos) && TouchesSink(m_endDrawPos))
+                                        || (TouchesSink(m_startDrawPos) && TouchesOutput(m_endDrawPos));
+
+                                    //AssignBuildDetails(m_interactMode, m_currLine.GetComponent<TransportStructure>(), reducesOutbreaks);
+                                    //m_currLine.GetComponent<TransportStructure>().Build();
+
+                                    m_startDrawPos = m_endDrawPos = UNASSIGNED_V2;
+                                }
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Transport_Bridge) {
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // build a bridge
+                                var bridge = Instantiate(m_bridgePrefab, m_bridgesContainer.transform);
+                                bridge.transform.localPosition = Input.mousePosition;
+
+                                //AssignBuildDetails(m_interactMode, bridge.GetComponent<TransportStructure>(), false);
+                                //bridge.GetComponent<TransportStructure>().Build();
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Transport_Remove) {
+                            if (Input.GetMouseButtonDown(0)) {
+                                Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
+
+                                if (removableCollider != null) {
+                                    //removableCollider.GetComponent<TransportStructure>().Remove();
+                                }
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Finance_Exchange_Basic) {
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // build an exchange
+                                var exchange = Instantiate(m_exchangeBasicPrefab, m_exchangeContainer.transform);
+                                exchange.transform.localPosition = Input.mousePosition;
+
+                                //AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
+                                //exchange.GetComponent<FinanceExchangeStructure>().Build();
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Finance_Exchange_Digester) {
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // build an exchange digester
+                                var exchange = Instantiate(m_exchangeDigestPrefab, m_exchangeContainer.transform);
+                                exchange.transform.localPosition = Input.mousePosition;
+
+                                //AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
+                                //exchange.GetComponent<FinanceExchangeStructure>().Build();
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Finance_Exchange_Remove) {
+                            if (Input.GetMouseButtonDown(0)) {
+                                Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
+
+                                if (removableCollider != null) {
+                                    //removableCollider.GetComponent<FinanceExchangeStructure>().Remove();
+                                }
+                            }
+                        }
+
+
+                        if (m_interactMode == Interact.Mode.Politics_Campaign_Stop) {
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // plan a stop
+                                var stop = Instantiate(m_stopPrefab, m_campaigningsContainer.transform);
+                                stop.transform.localPosition = Input.mousePosition;
+
+                                //AssignStratDetails(m_interactMode, stop.GetComponent<PoliticsCampaignStrategy>());
+                                //stop.GetComponent<PoliticsCampaignStrategy>().Build();
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Politics_Campaign_Video) {
+                            if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
+                                // run ad campaign
+                                var video = Instantiate(m_videoPrefab, m_campaigningsContainer.transform);
+                                video.transform.localPosition = Input.mousePosition;
+
+                                //AssignStratDetails(m_interactMode, video.GetComponent<PoliticsCampaignStrategy>());
+                                //video.GetComponent<PoliticsCampaignStrategy>().Build();
+                            }
+                        }
+
+                        if (m_interactMode == Interact.Mode.Politics_Campaign_Remove) {
+                            if (Input.GetMouseButtonDown(0)) {
+                                Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
+
+                                if (removableCollider != null) {
+                                    //removableCollider.GetComponent<PoliticsCampaignStrategy>().Remove();
+                                }
+                            }
+                        }
+                        */
+        }
+
+
+        private Zavala.Tiles.Tile OverTile(Vector2 pos) {
+            Ray ray;
+            RaycastHit hit;
+
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
+                return hit.collider.gameObject.GetComponent<Tile>();
             }
-
-            if (m_interactMode == Interact.Mode.Transport_Remove) {
-                if (Input.GetMouseButtonDown(0)) {
-                    Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
-
-                    if (removableCollider != null) {
-                        //removableCollider.GetComponent<TransportStructure>().Remove();
-                    }
-                }
-            }
-
-            if (m_interactMode == Interact.Mode.Finance_Exchange_Basic) {
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // build an exchange
-                    var exchange = Instantiate(m_exchangeBasicPrefab, m_exchangeContainer.transform);
-                    exchange.transform.localPosition = Input.mousePosition;
-
-                    //AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
-                    //exchange.GetComponent<FinanceExchangeStructure>().Build();
-                }
-            }
-
-            if (m_interactMode == Interact.Mode.Finance_Exchange_Digester) {
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // build an exchange digester
-                    var exchange = Instantiate(m_exchangeDigestPrefab, m_exchangeContainer.transform);
-                    exchange.transform.localPosition = Input.mousePosition;
-
-                    //AssignExchangeDetails(m_interactMode, exchange.GetComponent<FinanceExchangeStructure>());
-                    //exchange.GetComponent<FinanceExchangeStructure>().Build();
-                }
-            }
-
-            if (m_interactMode == Interact.Mode.Finance_Exchange_Remove) {
-                if (Input.GetMouseButtonDown(0)) {
-                    Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
-
-                    if (removableCollider != null) {
-                        //removableCollider.GetComponent<FinanceExchangeStructure>().Remove();
-                    }
-                }
-            }
-
-
-            if (m_interactMode == Interact.Mode.Politics_Campaign_Stop) {
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // plan a stop
-                    var stop = Instantiate(m_stopPrefab, m_campaigningsContainer.transform);
-                    stop.transform.localPosition = Input.mousePosition;
-
-                    //AssignStratDetails(m_interactMode, stop.GetComponent<PoliticsCampaignStrategy>());
-                    //stop.GetComponent<PoliticsCampaignStrategy>().Build();
-                }
-            }
-
-            if (m_interactMode == Interact.Mode.Politics_Campaign_Video) {
-                if (Input.GetMouseButtonDown(0) && OnMap(Input.mousePosition)) {
-                    // run ad campaign
-                    var video = Instantiate(m_videoPrefab, m_campaigningsContainer.transform);
-                    video.transform.localPosition = Input.mousePosition;
-
-                    //AssignStratDetails(m_interactMode, video.GetComponent<PoliticsCampaignStrategy>());
-                    //video.GetComponent<PoliticsCampaignStrategy>().Build();
-                }
-            }
-
-            if (m_interactMode == Interact.Mode.Politics_Campaign_Remove) {
-                if (Input.GetMouseButtonDown(0)) {
-                    Collider2D removableCollider = OverlappingStructure(Input.mousePosition);
-
-                    if (removableCollider != null) {
-                        //removableCollider.GetComponent<PoliticsCampaignStrategy>().Remove();
-                    }
-                }
-            }
-            */
+            else {
+                return null;
+            }       
         }
 
         /*
-        private bool OnMap(Vector2 pos) {
-            Collider2D hitCollider = Physics2D.OverlapPoint(pos, 1 << LayerMask.NameToLayer("BaseMap"));
-
-            return (hitCollider != null);
-        }
-
         private Collider2D OverlappingStructure(Vector2 pos) {
             Collider2D hitCollider = Physics2D.OverlapPoint(pos, 1 << LayerMask.NameToLayer("Structure"));
 
@@ -217,19 +227,7 @@ namespace Zavala.Interact
                     break;
                 case Interact.Mode.DefaultSelect:
                     break;
-                case Interact.Mode.PlaceRoad:
-                    newCursor = m_placeCursor;
-                    offset = new Vector2(newCursor.width/2, newCursor.height/2);
-                    break;
-                case Interact.Mode.PlaceDigester:
-                    newCursor = m_placeCursor;
-                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
-                    break;
-                case Interact.Mode.PlaceSkimmer:
-                    newCursor = m_placeCursor;
-                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
-                    break;
-                case Interact.Mode.PlaceStorage:
+                case Interact.Mode.PlaceItem:
                     newCursor = m_placeCursor;
                     offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
