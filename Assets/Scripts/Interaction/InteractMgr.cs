@@ -8,75 +8,21 @@ namespace Zavala.Interact
 {
     public enum Mode
     {
-        Default,
-        Transport_Rail,
-        Transport_Highway,
-        Transport_Road,
-        Transport_Bridge,
-        Transport_Remove,
-        Finance_Exchange_Basic,
-        Finance_Exchange_Digester,
-        Finance_Exchange_Remove,
-        Politics_Campaign_Stop,
-        Politics_Campaign_Video,
-        Politics_Campaign_Remove,
+        DefaultSelect,
+        PlaceRoad,
+        PlaceDigester,
+        PlaceSkimmer,
+        PlaceStorage,
+        PhosphorousSelect
     }
 
     public class InteractMgr : MonoBehaviour
     {
-        [Header("Shared")]
-
-        [SerializeField] private Texture2D m_removeCursor;
-
-        private Texture2D m_defaultCursor = null;
         private Interact.Mode m_interactMode;
 
-
-        [Header("Transport")]
-
-        [SerializeField] private Texture2D m_drawCursor;
-        [SerializeField] private Texture2D m_bridgeCursor;
-
-        [SerializeField] private Sprite m_railIcon;
-        [SerializeField] private Sprite m_highwayIcon;
-        [SerializeField] private Sprite m_roadIcon;
-
-        [SerializeField] private GameObject m_linePrefab;
-        [SerializeField] private GameObject m_bridgePrefab;
-        [SerializeField] private GameObject m_linesContainer;
-        [SerializeField] private GameObject m_bridgesContainer;
-        private Vector2 m_startDrawPos;
-        private Vector2 m_endDrawPos;
-
-        private static Vector2 UNASSIGNED_V2 = new Vector2(-9999, -9999);
-
-        private static float RAIL_COST = 20;
-        private static float HIGHWAY_COST = 20;
-        private static float ROAD_COST = 20;
-        private static float BRIDGE_COST = 20;
-
-
-        [Header("Exchange")]
-
-        [SerializeField] private Texture2D m_exchangeBasicCursor;
-        [SerializeField] private Texture2D m_exchangeDigestCursor;
-
-        [SerializeField] private GameObject m_exchangeBasicPrefab, m_exchangeDigestPrefab;
-        [SerializeField] private GameObject m_exchangeContainer;
-
-        private static float EXCHANGE_BASIC_COST = 20;
-        private static float EXCHANGE_DIGEST_COST = 30;
-        private static float EXCHANGE_BASIC_JOBS = 10;
-        private static float EXCHANGE_DIGEST_JOBS = 12;
-
-
-        [Header("Policy")]
-
-        [SerializeField] private Texture2D m_stopCursor;
-        [SerializeField] private Texture2D m_videoCursor;
-
-        [SerializeField] private GameObject m_stopPrefab, m_videoPrefab;
-        [SerializeField] private GameObject m_campaigningsContainer;
+        private Texture2D m_defaultCursor = null;
+        [SerializeField] private Texture2D m_placeCursor;
+        // [SerializeField] private Texture2D m_removeCursor;
 
 
         #region Callbacks
@@ -87,9 +33,6 @@ namespace Zavala.Interact
 
         private void Awake() {
             //EventMgr.InteractModeUpdated.AddListener(HandleInteractModeUpdated);
-            //EventMgr.SimCanvasSubmitted.AddListener(HandleSimCanvasSubmitted);
-
-            m_startDrawPos = m_endDrawPos = UNASSIGNED_V2;
         }
 
         private void OnDestroy() {
@@ -97,6 +40,8 @@ namespace Zavala.Interact
         }
 
         private void Update() {
+
+            /*
             bool drawing = (m_interactMode == Interact.Mode.Transport_Rail)
                 || (m_interactMode == Interact.Mode.Transport_Highway)
                 || (m_interactMode == Interact.Mode.Transport_Road);
@@ -217,19 +162,7 @@ namespace Zavala.Interact
                     }
                 }
             }
-        }
-
-        private void Stretch(GameObject obj, Vector3 initialPosition, Vector3 finalPosition, bool mirrorZ) {
-            float width = obj.GetComponent<Image>().rectTransform.rect.width;
-            Vector3 centerPos = (initialPosition + finalPosition) / 2f;
-            obj.transform.position = centerPos;
-            Vector3 direction = finalPosition - initialPosition;
-            direction = Vector3.Normalize(direction);
-            obj.transform.right = direction;
-            if (mirrorZ) obj.transform.right *= -1f;
-            Vector3 scale = new Vector3(1, 1, 1);
-            scale.x = Vector3.Distance(initialPosition, finalPosition) / width;
-            obj.transform.localScale = scale;
+            */
         }
 
         private bool OnMap(Vector2 pos) {
@@ -266,54 +199,21 @@ namespace Zavala.Interact
             switch (inMode) {
                 default:
                     break;
-                case Interact.Mode.Default:
+                case Interact.Mode.DefaultSelect:
                     break;
-                case Interact.Mode.Transport_Rail:
-                    newCursor = m_drawCursor;
-                    offset = new Vector2(0, newCursor.height);
-                    m_linePrefab.GetComponent<Image>().sprite = m_railIcon;
-                    break;
-                case Interact.Mode.Transport_Highway:
-                    newCursor = m_drawCursor;
-                    offset = new Vector2(0, newCursor.height);
-                    m_linePrefab.GetComponent<Image>().sprite = m_highwayIcon;
-                    break;
-                case Interact.Mode.Transport_Road:
-                    newCursor = m_drawCursor;
-                    offset = new Vector2(0, newCursor.height);
-                    m_linePrefab.GetComponent<Image>().sprite = m_roadIcon;
-                    break;
-                case Interact.Mode.Transport_Bridge:
-                    newCursor = m_bridgeCursor;
+                case Interact.Mode.PlaceRoad:
+                    newCursor = m_placeCursor;
                     offset = new Vector2(0, newCursor.height);
                     break;
-                case Interact.Mode.Transport_Remove:
-                    newCursor = m_removeCursor;
-                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
-                    break;
-                case Interact.Mode.Finance_Exchange_Basic:
-                    newCursor = m_exchangeBasicCursor;
+                case Interact.Mode.PlaceDigester:
+                    newCursor = m_placeCursor;
                     offset = new Vector2(0, newCursor.height);
                     break;
-                case Interact.Mode.Finance_Exchange_Digester:
-                    newCursor = m_exchangeDigestCursor;
+                case Interact.Mode.PlaceSkimmer:
+                    newCursor = m_placeCursor;
                     offset = new Vector2(0, newCursor.height);
                     break;
-                case Interact.Mode.Finance_Exchange_Remove:
-                    newCursor = m_removeCursor;
-                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
-                    break;
-                case Interact.Mode.Politics_Campaign_Stop:
-                    newCursor = m_stopCursor;
-                    offset = new Vector2(0, newCursor.height);
-                    break;
-                case Interact.Mode.Politics_Campaign_Video:
-                    newCursor = m_videoCursor;
-                    offset = new Vector2(0, newCursor.height);
-                    break;
-                case Interact.Mode.Politics_Campaign_Remove:
-                    newCursor = m_removeCursor;
-                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
+                case Interact.Mode.PhosphorousSelect:
                     break;
             }
 
@@ -381,12 +281,6 @@ namespace Zavala.Interact
             m_interactMode = newMode;
 
             UpdateCursor(newMode);
-        }
-
-        private void HandleSimCanvasSubmitted() {
-            m_interactMode = Interact.Mode.Default;
-
-            UpdateCursor(m_interactMode);
         }
 
         #endregion // Event Handlers

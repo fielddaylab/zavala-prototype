@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.DataDefs;
 
 namespace Zavala
 {
@@ -23,7 +24,6 @@ namespace Zavala
         public Sprite GrainIcon;
         public Sprite MilkIcon;
         public Sprite ManureIcon;
-
 
         #endregion // Inspector
 

@@ -3315,6 +3315,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ShopItems.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ShopItems.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 0a9dafb7db5fe8343b9bab4e6a491f52,
+        type: 2}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ShopItems.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8df27107e7c643a4e89813c98fccef43,
+        type: 2}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ShopItems.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 412c71a7d05f4e347b202ae9971d8adb,
+        type: 2}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ShopItems.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: ad7bf8a65d0e80e41b211f77dfaa0dfb,
+        type: 2}
     - target: {fileID: 7247391418410769891, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_RootOrder
