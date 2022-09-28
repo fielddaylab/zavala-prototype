@@ -10,11 +10,13 @@ namespace Zavala
     {
         public static PlayerMgr Instance;
 
+        [SerializeField] private int m_startingMoney;
         private int m_moneyUnits;
 
         public void Init() {
             Instance = this;
             m_moneyUnits = 0;
+            AddMoney(m_startingMoney);
 
             EventMgr.Instance.ProduceMoney += HandleProduceMoney;
         }

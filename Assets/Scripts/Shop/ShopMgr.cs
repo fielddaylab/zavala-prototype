@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zavala.DataDefs;
 using Zavala.Events;
+using Zavala.Interact;
 using Zavala.Shop.Items;
 
 namespace Zavala
@@ -77,6 +78,12 @@ namespace Zavala
             m_itemsContainer.SetActive(!m_itemsContainer.activeSelf);
         }
 
+        public void SelectShopItem(ShopItemData data) {
+            Debug.Log("Selected " + data.ItemType.ToString());
+
+            EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(GetInteractMode(data.ItemType)));
+        }
+
         #region Handlers
 
         private void HandlePlayerReceivedMoney(object sender, EventArgs args) {
@@ -84,5 +91,25 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        public static Interact.Mode GetInteractMode(Shop.Items.Type itemType) {
+            switch (itemType) {
+                case Shop.Items.Type.Road:
+                    return Interact.Mode.PlaceRoad;
+                    break;
+                case Shop.Items.Type.Digester:
+                    return Interact.Mode.PlaceDigester;
+                    break;
+                case Shop.Items.Type.Skimmer:
+                    return Interact.Mode.PlaceSkimmer;
+                    break;
+                case Shop.Items.Type.Storage:
+                    return Interact.Mode.PlaceStorage;
+                    break;
+                default:
+                    return Interact.Mode.DefaultSelect;
+                    break;
+            }
+        }
     }
 }

@@ -25,6 +25,11 @@ namespace Zavala
         public Sprite MilkIcon;
         public Sprite ManureIcon;
 
+        [Space(5)]
+
+        [Header("Meshes")]
+        public Mesh HoverMesh;
+
         #endregion // Inspector
 
         public void Init() {

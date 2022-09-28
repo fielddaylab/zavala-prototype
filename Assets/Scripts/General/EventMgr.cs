@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using Zavala.Interact;
 
 namespace Zavala.Events
 {
@@ -14,9 +16,10 @@ namespace Zavala.Events
         PlayerReceivedMoney,
         AttemptPurchase,
         PurchaseSuccessful,
-        PurchaseFailure
+        PurchaseFailure,
 
-        // Other
+        // Interact
+        InteractModeUpdated
     }
 
     #endregion // Enums
@@ -29,6 +32,15 @@ namespace Zavala.Events
 
         public ProduceMoneyEventArgs(int amt) {
             Amt = amt;
+        }
+    }
+
+    public class InteractModeEventArgs : EventArgs
+    {
+        public Interact.Mode Mode { get; set; }
+
+        public InteractModeEventArgs(Interact.Mode mode) {
+            Mode = mode;
         }
     }
 
@@ -47,6 +59,12 @@ namespace Zavala.Events
         public event EventHandler PurchaseFailure;
 
         #endregion // Money
+
+        #region Interaction
+
+        public event EventHandler<InteractModeEventArgs> InteractModeUpdated;
+
+        #endregion // Interaction
 
         public void Init() {
             Instance = this;
@@ -68,6 +86,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.PurchaseFailure:
                     PurchaseFailure?.Invoke(this, args);
+                    break;
+                case Events.ID.InteractModeUpdated:
+                    InteractModeUpdated?.Invoke(this, (InteractModeEventArgs)args);
                     break;
                 default:
                     break;

@@ -235,6 +235,7 @@ MonoBehaviour:
   GrainIcon: {fileID: 21300000, guid: d1ee23437c285404886c1e5ec2a9b5c1, type: 3}
   MilkIcon: {fileID: 21300000, guid: ca039c49fa45f9346b36503c7a1864f5, type: 3}
   ManureIcon: {fileID: 21300000, guid: e51a903bbab357a458eb3a1dc4e0ecb7, type: 3}
+  HoverMesh: {fileID: 4300000, guid: 71982be591066184d958695cbf3d4875, type: 3}
 --- !u!1 &809039409424542029
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79efe53ddc32aa844ab27d9215e550b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_placeCursor: {fileID: 0}
+  m_placeCursor: {fileID: 2800000, guid: 6306d8c419b6428478ca60616ad841fc, type: 3}
 --- !u!1 &2453652750304789500
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,6 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a41b8b2f99e7e5f46b0350685e11bc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_startingMoney: 200
 --- !u!1 &8861051097443098815
 GameObject:
   m_ObjectHideFlags: 0

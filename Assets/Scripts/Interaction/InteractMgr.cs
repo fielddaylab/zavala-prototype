@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Events;
 
 // PLACEHOLDER from last iteration. Currently non-functional
 
@@ -18,6 +19,8 @@ namespace Zavala.Interact
 
     public class InteractMgr : MonoBehaviour
     {
+        public static InteractMgr Instance;
+
         private Interact.Mode m_interactMode;
 
         private Texture2D m_defaultCursor = null;
@@ -28,24 +31,35 @@ namespace Zavala.Interact
         #region Callbacks
 
         public void Init() {
+            Instance = this;
 
-        }
-
-        private void Awake() {
-            //EventMgr.InteractModeUpdated.AddListener(HandleInteractModeUpdated);
-        }
-
-        private void OnDestroy() {
-            // EventMgr.InteractModeUpdated.RemoveListener(HandleInteractModeUpdated);
+            EventMgr.Instance.InteractModeUpdated += HandleInteractModeUpdated;
         }
 
         private void Update() {
+            if (Input.GetMouseButtonDown(1)) {
+                // cancel interact mode with right click
+                EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(Interact.Mode.DefaultSelect));
+            }
 
-            /*
-            bool drawing = (m_interactMode == Interact.Mode.Transport_Rail)
-                || (m_interactMode == Interact.Mode.Transport_Highway)
-                || (m_interactMode == Interact.Mode.Transport_Road);
+            switch(m_interactMode) {
+                case Interact.Mode.DefaultSelect:
+                    break;
+                case Interact.Mode.PlaceRoad:
+                    break;
+                case Interact.Mode.PlaceSkimmer:
+                    break;
+                case Interact.Mode.PlaceDigester:
+                    break;
+                case Interact.Mode.PlaceStorage:
+                    break;
+                case Interact.Mode.PhosphorousSelect:
+                    break;
+                default:
+                    break;
+            }
 
+/*
             if (drawing) {
                 if (!m_startDrawPos.Equals(UNASSIGNED_V2)) {
                     // draw line from start to end point
@@ -165,6 +179,7 @@ namespace Zavala.Interact
             */
         }
 
+        /*
         private bool OnMap(Vector2 pos) {
             Collider2D hitCollider = Physics2D.OverlapPoint(pos, 1 << LayerMask.NameToLayer("BaseMap"));
 
@@ -189,6 +204,7 @@ namespace Zavala.Interact
 
             return (hitCollider != null);
         }
+        */
 
         #endregion // Unity Callbacks
 
@@ -203,15 +219,19 @@ namespace Zavala.Interact
                     break;
                 case Interact.Mode.PlaceRoad:
                     newCursor = m_placeCursor;
-                    offset = new Vector2(0, newCursor.height);
+                    offset = new Vector2(newCursor.width/2, newCursor.height/2);
                     break;
                 case Interact.Mode.PlaceDigester:
                     newCursor = m_placeCursor;
-                    offset = new Vector2(0, newCursor.height);
+                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
                 case Interact.Mode.PlaceSkimmer:
                     newCursor = m_placeCursor;
-                    offset = new Vector2(0, newCursor.height);
+                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
+                    break;
+                case Interact.Mode.PlaceStorage:
+                    newCursor = m_placeCursor;
+                    offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
                 case Interact.Mode.PhosphorousSelect:
                     break;
@@ -275,12 +295,16 @@ namespace Zavala.Interact
         }
         */
 
+        public Interact.Mode GetCurrMode() {
+            return m_interactMode;
+        }
+
         #region Event Handlers
 
-        private void HandleInteractModeUpdated(Interact.Mode newMode) {
-            m_interactMode = newMode;
+        private void HandleInteractModeUpdated(object sender, InteractModeEventArgs args) {
+            m_interactMode = args.Mode;
 
-            UpdateCursor(newMode);
+            UpdateCursor(m_interactMode);
         }
 
         #endregion // Event Handlers
