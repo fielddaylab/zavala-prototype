@@ -41,7 +41,9 @@ namespace Zavala.Tiles
         private void OnMouseEnter() {
             switch(InteractMgr.Instance.GetCurrMode()) {
                 case Interact.Mode.PlaceItem:
-                    HoverPlaceFilter();
+                    if (!AnyBlockers()) {
+                        HoverPlaceFilter();
+                    }
                     break;
                 default:
                     break;

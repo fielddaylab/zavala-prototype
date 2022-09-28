@@ -117,7 +117,7 @@ namespace Zavala
         public static Interact.Mode GetInteractMode(Shop.Items.Type itemType) {
             switch (itemType) {
                 case Shop.Items.Type.Road:
-                    return Interact.Mode.PlaceItem;
+                    return Interact.Mode.DrawRoad;
                     break;
                 case Shop.Items.Type.Digester:
                     return Interact.Mode.PlaceItem;
