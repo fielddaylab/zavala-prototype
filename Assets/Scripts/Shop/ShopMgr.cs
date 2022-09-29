@@ -64,7 +64,7 @@ namespace Zavala
         public bool TryPurchaseRoad(int roadLength) {
             if (m_selectedItem.Cost * roadLength <= PlayerMgr.Instance.GetMoney()) {
                 // player has enough money
-                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost));
+                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost * roadLength));
                 UpdateText();
                 return true;
             }
