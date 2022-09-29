@@ -15,6 +15,7 @@ namespace Zavala
         [SerializeField] private PlayerMgr m_playerMgr;
         [SerializeField] private ShopMgr m_shopMgr;
         [SerializeField] private InteractMgr m_interactMgr;
+        [SerializeField] private RoadMgr m_roadMgr;
 
         private void Awake() {
             if (Instance == null) {
@@ -31,6 +32,7 @@ namespace Zavala
             m_shopMgr.Init();
             m_playerMgr.Init();
             m_interactMgr.Init();
+            m_roadMgr.Init();
         }
     }
 }

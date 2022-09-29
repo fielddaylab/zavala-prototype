@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530a0cb13995e9a4b9ee01ec01439cb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxProducts: 2
+  MaxProducts: 3
   m_iconOffsetZ: 0.25
 --- !u!114 &6619742981199090802
 MonoBehaviour:

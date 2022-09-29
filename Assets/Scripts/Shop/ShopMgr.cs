@@ -131,19 +131,14 @@ namespace Zavala
             switch (itemType) {
                 case Shop.Items.Type.Road:
                     return Interact.Mode.DrawRoad;
-                    break;
                 case Shop.Items.Type.Digester:
                     return Interact.Mode.PlaceItem;
-                    break;
                 case Shop.Items.Type.Skimmer:
                     return Interact.Mode.PlaceItem;
-                    break;
                 case Shop.Items.Type.Storage:
                     return Interact.Mode.PlaceItem;
-                    break;
                 default:
                     return Interact.Mode.DefaultSelect;
-                    break;
             }
         }
     }

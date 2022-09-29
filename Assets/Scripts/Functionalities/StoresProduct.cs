@@ -33,8 +33,15 @@ namespace Zavala.Functionalities
             m_initialQueuePos = GameDB.Instance.UIStoredProductPrefab.transform.localPosition;
         }
 
-        public List<StoredProduct> GetStorageList() {
-            return m_storageList;
+        public bool StorageContains(Resources.Type resourceType) {
+            Debug.Log("[StoresProduct] Checking if storage contains " + resourceType);
+            for (int i = 0; i < m_storageList.Count; i++) {
+                Debug.Log("[StoresProduct] store component type: " + m_storageList[i].Type);
+                if (m_storageList[i].Type == resourceType) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool TryAddToStorage(Resources.Type productType) {
@@ -44,7 +51,7 @@ namespace Zavala.Functionalities
                 return false;
             }
             else {
-                Debug.Log("Added to list");
+                Debug.Log("[StoresProduct] Added to storage list");
                 UIStoredProduct newProductUI = Instantiate(GameDB.Instance.UIStoredProductPrefab, this.transform).GetComponent<UIStoredProduct>();
                 newProductUI.Init(productType);
                 StoredProduct newProduct = new StoredProduct(productType, newProductUI);
@@ -57,12 +64,12 @@ namespace Zavala.Functionalities
 
         public bool TryRemoveFromStorage(Resources.Type productType) {
             if (m_storageList.Count <= 0) {
-                Debug.Log("Storage is empty! Not removing from list.");
+                Debug.Log("[StoresProduct] Storage is empty! Not removing from list.");
                 // StorageEmpty.Invoke(this, EventArgs.Empty);
                 return false;
             }
             else {
-                Debug.Log("Removed from list");
+                Debug.Log("[StoresProduct] Removed from list");
                 RemoveFromStorageList(productType);
 
                 RedistributeQueue();
