@@ -13,6 +13,7 @@ namespace Zavala
     [RequireComponent(typeof(Cycles))]
     public class City : MonoBehaviour
     {
+        private ConnectionNode m_connectionNodeComponent;
         private Requests m_requestsComponent;
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
@@ -23,6 +24,7 @@ namespace Zavala
         [SerializeField] private int m_population;
 
         private void Awake() {
+            m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
@@ -46,6 +48,9 @@ namespace Zavala
                 for (int i = 0; i < newProducts.Count; i++) {
                     if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
                         Debug.Log("[City] Request fulfilled, but storage full!");
+                    }
+                    else {
+                        m_connectionNodeComponent.UpdateNodeEconomy();
                     }
                 }
             }

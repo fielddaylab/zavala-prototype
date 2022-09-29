@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
@@ -13,6 +14,8 @@ namespace Zavala
 
         //private List<RoadSegment> m_segments;
         private List<Tile> m_segments;
+
+        public event EventHandler EconomyUpdated;
 
         #region Road Creation
 
@@ -31,6 +34,8 @@ namespace Zavala
         public void FinalizeConnections() {
             FinalizeConnectionsInList(m_end1Nodes);
             FinalizeConnectionsInList(m_end2Nodes);
+
+            UpdateEconomy();
         }
 
         private void FinalizeConnectionsInList(List<ConnectionNode> nodeList) {
@@ -89,5 +94,13 @@ namespace Zavala
         }
 
         #endregion //  Queries
+
+        #region Triggers 
+
+        public void UpdateEconomy() {
+            EconomyUpdated.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion // Triggers
     }
 }

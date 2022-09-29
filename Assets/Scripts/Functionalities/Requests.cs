@@ -33,6 +33,7 @@ namespace Zavala.Functionalities
             m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
 
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
+            m_connectionNodeComponent.NodeEconomyUpdated += HandleNodeEconomyUpdated;
         }
 
         public void QueueRequest(Resources.Type resourceType) {
@@ -51,7 +52,7 @@ namespace Zavala.Functionalities
             newRequest.TimerExpired += HandleTimerExpired;
             RedistributeQueue();
 
-            QueryRoadForProducts();
+            m_connectionNodeComponent.UpdateNodeEconomy();
         }
 
         private void RedistributeQueue() {
@@ -108,13 +109,16 @@ namespace Zavala.Functionalities
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
-            Debug.Log("[Requests] 1 Expire");
             Debug.Log("[Requests] request expired");
             RequestExpired?.Invoke(this, EventArgs.Empty);
 
             m_activeRequests.Remove((UIRequest)sender);
             Destroy(((UIRequest)sender).gameObject);
             RedistributeQueue();
+        }
+
+        private void HandleNodeEconomyUpdated(object sender, EventArgs args) {
+            QueryRoadForProducts();
         }
 
         #endregion // Handlers
