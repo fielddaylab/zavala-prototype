@@ -18,13 +18,21 @@ namespace Zavala
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
 
+        private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
+
+        [SerializeField] private int m_importCost;
+
         private void Awake() {
             m_requestsComponent = this.GetComponent<Requests>();
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
 
+            m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
+            m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
+
+            m_firstCycle = true;
         }
 
         private void StraightToStorage() {
@@ -50,7 +58,28 @@ namespace Zavala
             // Dairy Farms request 1 grain
             m_requestsComponent.QueueRequest(Resources.Type.Grain);
 
+            if (m_firstCycle) {
+                StraightToStorage();
+                m_firstCycle = false;
+            }
+        }
+
+        private void HandleRequestFulfilled(object sender, EventArgs e) {
+            Debug.Log("[DiaryFarm] Request fulfilled");
+
             StraightToStorage();
+        }
+
+        private void HandleRequestExpired(object sender, EventArgs e) {
+            Debug.Log("[DairyFarm] Request expired");
+            Debug.Log("[DairyFarm] Attempting to purchase import...");
+
+            if (ShopMgr.Instance.TryPurchaseImport(m_importCost)) {
+                Debug.Log("[DiaryFarm] Import purchased successfully");
+            }
+            else {
+                Debug.Log("[DairyFarm] Couldn't purchase import!");
+            }
         }
 
         #endregion // Handlers

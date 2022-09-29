@@ -15,7 +15,7 @@ namespace Zavala.Functionalities
         public List<Resources.Type> RequestTypes;
 
         [SerializeField] private bool m_hasTimeout;
-        [SerializeField] private float m_requestTimeout;
+        [SerializeField] private int m_requestTimeout; // num Cycles
 
         [SerializeField] private float m_iconOffsetZ = 0.25f;
 
@@ -36,10 +36,11 @@ namespace Zavala.Functionalities
         }
 
         public void QueueRequest(Resources.Type resourceType) {
+            Debug.Log("[Requests] 1 Queue");
             // init and display
             UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
             if (m_hasTimeout) {
-                newRequest.Init(resourceType, m_requestTimeout);
+                newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>());
             }
             else {
                 newRequest.Init(resourceType);
@@ -47,10 +48,10 @@ namespace Zavala.Functionalities
 
             // add to requests
             m_activeRequests.Add(newRequest);
-            newRequest.RequestExpired += HandleRequestExpired;
+            newRequest.TimerExpired += HandleTimerExpired;
             RedistributeQueue();
 
-            QueryRoadForProduct(newRequest.GetResourceType());
+            QueryRoadForProducts();
         }
 
         private void RedistributeQueue() {
@@ -65,21 +66,25 @@ namespace Zavala.Functionalities
             }
         }
 
-        private void QueryRoadForProduct(Resources.Type resourceType) {
-            List<Road> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
-            Debug.Log("[Requests] Querying road... (" + connectedRoads.Count + " roads connected)");
+        private void QueryRoadForProducts() {
+            for (int requestIndex = 0; requestIndex < m_activeRequests.Count; requestIndex++) {
+                Resources.Type resourceType = m_activeRequests[requestIndex].GetResourceType();
 
-            // find first available
-            for (int i = 0; i < connectedRoads.Count; i++) {
-                if (connectedRoads[i].ResourceOnRoad(resourceType)) {
-                    // TODO: summon a truck from road fleet with this as recipient
+                List<Road> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
+                Debug.Log("[Requests] Querying road... (" + connectedRoads.Count + " roads connected)");
 
-                    // TEMP: send resouce immediately
-                    Debug.Log("[Requests] Resource on road! Sending to recipient...");
-                    // remove from supplier
-                    if (connectedRoads[i].GetSupplierOnRoad(resourceType).TryRemoveFromStorage(resourceType)) {
-                        // send to recipient
-                        ReceiveRequestedProduct(resourceType);
+                // find first available
+                for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
+                    if (connectedRoads[roadIndex].ResourceOnRoad(resourceType)) {
+                        // TODO: summon a truck from road fleet with this as recipient
+
+                        // TEMP: send resouce immediately
+                        Debug.Log("[Requests] Resource on road! Sending to recipient...");
+                        // remove from supplier
+                        if (connectedRoads[roadIndex].GetSupplierOnRoad(resourceType).TryRemoveFromStorage(resourceType)) {
+                            // send to recipient
+                            ReceiveRequestedProduct(resourceType);
+                        }
                     }
                 }
             }
@@ -89,9 +94,11 @@ namespace Zavala.Functionalities
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
                     UIRequest toFulfill = m_activeRequests[i];
+                    toFulfill.TimerExpired -= HandleTimerExpired;
                     m_activeRequests.RemoveAt(i);
                     Destroy(toFulfill.gameObject);
                     // trigger request fulfilled event
+                    RequestFulfilled.Invoke(this, EventArgs.Empty);
                     Debug.Log("[Requests] Request fulfilled!");
                     break;
                 }
@@ -100,11 +107,10 @@ namespace Zavala.Functionalities
 
         #region Handlers
 
-        private void HandleRequestExpired(object sender, EventArgs e) {
+        private void HandleTimerExpired(object sender, EventArgs e) {
+            Debug.Log("[Requests] 1 Expire");
             Debug.Log("[Requests] request expired");
-            // TODO: trigger request expired event
-
-            // TODO: try pay for import cost
+            RequestExpired?.Invoke(this, EventArgs.Empty);
 
             m_activeRequests.Remove((UIRequest)sender);
             Destroy(((UIRequest)sender).gameObject);

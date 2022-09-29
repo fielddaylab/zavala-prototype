@@ -40,6 +40,12 @@ namespace Zavala.Functionalities
                 if (m_storageList[i].Type == resourceType) {
                     return true;
                 }
+                // handle SoilEnricher case (Manure OR Fertilizer)
+                else if (resourceType == Resources.Type.SoilEnricher) {
+                    if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -83,6 +89,14 @@ namespace Zavala.Functionalities
                     Destroy(m_storageList[i].UI.gameObject);
                     m_storageList.RemoveAt(i);
                     return;
+                }
+                // handle soilEnricher case (Manure OR Fertilizer)
+                else if (productType == Resources.Type.SoilEnricher) {
+                    if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
+                        Destroy(m_storageList[i].UI.gameObject);
+                        m_storageList.RemoveAt(i);
+                        return;
+                    }
                 }
             }
         }

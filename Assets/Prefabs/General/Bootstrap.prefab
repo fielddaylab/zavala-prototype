@@ -235,6 +235,7 @@ MonoBehaviour:
   GrainIcon: {fileID: 21300000, guid: d1ee23437c285404886c1e5ec2a9b5c1, type: 3}
   MilkIcon: {fileID: 21300000, guid: ca039c49fa45f9346b36503c7a1864f5, type: 3}
   ManureIcon: {fileID: 21300000, guid: e51a903bbab357a458eb3a1dc4e0ecb7, type: 3}
+  SoilEnricherIcon: {fileID: 21300000, guid: b2e840bf3efdbdd44a6743b08c253b32, type: 3}
   HoverMesh: {fileID: 4300000, guid: 71982be591066184d958695cbf3d4875, type: 3}
 --- !u!1 &809039409424542029
 GameObject:

@@ -212,8 +212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 
-  m_hasTimeout: 0
-  m_requestTimeout: 0
+  m_hasTimeout: 1
+  m_requestTimeout: 2
   m_iconOffsetZ: 0.25
 --- !u!114 &4694675410523403283
 MonoBehaviour:
@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ba5985f5202ba41835e96fe0729881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_population: 2
 --- !u!114 &5517435915057001926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5af74eb5dcb654ebec453d222ce493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CycleTime: 10
+  CycleTime: 20
 --- !u!114 &-8263272586884739805
 MonoBehaviour:
   m_ObjectHideFlags: 0

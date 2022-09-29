@@ -24,6 +24,7 @@ namespace Zavala
         public Sprite GrainIcon;
         public Sprite MilkIcon;
         public Sprite ManureIcon;
+        public Sprite SoilEnricherIcon;
 
         [Space(5)]
 
@@ -46,6 +47,8 @@ namespace Zavala
                     return MilkIcon;
                 case Resources.Type.Manure:
                     return ManureIcon;
+                case Resources.Type.SoilEnricher:
+                    return SoilEnricherIcon;
                 default:
                     return NoneIcon;
             }

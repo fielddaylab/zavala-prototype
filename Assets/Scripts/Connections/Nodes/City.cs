@@ -18,6 +18,10 @@ namespace Zavala
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
 
+        private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
+
+        [SerializeField] private int m_population;
+
         private void Awake() {
             m_requestsComponent = this.GetComponent<Requests>();
             m_producesComponent = this.GetComponent<Produces>();
@@ -27,18 +31,22 @@ namespace Zavala
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
+
+            m_firstCycle = true;
         }
 
         private void StraightToStorage() {
-            // produce and add to storage
-            List<Resources.Type> newProducts = m_producesComponent.Produce();
-            if (newProducts == null) {
-                return;
-            }
+            // produce money per population
+            for (int p = 0; p < m_population; p++) {
+                List<Resources.Type> newProducts = m_producesComponent.Produce();
+                if (newProducts == null) {
+                    return;
+                }
 
-            for(int i = 0; i < newProducts.Count; i++) {
-                if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
-                    Debug.Log("[City] Request fulfilled, but storage full!");
+                for (int i = 0; i < newProducts.Count; i++) {
+                    if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                        Debug.Log("[City] Request fulfilled, but storage full!");
+                    }
                 }
             }
         }
@@ -50,7 +58,14 @@ namespace Zavala
             Debug.Log("[City] Cycle completed");
 
             // Cities request 1 milk / population
-            m_requestsComponent.QueueRequest(Resources.Type.Milk);
+            for (int i = 0; i < m_population; i++) {
+                m_requestsComponent.QueueRequest(Resources.Type.Milk);
+            }
+
+            if (m_firstCycle) {
+                StraightToStorage();
+                m_firstCycle = false;
+            }
         }
 
         private void HandleRequestFulfilled(object sender, EventArgs e) {
@@ -61,6 +76,13 @@ namespace Zavala
 
         private void HandleRequestExpired(object sender, EventArgs e) {
             Debug.Log("[City] Request expired");
+
+            // city shrinks by 1
+            m_population--;
+            if (m_population < 0) {
+                Debug.Log("City is empty!");
+                m_population = 0;
+            }
         }
 
         #endregion // Handlers

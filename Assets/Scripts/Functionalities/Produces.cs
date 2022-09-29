@@ -13,7 +13,8 @@ namespace Zavala.Resources
         Fertilizer,
         Grain,
         Milk,
-        Manure
+        Manure,
+        SoilEnricher
     }
 }
 

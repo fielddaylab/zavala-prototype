@@ -49,33 +49,32 @@ namespace Zavala
         }
 
         public bool TryPurchaseSelection() {
-            if (m_selectedItem.Cost <= PlayerMgr.Instance.GetMoney()) {
-                // player has enough money
-                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost));
-                UpdateText();
-                return true;
-            }
-            else {
-                // purchase failure
-                return false;
-            }
+            return TryPurchaseHelper(m_selectedItem.Cost);
         }
 
         public bool TryPurchaseRoad(int roadLength) {
-            if (m_selectedItem.Cost * roadLength <= PlayerMgr.Instance.GetMoney()) {
-                // player has enough money
-                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost * roadLength));
-                UpdateText();
-                return true;
-            }
-            else {
-                // purchase failure
-                return false;
-            }
+            return TryPurchaseHelper(m_selectedItem.Cost * roadLength);
         }
 
         public GameObject GetPurchasePrefab() {
             return m_selectedItem.Prefab;
+        }
+
+        public bool TryPurchaseImport(int cost) {
+            return TryPurchaseHelper(cost);
+        }
+
+        private bool TryPurchaseHelper(int purchaseCost) {
+            if (purchaseCost <= PlayerMgr.Instance.GetMoney()) {
+                // player has enough money
+                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(purchaseCost));
+                UpdateText();
+                return true;
+            }
+            else {
+                // purchase failure
+                return false;
+            }
         }
 
 

@@ -212,8 +212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 01000000
-  m_hasTimeout: 0
-  m_requestTimeout: 0
+  m_hasTimeout: 1
+  m_requestTimeout: 2
   m_iconOffsetZ: 0.25
 --- !u!114 &4976729194800329817
 MonoBehaviour:
@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac473d858b2b2a40bc95685b0f4c6cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_importCost: 15
 --- !u!114 &7654319240052785948
 MonoBehaviour:
   m_ObjectHideFlags: 0

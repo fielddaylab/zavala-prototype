@@ -13,9 +13,20 @@ namespace Zavala
 
         private Resources.Type m_resourceType;
 
-        private UITimer m_uiTimer;
+        //private UITimer m_uiTimer;
 
-        public event EventHandler RequestExpired; // when the timer completes
+        private int m_remainingCycles;
+
+        public event EventHandler TimerExpired; // when the timer completes
+
+        private void InitBasics(Resources.Type resourceType) {
+            m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
+            m_resourceIcon.SetNativeSize();
+
+            m_resourceType = resourceType;
+
+            m_remainingCycles = -1;
+        }
 
         // no timeout
         public void Init(Resources.Type resourceType) {
@@ -23,19 +34,15 @@ namespace Zavala
         }
 
         // with timeout
-        public void Init(Resources.Type resourceType, float requestTimeout) {
+        public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync) {
             InitBasics(resourceType);
 
-            m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
-            m_uiTimer.Init(requestTimeout, false);
-            m_uiTimer.TimerCompleted += HandleTimerCompleted;
-        }
+            cycleSync.CycleCompleted += HandleCycleCompleted;
+            m_remainingCycles = requestTimeout;
 
-        private void InitBasics(Resources.Type resourceType) {
-            m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
-            m_resourceIcon.SetNativeSize();
-
-            m_resourceType = resourceType;
+            //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
+            //m_uiTimer.Init(requestTimeout, false);
+            //m_uiTimer.TimerCompleted += HandleTimerCompleted;
         }
 
         public Resources.Type GetResourceType() {
@@ -44,10 +51,27 @@ namespace Zavala
 
         #region Handlers
 
+        /*
         private void HandleTimerCompleted(object sender, EventArgs e) {
             Debug.Log("[UIRequest] Timer completed");
 
             RequestExpired?.Invoke(this, EventArgs.Empty);
+        }
+        */
+
+        private void HandleCycleCompleted(object sender, EventArgs e) {
+            if (m_remainingCycles == -1) {
+                // request has no expiry
+                return;
+            }
+            else {
+                // tick cycles
+                m_remainingCycles--;
+
+                if (m_remainingCycles == 0) {
+                    TimerExpired?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
 
         #endregion // Handlers
