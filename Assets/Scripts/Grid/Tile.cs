@@ -65,6 +65,16 @@ namespace Zavala.Tiles
             }
         }
 
+        // TODO: remove this temp debug
+        public void DebugHighlight() {
+            m_meshFilterComponent.mesh = GameDB.Instance.HoverMesh;
+            m_meshFilterComponentUnder.mesh = GameDB.Instance.HoverMesh;
+        }
+        public void UndoDebugHighlight() {
+            m_meshFilterComponent.mesh = m_originalMesh;
+            m_meshFilterComponentUnder.mesh = m_originalMeshUnder;
+        }
+
         public void ClickTile() {
             switch (InteractMgr.Instance.GetCurrMode()) {
                 case Interact.Mode.PlaceItem:
@@ -87,6 +97,11 @@ namespace Zavala.Tiles
                 default:
                     break;
             }
+        }
+
+        public void ConstructRoad(GameObject roadPrefab) {
+            GameObject itemInstance = Instantiate(roadPrefab, this.transform);
+            m_addOns.Add(itemInstance.GetComponent<AddOn>());
         }
 
         private bool AnyBlockers() {

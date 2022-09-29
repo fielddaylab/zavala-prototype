@@ -323,6 +323,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_placeCursor: {fileID: 2800000, guid: 6306d8c419b6428478ca60616ad841fc, type: 3}
+  m_roadPrefab: {fileID: 6291261227990647790, guid: 7b28fbc3b251d384ead1797c5789d64c,
+    type: 3}
 --- !u!1 &2453652750304789500
 GameObject:
   m_ObjectHideFlags: 0

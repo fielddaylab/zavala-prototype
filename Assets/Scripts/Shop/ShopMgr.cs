@@ -61,6 +61,19 @@ namespace Zavala
             }
         }
 
+        public bool TryPurchaseRoad(int roadLength) {
+            if (m_selectedItem.Cost * roadLength <= PlayerMgr.Instance.GetMoney()) {
+                // player has enough money
+                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(m_selectedItem.Cost));
+                UpdateText();
+                return true;
+            }
+            else {
+                // purchase failure
+                return false;
+            }
+        }
+
         public GameObject GetPurchasePrefab() {
             return m_selectedItem.Prefab;
         }
