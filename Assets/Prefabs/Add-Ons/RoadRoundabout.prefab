@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 23345454224671092}
   - component: {fileID: 65145509091318892}
   - component: {fileID: -6269227370425896417}
-  - component: {fileID: 9217971400703964837}
   m_Layer: 0
   m_Name: RoadRoundabout
   m_TagString: Untagged
@@ -107,17 +106,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60b69cfc0a719c34dacb889fa5321331, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &9217971400703964837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1410689929301814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f6814c5e94616f419880060ca2b18a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
