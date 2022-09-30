@@ -31,6 +31,11 @@ namespace Zavala
         [Header("Meshes")]
         public Mesh HoverMesh;
 
+        [Space(5)]
+
+        [Header("Transport")]
+        public GameObject TruckPrefab;
+
         #endregion // Inspector
 
         public void Init() {

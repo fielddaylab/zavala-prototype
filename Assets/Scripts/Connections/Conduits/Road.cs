@@ -28,7 +28,11 @@ namespace Zavala
         }
 
         public void SetSegments(List<Tile> segments) {
-            m_segments = segments;
+            m_segments = new List<Tile>();
+
+            for (int i = 0; i < segments.Count; i++) {
+                m_segments.Add(segments[i]);
+            }
         }
 
         public void FinalizeConnections() {
@@ -61,16 +65,20 @@ namespace Zavala
         }
 
         public StoresProduct GetSupplierOnRoad(Resources.Type resourceType) {
-            StoresProduct supplier = SupplierInList(m_end1Nodes, resourceType);
+            StoresProduct supplier = GetSupplierInList(m_end1Nodes, resourceType);
             if (supplier != null) {
                 return supplier;
             }
-            supplier = SupplierInList(m_end2Nodes, resourceType);
+            supplier = GetSupplierInList(m_end2Nodes, resourceType);
             if (supplier != null) {
                 return supplier;
             }
 
             return null;
+        }
+
+        public Tile GetTileAtIndex(int index) {
+            return m_segments[index];
         }
 
         private bool ResourceInList(List<ConnectionNode> nodeList, Resources.Type resourceType) {
@@ -83,7 +91,7 @@ namespace Zavala
             return false;
         }
 
-        private StoresProduct SupplierInList(List<ConnectionNode> nodeList, Resources.Type resourceType) {
+        private StoresProduct GetSupplierInList(List<ConnectionNode> nodeList, Resources.Type resourceType) {
             for (int i = 0; i < nodeList.Count; i++) {
                 StoresProduct storeComponent = nodeList[i].gameObject.GetComponent<StoresProduct>();
                 if (storeComponent != null && storeComponent.StorageContains(resourceType)) {
@@ -91,6 +99,26 @@ namespace Zavala
                 }
             }
             return null;
+        }
+
+        private bool IsSupplierInList(List<ConnectionNode> nodeList, StoresProduct supplier) {
+            for (int i = 0; i < nodeList.Count; i++) {
+                StoresProduct storeComponent = nodeList[i].gameObject.GetComponent<StoresProduct>();
+                if (storeComponent == supplier) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool IsRecipientInList(List<ConnectionNode> nodeList, Requests recipient) {
+            for (int i = 0; i < nodeList.Count; i++) {
+                Requests requestComponent = nodeList[i].gameObject.GetComponent<Requests>();
+                if (requestComponent == recipient) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         #endregion //  Queries
@@ -101,6 +129,39 @@ namespace Zavala
             EconomyUpdated.Invoke(this, EventArgs.Empty);
         }
 
+        public bool TrySummonTruck(Resources.Type resourceType, StoresProduct supplier, Requests recipient) {
+            if (supplier.TryRemoveFromStorage(resourceType)) {
+                // send to recipient
+
+                // find start tile
+                Transform startTransform = m_segments[GetStartIndex(supplier)].gameObject.transform;
+                Truck newTruck = Instantiate(GameDB.Instance.TruckPrefab).GetComponent<Truck>();
+                newTruck.Init(resourceType, supplier, recipient, this);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         #endregion // Triggers
+
+        public int GetStartIndex(StoresProduct supplier) {
+            if (IsSupplierInList(m_end1Nodes, supplier)) {
+                return 0;
+            }
+            else {
+                return m_segments.Count - 1;
+            }
+        }
+
+        public int GetEndIndex(Requests recipient) {
+            if (IsRecipientInList(m_end1Nodes, recipient)) {
+                return 0;
+            }
+            else {
+                return m_segments.Count - 1;
+            }
+        }
     }
 }

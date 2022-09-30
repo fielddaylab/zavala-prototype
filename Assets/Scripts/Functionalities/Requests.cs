@@ -78,20 +78,23 @@ namespace Zavala.Functionalities
                 for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
                     if (connectedRoads[roadIndex].ResourceOnRoad(resourceType)) {
                         // TODO: summon a truck from road fleet with this as recipient
-
-                        // TEMP: send resouce immediately
-                        Debug.Log("[Requests] Resource on road! Sending to recipient...");
                         // remove from supplier
-                        if (connectedRoads[roadIndex].GetSupplierOnRoad(resourceType).TryRemoveFromStorage(resourceType)) {
-                            // send to recipient
-                            ReceiveRequestedProduct(resourceType);
+                        StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType);
+
+                        if (connectedRoads[roadIndex].TrySummonTruck(resourceType, supplier, this)) {
+                            Debug.Log("[Requests] Truck summoned successfully");
+
+                            // TODO: set request to en-route
+                        }
+                        else {
+                            Debug.Log("[Requests] Truck not summoned");
                         }
                     }
                 }
             }
         }
 
-        private void ReceiveRequestedProduct(Resources.Type resourceType) {
+        public void ReceiveRequestedProduct(Resources.Type resourceType) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
                     UIRequest toFulfill = m_activeRequests[i];

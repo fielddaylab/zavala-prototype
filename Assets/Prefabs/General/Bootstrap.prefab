@@ -237,6 +237,8 @@ MonoBehaviour:
   ManureIcon: {fileID: 21300000, guid: e51a903bbab357a458eb3a1dc4e0ecb7, type: 3}
   SoilEnricherIcon: {fileID: 21300000, guid: b2e840bf3efdbdd44a6743b08c253b32, type: 3}
   HoverMesh: {fileID: 4300000, guid: 71982be591066184d958695cbf3d4875, type: 3}
+  TruckPrefab: {fileID: 822282256533157029, guid: 34a476f04411dcc4d831fdcd43f0ffbb,
+    type: 3}
 --- !u!1 &809039409424542029
 GameObject:
   m_ObjectHideFlags: 0
