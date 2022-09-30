@@ -77,7 +77,7 @@ namespace Zavala.Functionalities
                 // find first available
                 for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
                     if (connectedRoads[roadIndex].ResourceOnRoad(resourceType)) {
-                        // TODO: summon a truck from road fleet with this as recipient
+                        // summon a truck from road fleet with this as recipient
                         // remove from supplier
                         StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType);
 

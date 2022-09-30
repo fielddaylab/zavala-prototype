@@ -7,8 +7,10 @@ using Zavala.Tiles;
 
 namespace Zavala
 {
+    [RequireComponent(typeof(AudioSource))]
     public class Truck : MonoBehaviour
     {
+        [SerializeField] private Canvas m_canvas;
         [SerializeField] private Image m_resourceIcon;
         [SerializeField] private float m_speed;
 
@@ -24,6 +26,21 @@ namespace Zavala
 
         private float m_yBuffer;
 
+        // Audio
+        private AudioSource m_audioSource;
+
+        [SerializeField] private AudioClip m_engineStartClip;
+        [SerializeField] private AudioClip m_engineContinueClip;
+        [SerializeField] private AudioClip m_engineEndClip;
+
+        private enum EngineState {
+            Start,
+            Continue,
+            End
+        }
+
+        private EngineState m_engineState;
+
         public void Init(Resources.Type resourceType, StoresProduct supplier, Requests recipient, Road road) {
             m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
             m_resourceIcon.SetNativeSize();
@@ -37,10 +54,16 @@ namespace Zavala
             m_destRoadSegmentIndex = m_roadToFollow.GetEndIndex(recipient);
             m_immediateNextDest = m_roadToFollow.GetTileAtIndex(m_startRoadSegmentIndex);
             this.transform.position = m_immediateNextDest.transform.position + new Vector3(0, m_yBuffer, 0);
+
+            m_audioSource = this.GetComponent<AudioSource>();
+            m_engineState = EngineState.Start;
+            m_audioSource.clip = m_engineStartClip;
+            m_audioSource.Play();
         }
 
         private void Update() {
             TraverseRoad();
+            UpdateAudio();
         }
 
         private void TraverseRoad() {
@@ -71,11 +94,45 @@ namespace Zavala
             }
         }
 
+        private void UpdateAudio() {
+            switch(m_engineState) {
+                case EngineState.Start:
+                    if (!m_audioSource.isPlaying) {
+                        m_engineState = EngineState.Continue;
+                        m_audioSource.clip = m_engineContinueClip;
+                        m_audioSource.loop = true;
+                        m_audioSource.Play();
+                    }
+                    break;
+                case EngineState.Continue:
+
+                    break;
+                case EngineState.End:
+                    if (!m_audioSource.isPlaying) {
+                        if (m_audioSource.loop) {
+                            m_audioSource.clip = m_engineEndClip;
+                            m_audioSource.loop = false;
+                            m_audioSource.Play();
+                        }
+                        else {
+                            // remove truck 
+                            Destroy(this.gameObject);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void Deliver() {
             m_recipient.ReceiveRequestedProduct(m_resourceType);
 
-            // remove truck
-            Destroy(this.gameObject);
+            m_engineState = EngineState.End;
+            m_audioSource.Stop();
+
+            // hide truck
+            m_canvas.gameObject.SetActive(false);
         }
     }
 }
