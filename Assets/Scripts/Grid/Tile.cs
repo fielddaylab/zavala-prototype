@@ -27,6 +27,8 @@ namespace Zavala.Tiles
 
         private List<AddOn> m_addOns;
 
+        private List<PhosphPip> m_pips;
+
         private void Awake() {
             m_meshFilterComponent = this.GetComponent<MeshFilter>();
             m_meshFilterComponentUnder = this.transform.GetChild(0).GetComponent<MeshFilter>();
@@ -36,6 +38,8 @@ namespace Zavala.Tiles
             m_blocksBuildComponent = this.GetComponent<BlocksBuild>(); // <- may well be null
 
             m_addOns = new List<AddOn>();
+
+            m_pips = new List<PhosphPip>();
         }
 
         private void OnMouseEnter() {
@@ -117,5 +121,17 @@ namespace Zavala.Tiles
 
             return false;
         }
+
+        #region Phosphorus Pips
+
+        public void AddPip(PhosphPip pip) {
+            m_pips.Add(pip);
+        }
+
+        public void RemovePip(PhosphPip pip) {
+            m_pips.Remove(pip);
+        }
+
+        #endregion // Phosphorus Pips
     }
 }

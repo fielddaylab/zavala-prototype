@@ -15,6 +15,7 @@ namespace Zavala
         public GameObject UITimerPrefabDefault;
         public GameObject UIRequestPrefab;
         public GameObject UIStoredProductPrefab;
+        public GameObject PipPrefab;
 
         [Space(5)]
 
