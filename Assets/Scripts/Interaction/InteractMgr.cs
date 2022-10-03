@@ -12,10 +12,9 @@ namespace Zavala.Interact
 {
     public enum Mode
     {
-        DefaultSelect,
+        Select,
         PlaceItem, // shop item
         DrawRoad,
-        PhosphorousSelect
     }
 
     public class InteractMgr : MonoBehaviour
@@ -40,11 +39,11 @@ namespace Zavala.Interact
         private void Update() {
             if (Input.GetMouseButtonDown(1)) {
                 // cancel interact mode with right click
-                EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(Interact.Mode.DefaultSelect));
+                EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(Interact.Mode.Select));
             }
 
             switch (m_interactMode) {
-                case Interact.Mode.DefaultSelect:
+                case Interact.Mode.Select:
                     CheckForClick();
                     break;
                 case Interact.Mode.PlaceItem:
@@ -52,9 +51,6 @@ namespace Zavala.Interact
                     break;
                 case Interact.Mode.DrawRoad:
                     CheckForDrawingRoad();
-                    break;
-                case Interact.Mode.PhosphorousSelect:
-                    CheckForClick();
                     break;
                 default:
                     break;
@@ -98,9 +94,7 @@ namespace Zavala.Interact
             Vector3 offset = Vector3.zero;
 
             switch (inMode) {
-                default:
-                    break;
-                case Interact.Mode.DefaultSelect:
+                case Interact.Mode.Select:
                     break;
                 case Interact.Mode.PlaceItem:
                     newCursor = m_placeCursor;
@@ -110,7 +104,7 @@ namespace Zavala.Interact
                     newCursor = m_placeCursor;
                     offset = new Vector2(newCursor.width / 2, newCursor.height / 2);
                     break;
-                case Interact.Mode.PhosphorousSelect:
+                default:
                     break;
             }
 
@@ -127,6 +121,8 @@ namespace Zavala.Interact
             m_interactMode = args.Mode;
 
             UpdateCursor(m_interactMode);
+
+            Debug.Log("[InteractMgr] Interact mode updated to " + args.Mode);
         }
 
         #endregion // Event Handlers

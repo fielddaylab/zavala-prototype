@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Events;
 using Zavala.Interact;
+using Zavala.Lenses;
 
 namespace Zavala
 {
@@ -16,6 +17,8 @@ namespace Zavala
         [SerializeField] private ShopMgr m_shopMgr;
         [SerializeField] private InteractMgr m_interactMgr;
         [SerializeField] private RoadMgr m_roadMgr;
+        [SerializeField] private PhosphMgr m_phosphMgr;
+        [SerializeField] private LensMgr m_lensMgr;
 
         private void Awake() {
             if (Instance == null) {
@@ -33,6 +36,8 @@ namespace Zavala
             m_playerMgr.Init();
             m_interactMgr.Init();
             m_roadMgr.Init();
+            //m_phosphMgr.Init();
+            m_lensMgr.Init();
         }
     }
 }

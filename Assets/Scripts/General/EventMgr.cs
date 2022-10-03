@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Zavala.Interact;
+using Zavala.Lenses;
 
 namespace Zavala.Events
 {
@@ -19,7 +20,10 @@ namespace Zavala.Events
         PurchaseFailure,
 
         // Interact
-        InteractModeUpdated
+        InteractModeUpdated,
+
+        // Lenses
+        LensModeUpdated
     }
 
     #endregion // Enums
@@ -53,6 +57,15 @@ namespace Zavala.Events
         }
     }
 
+    public class LensModeEventArgs : EventArgs
+    {
+        public Lenses.Mode Mode { get; set; }
+
+        public LensModeEventArgs(Lenses.Mode mode) {
+            Mode = mode;
+        }
+    }
+
     #endregion // EventArgs
 
     public class EventMgr : MonoBehaviour
@@ -74,6 +87,12 @@ namespace Zavala.Events
         public event EventHandler<InteractModeEventArgs> InteractModeUpdated;
 
         #endregion // Interaction
+
+        #region Lenses
+
+        public event EventHandler<LensModeEventArgs> LensModeUpdated;
+
+        #endregion // Lenses
 
         public void Init() {
             Instance = this;
@@ -98,6 +117,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.InteractModeUpdated:
                     InteractModeUpdated?.Invoke(this, (InteractModeEventArgs)args);
+                    break;
+                case Events.ID.LensModeUpdated:
+                    LensModeUpdated?.Invoke(this, (LensModeEventArgs)args);
                     break;
                 default:
                     break;

@@ -119,7 +119,7 @@ namespace Zavala
         }
 
         private void HandleInteractModeUpdated(object sender, InteractModeEventArgs args) {
-            if (args.Mode == Mode.DefaultSelect || args.Mode == Mode.PhosphorousSelect) {
+            if (args.Mode == Mode.Select) {
                 m_selectedItem = null;
             }
         }
@@ -137,7 +137,7 @@ namespace Zavala
                 case Shop.Items.Type.Storage:
                     return Interact.Mode.PlaceItem;
                 default:
-                    return Interact.Mode.DefaultSelect;
+                    return Interact.Mode.Select;
             }
         }
     }
