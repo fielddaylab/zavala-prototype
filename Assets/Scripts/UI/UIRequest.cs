@@ -17,6 +17,8 @@ namespace Zavala
 
         private int m_remainingCycles;
 
+        private bool m_enRoute; // whether a truck has been dispatched to serve this request
+
         public event EventHandler TimerExpired; // when the timer completes
 
         private void InitBasics(Resources.Type resourceType) {
@@ -26,6 +28,8 @@ namespace Zavala
             m_resourceType = resourceType;
 
             m_remainingCycles = -1;
+
+            m_enRoute = false;
         }
 
         // no timeout
@@ -47,6 +51,14 @@ namespace Zavala
 
         public Resources.Type GetResourceType() {
             return m_resourceType;
+        }
+
+        public void SetEnRoute() {
+            m_enRoute = true;
+        }
+
+        public bool IsEnRoute() {
+            return m_enRoute;
         }
 
         #region Handlers

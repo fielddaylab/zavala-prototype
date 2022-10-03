@@ -64,7 +64,7 @@ namespace Zavala
 
             // Cities request 1 milk / population
             for (int i = 0; i < m_population; i++) {
-                m_requestsComponent.QueueRequest(Resources.Type.Milk);
+                m_requestsComponent.QueueRequest();
             }
 
             if (m_firstCycle) {

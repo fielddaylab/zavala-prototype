@@ -26,6 +26,8 @@ namespace Zavala
 
         private float m_yBuffer;
 
+        private bool m_delivered;
+
         // Audio
         private AudioSource m_audioSource;
 
@@ -46,6 +48,8 @@ namespace Zavala
             m_resourceIcon.SetNativeSize();
 
             m_yBuffer = this.gameObject.transform.localPosition.y;
+
+            m_delivered = false;
 
             m_resourceType = resourceType;
             m_recipient = recipient;
@@ -78,7 +82,9 @@ namespace Zavala
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     Debug.Log("[Truck] Arrived at final destination");
 
-                    Deliver();
+                    if (!m_delivered) {
+                        Deliver();
+                    }
                 }
                 else {
                     if (m_currRoadSegmentIndex < m_destRoadSegmentIndex) {
@@ -127,6 +133,7 @@ namespace Zavala
 
         private void Deliver() {
             m_recipient.ReceiveRequestedProduct(m_resourceType);
+            m_delivered = true;
 
             m_engineState = EngineState.End;
             m_audioSource.Stop();

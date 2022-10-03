@@ -61,7 +61,7 @@ namespace Zavala
             Debug.Log("[GrainFarm] Cycle completed");
 
             // Grain Farms request 1 soilEnricher (Manure OR Fertilizer)
-            m_requestsComponent.QueueRequest(Resources.Type.SoilEnricher);
+            m_requestsComponent.QueueRequest();
 
             if (m_firstCycle) {
                 StraightToStorage();

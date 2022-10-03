@@ -36,23 +36,26 @@ namespace Zavala.Functionalities
             m_connectionNodeComponent.NodeEconomyUpdated += HandleNodeEconomyUpdated;
         }
 
-        public void QueueRequest(Resources.Type resourceType) {
-            Debug.Log("[Requests] 1 Queue");
-            // init and display
-            UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
-            if (m_hasTimeout) {
-                newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>());
-            }
-            else {
-                newRequest.Init(resourceType);
-            }
+        public void QueueRequest() {
+            for (int i = 0; i < RequestTypes.Count; i++) {
+                Resources.Type resourceType = RequestTypes[i];
 
-            // add to requests
-            m_activeRequests.Add(newRequest);
-            newRequest.TimerExpired += HandleTimerExpired;
-            RedistributeQueue();
+                // init and display
+                UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
+                if (m_hasTimeout) {
+                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>());
+                }
+                else {
+                    newRequest.Init(resourceType);
+                }
 
-            m_connectionNodeComponent.UpdateNodeEconomy();
+                // add to requests
+                m_activeRequests.Add(newRequest);
+                newRequest.TimerExpired += HandleTimerExpired;
+                RedistributeQueue();
+
+                m_connectionNodeComponent.UpdateNodeEconomy();
+            }
         }
 
         private void RedistributeQueue() {
@@ -69,6 +72,10 @@ namespace Zavala.Functionalities
 
         private void QueryRoadForProducts() {
             for (int requestIndex = 0; requestIndex < m_activeRequests.Count; requestIndex++) {
+                if (m_activeRequests[requestIndex].IsEnRoute()) {
+                    continue;
+                }
+
                 Resources.Type resourceType = m_activeRequests[requestIndex].GetResourceType();
 
                 List<Road> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
@@ -84,7 +91,8 @@ namespace Zavala.Functionalities
                         if (connectedRoads[roadIndex].TrySummonTruck(resourceType, supplier, this)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
-                            // TODO: set request to en-route
+                            // set request to en-route
+                            m_activeRequests[requestIndex].SetEnRoute();
                         }
                         else {
                             Debug.Log("[Requests] Truck not summoned");
@@ -104,7 +112,7 @@ namespace Zavala.Functionalities
                     // trigger request fulfilled event
                     RequestFulfilled.Invoke(this, EventArgs.Empty);
                     Debug.Log("[Requests] Request fulfilled!");
-                    break;
+                    return;
                 }
             }
         }

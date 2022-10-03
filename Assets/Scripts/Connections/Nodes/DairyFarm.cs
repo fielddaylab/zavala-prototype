@@ -61,7 +61,7 @@ namespace Zavala
             Debug.Log("[DairyFarm] Cycle completed");
 
             // Dairy Farms request 1 grain
-            m_requestsComponent.QueueRequest(Resources.Type.Grain);
+            m_requestsComponent.QueueRequest();
 
             if (m_firstCycle) {
                 StraightToStorage();
