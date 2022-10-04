@@ -38,6 +38,10 @@ namespace Zavala.Interact
 
         private void Update() {
             if (Input.GetMouseButtonDown(1)) {
+                if (m_interactMode == Interact.Mode.DrawRoad) {
+                    RoadMgr.Instance.EndDrawingRoad();
+                }
+
                 // cancel interact mode with right click
                 EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(Interact.Mode.Select));
             }
