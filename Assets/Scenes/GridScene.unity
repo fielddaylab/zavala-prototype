@@ -2492,7 +2492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4014751909295292, guid: 38123c71f1f557445b02dcba566f17e1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 4014751909295292, guid: 38123c71f1f557445b02dcba566f17e1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3353,6 +3353,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4634340456602551431, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_Name
+      value: PhosphMgr
       objectReference: {fileID: 0}
     - target: {fileID: 6715597374621099143, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}

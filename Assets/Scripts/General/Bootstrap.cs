@@ -4,6 +4,7 @@ using UnityEngine;
 using Zavala.Events;
 using Zavala.Interact;
 using Zavala.Lenses;
+using Zavala.Tiles;
 
 namespace Zavala
 {
@@ -36,8 +37,13 @@ namespace Zavala
             m_playerMgr.Init();
             m_interactMgr.Init();
             m_roadMgr.Init();
-            //m_phosphMgr.Init();
+            m_phosphMgr.Init();
             m_lensMgr.Init();
+            GridMgr.Init();
+        }
+
+        private void Update() {
+            m_phosphMgr.SimulateRunoff();
         }
     }
 }

@@ -7,6 +7,24 @@ namespace Zavala
 {
     public class GridMgr : MonoBehaviour
     {
+        private static List<Tile> AllTiles;
+
+        public static void Init() {
+            AllTiles= new List<Tile>();
+        }
+
+        public static void TrackTile(Tile toTrack) {
+            AllTiles.Add(toTrack);
+        }
+
+        public static void UntrackTile(Tile toUntrack) {
+            AllTiles.Remove(toUntrack);
+        }
+
+        public static List<Tile> GetAllTiles() {
+            return AllTiles;
+        }
+
         public static Zavala.Tiles.Tile OverTile(Vector2 pos) {
             Ray ray;
             RaycastHit hit;
@@ -30,7 +48,6 @@ namespace Zavala
             // raycast in 6 directions
             Vector3 startPos = centerTile.transform.position;
             Vector3 adjPos = startPos;
-            Debug.Log("start pos: " + adjPos);
             RaycastHit hit;
 
             for (int dir = 0; dir < 6; dir++) {
@@ -69,8 +86,6 @@ namespace Zavala
                     adjTiles.Add(hit.collider.gameObject.GetComponent<Tile>());
                 }
             }
-
-            Debug.Log("Num adjacent tiles: " + adjTiles.Count);
 
             return adjTiles;
         }

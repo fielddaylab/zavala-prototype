@@ -15,25 +15,21 @@ namespace Zavala
 
         private Tile m_currTile; // the tile this pip is under
 
-        private static float TILE_BOUNDS = 0.3f;
+        private static float TILE_BOUNDS = 0.2f;
         private static float RELATIVE_Y = 0.1f; // relative y to the tile it flows under
 
         public void Init(Tile parentTile) {
             m_renderer = this.GetComponent<SpriteRenderer>();
             
-            this.transform.position = parentTile.transform.position;
-
             float xOffset = Random.Range(-TILE_BOUNDS, TILE_BOUNDS);
             float zOffset = Random.Range(-TILE_BOUNDS, TILE_BOUNDS);
 
             m_centerOffset = new Vector3(xOffset, RELATIVE_Y, zOffset);
-            this.transform.position = new Vector3(
-                this.transform.position.x + m_centerOffset.x,
-                this.transform.position.y,
-                this.transform.position.z + m_centerOffset.z);
+
+            TransferToTile(parentTile);
 
             m_currTile = parentTile;
-            m_currTile.AddPip(this);
+            m_currTile.AddPipDirect(this);
         }
 
         private void Start() {
@@ -58,5 +54,12 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        public void TransferToTile(Tile newTile) {
+            this.transform.position = new Vector3(
+                newTile.transform.position.x + m_centerOffset.x,
+                newTile.transform.position.y,
+                newTile.transform.position.z + m_centerOffset.z);
+        }
     }
 }
