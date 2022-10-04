@@ -6,8 +6,6 @@ using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Tiles;
 
-// PLACEHOLDER from last iteration. Currently non-functional
-
 namespace Zavala.Interact
 {
     public enum Mode
