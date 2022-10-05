@@ -8,11 +8,13 @@ using Zavala.Tiles;
 namespace Zavala
 {
     [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(GeneratesPhosphorus))]
     public class Truck : MonoBehaviour
     {
         [SerializeField] private Canvas m_canvas;
         [SerializeField] private Image m_resourceIcon;
         [SerializeField] private float m_speed;
+        [SerializeField] private float m_leakRate;
 
         private Resources.Type m_resourceType;
         private Requests m_recipient;
@@ -27,6 +29,8 @@ namespace Zavala
         private float m_yBuffer;
 
         private bool m_delivered;
+
+        private GeneratesPhosphorus m_generatesComponent;
 
         // Audio
         private AudioSource m_audioSource;
@@ -63,6 +67,8 @@ namespace Zavala
             m_engineState = EngineState.Start;
             m_audioSource.clip = m_engineStartClip;
             m_audioSource.Play();
+
+            m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
         }
 
         private void Update() {
@@ -78,6 +84,13 @@ namespace Zavala
                 this.transform.Translate((nextDestPos - this.transform.position).normalized * m_speed * Time.deltaTime);
             }
             else {
+                // leak phosphorus (TODO: leak according to time, or per tile?)
+                    // if per time, reference cycles component
+                    // if per tile, 25% chance per tile
+                if (Random.Range(0.0f, 1.0f) <= m_leakRate) {
+                    m_generatesComponent.GeneratePipBatch(m_immediateNextDest);
+                }
+
                 // update immediate next dest
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     Debug.Log("[Truck] Arrived at final destination");
@@ -87,6 +100,7 @@ namespace Zavala
                     }
                 }
                 else {
+
                     if (m_currRoadSegmentIndex < m_destRoadSegmentIndex) {
                         m_currRoadSegmentIndex++;
                     }

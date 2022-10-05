@@ -10,25 +10,11 @@ namespace Zavala.Functionalities
     {
         [SerializeField] private int m_amt;
 
-        private void Start() {
-            if (this.GetComponent<Cycles>() != null) {
-                this.GetComponent<Cycles>().CycleCompleted += HandleCycleCompleted;
-            }
-        }
-
-        private void GeneratePip() {
-            PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
-            newPip.Init(this.GetComponent<Tile>());
-        }
-
-        #region Handlers
-
-        private void HandleCycleCompleted(object sender, EventArgs args) {
+        public void GeneratePipBatch(Tile destTile) {
             for (int i = 0; i < m_amt; i++) {
-                GeneratePip();
+                PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
+                newPip.Init(destTile);
             }
         }
-
-        #endregion // Handlers
     }
 }
