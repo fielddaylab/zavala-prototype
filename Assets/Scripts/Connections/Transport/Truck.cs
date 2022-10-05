@@ -93,10 +93,9 @@ namespace Zavala
 
                 // update immediate next dest
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
-                    Debug.Log("[Truck] Arrived at final destination");
-
                     if (!m_delivered) {
                         Deliver();
+                        Debug.Log("[Truck] Delivered to final destination");
                     }
                 }
                 else {

@@ -21,6 +21,7 @@ namespace Zavala.Functionalities
         public int MaxProducts; // the max number of products this can store
 
         public event EventHandler StorageExceeded; // when a product would be added but there is no room
+        public event EventHandler RemovedStorage;
 
         [SerializeField] private float m_iconOffsetZ = 0.25f;
 
@@ -48,6 +49,10 @@ namespace Zavala.Functionalities
                 }
             }
             return false;
+        }
+
+        public bool IsStorageFull() {
+            return m_storageList.Count == MaxProducts;
         }
 
         public bool TryAddToStorage(Resources.Type productType) {
@@ -79,6 +84,7 @@ namespace Zavala.Functionalities
                 RemoveFromStorageList(productType);
 
                 RedistributeQueue();
+                RemovedStorage?.Invoke(this, EventArgs.Empty);
                 return true;
             }
         }

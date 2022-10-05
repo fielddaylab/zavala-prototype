@@ -50,7 +50,7 @@ namespace Zavala.Tiles
 
         #region Callbacks
 
-        private void Awake() {
+        private void Start() {
             m_meshFilterComponent = this.GetComponent<MeshFilter>();
             m_meshFilterComponentUnder = this.transform.GetChild(0).GetComponent<MeshFilter>();
             m_originalMesh = m_meshFilterComponent.mesh;
@@ -67,9 +67,7 @@ namespace Zavala.Tiles
             m_elevation = this.transform.localPosition.y;
 
             GridMgr.TrackTile(this);
-        }
 
-        private void Start() {
             RecalculateNeighbors();
         }
 
@@ -232,6 +230,10 @@ namespace Zavala.Tiles
 
         public float GetElevation() {
             return m_elevation;
+        }
+
+        public List<AddOn> GetAddOns() {
+            return m_addOns;
         }
 
         #endregion // Getters and Setters

@@ -53,11 +53,11 @@ namespace Zavala
         #region Queries
 
         // Wether a connected node has the specified resource in storage
-        public bool ResourceOnRoad(Resources.Type resourceType) {
-            if (ResourceInList(m_end1Nodes, resourceType)) {
+        public bool ResourceOnRoad(Resources.Type resourceType, GameObject requester) {
+            if (ResourceInList(m_end1Nodes, resourceType, requester)) {
                 return true;
             }
-            if (ResourceInList(m_end2Nodes, resourceType)) {
+            if (ResourceInList(m_end2Nodes, resourceType, requester)) {
                 return true;
             }
 
@@ -81,10 +81,10 @@ namespace Zavala
             return m_segments[index];
         }
 
-        private bool ResourceInList(List<ConnectionNode> nodeList, Resources.Type resourceType) {
+        private bool ResourceInList(List<ConnectionNode> nodeList, Resources.Type resourceType, GameObject requester) {
             for (int i = 0; i < nodeList.Count; i++) {
                 StoresProduct storeComponent = nodeList[i].gameObject.GetComponent<StoresProduct>();
-                if (storeComponent != null && storeComponent.StorageContains(resourceType)) {
+                if (storeComponent != null && storeComponent.StorageContains(resourceType) && storeComponent.gameObject != requester) {
                     return true;
                 }
             }

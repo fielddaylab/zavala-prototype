@@ -37,9 +37,9 @@ namespace Zavala
             m_playerMgr.Init();
             m_interactMgr.Init();
             m_roadMgr.Init();
+            GridMgr.Init();
             m_phosphMgr.Init();
             m_lensMgr.Init();
-            GridMgr.Init();
         }
 
         private void Update() {

@@ -10,7 +10,7 @@ namespace Zavala
         private static List<Tile> AllTiles;
 
         public static void Init() {
-            AllTiles= new List<Tile>();
+            AllTiles = new List<Tile>();
         }
 
         public static void TrackTile(Tile toTrack) {
@@ -98,6 +98,12 @@ namespace Zavala
             for (int i = 0; i < adjTiles.Count; i++) {
                 if (adjTiles[i].gameObject.GetComponent<ConnectionNode>() != null) {
                     adjNodes.Add(adjTiles[i].GetComponent<ConnectionNode>());
+                }
+                List<AddOn> tileAddOns = adjTiles[i].GetAddOns();
+                for (int a = 0; a < tileAddOns.Count; a++) {
+                    if (tileAddOns[a].GetComponent<ConnectionNode>() != null) {
+                        adjNodes.Add(tileAddOns[a].GetComponent<ConnectionNode>());
+                    }
                 }
             }
 

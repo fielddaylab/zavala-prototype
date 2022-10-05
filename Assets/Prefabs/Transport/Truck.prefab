@@ -49,7 +49,7 @@ MonoBehaviour:
   m_canvas: {fileID: 7822698283546910436}
   m_resourceIcon: {fileID: 587461136687814127}
   m_speed: 0.5
-  m_leakRate: 0.25
+  m_leakRate: 0.1
   m_engineStartClip: {fileID: 8300000, guid: 1913d0a8d95d9d641b3541abe9e8056a, type: 3}
   m_engineContinueClip: {fileID: 8300000, guid: 43b4c583e56bec440a7f4d51d602be94,
     type: 3}

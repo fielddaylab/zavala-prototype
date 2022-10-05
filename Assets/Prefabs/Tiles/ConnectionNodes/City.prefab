@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ccc55681653cb943a4c0126c788ac4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RequestTypes: 
+  RequestTypes: 03000000
   m_hasTimeout: 1
   m_requestTimeout: 2
   m_iconOffsetZ: 0.25
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ba5985f5202ba41835e96fe0729881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_population: 2
+  m_population: 3
 --- !u!114 &5517435915057001926
 MonoBehaviour:
   m_ObjectHideFlags: 0

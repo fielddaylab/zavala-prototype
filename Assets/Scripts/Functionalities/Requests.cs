@@ -83,7 +83,7 @@ namespace Zavala.Functionalities
 
                 // find first available
                 for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
-                    if (connectedRoads[roadIndex].ResourceOnRoad(resourceType)) {
+                    if (connectedRoads[roadIndex].ResourceOnRoad(resourceType, this.gameObject)) {
                         // summon a truck from road fleet with this as recipient
                         // remove from supplier
                         StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType);
@@ -110,11 +110,16 @@ namespace Zavala.Functionalities
                     m_activeRequests.RemoveAt(i);
                     Destroy(toFulfill.gameObject);
                     // trigger request fulfilled event
-                    RequestFulfilled.Invoke(this, EventArgs.Empty);
+                    // TODO: pass the resource type through this event
+                    RequestFulfilled?.Invoke(this, EventArgs.Empty);
                     Debug.Log("[Requests] Request fulfilled!");
                     return;
                 }
             }
+        }
+
+        public int GetNumActiveRequests() {
+            return m_activeRequests.Count;
         }
 
         #region Handlers
