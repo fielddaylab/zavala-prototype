@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
@@ -35,6 +36,8 @@ namespace Zavala.Tiles
 
         private List<PhosphPip> m_pips;
         private List<PhosphPip> m_stagedToAdd, m_stagedToRemove;
+
+        public event EventHandler OnPhosphRefresh;
 
 
         // Relative Elevation
@@ -197,13 +200,21 @@ namespace Zavala.Tiles
         }
 
         public void ApplyStagedTransfer() {
+            bool modified = false;
+
             for (int i = 0; i < m_stagedToRemove.Count; i++) {
                 m_pips.Remove(m_stagedToRemove[i]);
+                modified = true;
             }
             for (int i = 0; i < m_stagedToAdd.Count; i++) {
                 // TODO: gradual pip movement
                 m_pips.Add(m_stagedToAdd[i]);
                 m_stagedToAdd[i].TransferToTile(this);
+                modified = true;
+            }
+
+            if (modified) {
+                OnPhosphRefresh?.Invoke(this, EventArgs.Empty);
             }
 
             // clean up
