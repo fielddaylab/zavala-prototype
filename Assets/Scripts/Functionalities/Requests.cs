@@ -33,6 +33,8 @@ namespace Zavala.Functionalities
 
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_connectionNodeComponent.NodeEconomyUpdated += HandleNodeEconomyUpdated;
+
+            m_initialQueuePos = Vector3.zero;
         }
 
         private void Start() {
@@ -40,6 +42,10 @@ namespace Zavala.Functionalities
         }
 
         public void QueueRequest() {
+            if (m_initialQueuePos == Vector3.zero) {
+                m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
+            }
+
             for (int i = 0; i < RequestTypes.Count; i++) {
                 Resources.Type resourceType = RequestTypes[i];
 

@@ -34,7 +34,6 @@ namespace Zavala.Functionalities
             if (m_producesMoney) {
                 // add money to funds
                 EventMgr.Instance.TriggerEvent(Events.ID.ProduceMoney, new Events.ProduceMoneyEventArgs(m_amt));
-                return null;
             }
 
             // todo: produce type based on input type

@@ -61,7 +61,6 @@ namespace Zavala
         }
 
         private void StraightToStorage() {
-            // produce money per population
             List<Resources.Type> newProducts = m_producesComponent.Produce();
             if (newProducts == null) {
                 return;
