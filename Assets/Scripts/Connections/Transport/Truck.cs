@@ -84,13 +84,6 @@ namespace Zavala
                 this.transform.Translate((nextDestPos - this.transform.position).normalized * m_speed * Time.deltaTime);
             }
             else {
-                // leak phosphorus (TODO: leak according to time, or per tile?)
-                    // if per time, reference cycles component
-                    // if per tile, 25% chance per tile
-                if (Random.Range(0.0f, 1.0f) <= m_leakRate) {
-                    m_generatesComponent.GeneratePipBatch(m_immediateNextDest);
-                }
-
                 // update immediate next dest
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     if (!m_delivered) {
@@ -107,6 +100,13 @@ namespace Zavala
                         m_currRoadSegmentIndex--;
                     }
                     m_immediateNextDest = m_roadToFollow.GetTileAtIndex(m_currRoadSegmentIndex);
+
+                    // leak phosphorus (TODO: leak according to time, or per tile?)
+                    // if per time, reference cycles component
+                    // if per tile, 25% chance per tile
+                    if (Random.Range(0.0f, 1.0f) <= m_leakRate) {
+                        m_generatesComponent.GeneratePipBatch(m_immediateNextDest);
+                    }
 
                     Debug.Log("[Truck] Updated immediate next destination");
                 }

@@ -11,6 +11,7 @@ namespace Zavala.Functionalities
         [SerializeField] private int m_amt;
 
         public void GeneratePipBatch(Tile destTile) {
+            Debug.Log("[GeneratesPhosph] Generating " + m_amt + " units");
             for (int i = 0; i < m_amt; i++) {
                 PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
                 newPip.Init(destTile);
