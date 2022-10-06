@@ -98,12 +98,21 @@ namespace Zavala
         }
 
         public void EndDrawingRoad() {
-            if (RoadMgr.Instance.StartedRoad) {
-                if (TryCompleteRoad()) {
-                    RoadCleanUp();
-                }
-                else {
-                    CancelRoad();
+            if (m_startedRoad) {
+                Debug.Log("[RoadMgr] end drawing road start");
+                if (RoadMgr.Instance.StartedRoad) {
+                    Debug.Log("[RoadMgr] end drawing road 1");
+
+                    if (TryCompleteRoad()) {
+                        Debug.Log("[RoadMgr] end drawing road 2");
+
+                        RoadCleanUp();
+                    }
+                    else {
+                        Debug.Log("[RoadMgr] end drawing road 3");
+
+                        CancelRoad();
+                    }
                 }
             }
         }
@@ -111,6 +120,8 @@ namespace Zavala
         #region Helpers
 
         private bool TryCompleteRoad() {
+            Debug.Log("[RoadMgr] try complete road");
+
             // check if next to at least one connection node
             List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdj(Input.mousePosition);
 
@@ -121,8 +132,11 @@ namespace Zavala
                 // save road segments
                 m_roadInProgress.SetSegments(m_tracedTiles);
 
+                Debug.Log("[RoadMgr] try purchase road");
+
                 // try to purchase road
                 if (ShopMgr.Instance.TryPurchaseRoad(m_tracedTiles.Count)) {
+                    Debug.Log("[RoadMgr] Finalizing road");
                     // save road in mgr and connected nodes
                     FinalizeRoad();
 
@@ -157,7 +171,9 @@ namespace Zavala
         private void FinalizeRoad() {
             // on tiles
             for (int i = 0; i < m_tracedTiles.Count; i++) {
+                Debug.Log("[RoadMgr] constructing road");
                 m_tracedTiles[i].ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
+                Debug.Log("[RoadMgr] constructing end");
             }
 
             // in connection nodes

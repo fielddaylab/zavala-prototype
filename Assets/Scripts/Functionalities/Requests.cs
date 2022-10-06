@@ -30,10 +30,13 @@ namespace Zavala.Functionalities
 
         private void Awake() {
             m_activeRequests = new List<UIRequest>();
-            m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
 
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_connectionNodeComponent.NodeEconomyUpdated += HandleNodeEconomyUpdated;
+        }
+
+        private void Start() {
+            m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
         }
 
         public void QueueRequest() {

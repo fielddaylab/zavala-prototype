@@ -65,6 +65,7 @@ namespace Zavala
         }
 
         private bool TryPurchaseHelper(int purchaseCost) {
+            Debug.Log("[ShopMgr] TryPuchaseHelper begin");
             if (purchaseCost <= PlayerMgr.Instance.GetMoney()) {
                 // player has enough money
                 EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(purchaseCost));

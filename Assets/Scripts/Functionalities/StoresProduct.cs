@@ -31,6 +31,9 @@ namespace Zavala.Functionalities
 
         private void Awake() {
             m_storageList = new List<StoredProduct>();
+        }
+
+        private void Start() {
             m_initialQueuePos = GameDB.Instance.UIStoredProductPrefab.transform.localPosition;
         }
 
