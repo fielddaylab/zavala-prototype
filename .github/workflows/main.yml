@@ -13,7 +13,7 @@ on:
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  UNITY_VERSION: 2021.3.11f
+  UNITY_VERSION: 2021.3.11f1
   
 jobs:
   build:
