@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +23,10 @@ namespace Zavala.Functionalities
 
         public event EventHandler StorageExceeded; // when a product would be added but there is no room
         public event EventHandler RemovedStorage;
+        public event EventHandler StorageExpired;
 
+        [SerializeField] private bool m_hasTimeout;
+        [SerializeField] private int m_storageTimeout; // num Cycles
         [SerializeField] private float m_iconOffsetZ = 0.25f;
 
         private List<StoredProduct> m_storageList; // the products in storage
@@ -67,9 +71,15 @@ namespace Zavala.Functionalities
             else {
                 Debug.Log("[StoresProduct] Added to storage list");
                 UIStoredProduct newProductUI = Instantiate(GameDB.Instance.UIStoredProductPrefab, this.transform).GetComponent<UIStoredProduct>();
-                newProductUI.Init(productType);
+                if (m_hasTimeout) {
+                    newProductUI.Init(productType, m_storageTimeout, this.GetComponent<Cycles>());
+                }
+                else {
+                    newProductUI.Init(productType);
+                }
                 StoredProduct newProduct = new StoredProduct(productType, newProductUI);
                 m_storageList.Add(newProduct);
+                newProductUI.TimerExpired += HandleTimerExpired;
 
                 RedistributeQueue();
                 return true;
@@ -83,7 +93,6 @@ namespace Zavala.Functionalities
                 return false;
             }
             else {
-                Debug.Log("[StoresProduct] Removed from list");
                 RemoveFromStorageList(productType);
 
                 RedistributeQueue();
@@ -95,15 +104,23 @@ namespace Zavala.Functionalities
         private void RemoveFromStorageList(Resources.Type productType) {
             for (int i = 0; i < m_storageList.Count; i++) {
                 if (m_storageList[i].Type == productType) {
+                    Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
+
                     Destroy(m_storageList[i].UI.gameObject);
                     m_storageList.RemoveAt(i);
+                    Debug.Log("[StoresProduct] Removed from list");
+
                     return;
                 }
                 // handle soilEnricher case (Manure OR Fertilizer)
                 else if (productType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
+                        Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
+
                         Destroy(m_storageList[i].UI.gameObject);
                         m_storageList.RemoveAt(i);
+                        Debug.Log("[StoresProduct] Removed from list");
+
                         return;
                     }
                 }
@@ -121,5 +138,22 @@ namespace Zavala.Functionalities
                     );
             }
         }
+
+        #region Handlers
+
+        private void HandleTimerExpired(object sender, EventArgs e) {
+            Debug.Log("[StoresProduct] storage expired");
+            StorageExpired?.Invoke(this, EventArgs.Empty);
+
+            if (TryRemoveFromStorage(((UIStoredProduct)sender).GetResourceType())) {
+                RedistributeQueue();
+            }
+            else {
+                Debug.Log("[Skimmer] Unable to remove");
+            }
+        }
+
+
+        #endregion // Handlers
     }
 }

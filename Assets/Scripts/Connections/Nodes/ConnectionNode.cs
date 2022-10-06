@@ -40,7 +40,7 @@ namespace Zavala
 
         // from road to nodes
         private void HandleEconomyUpdated(object sender, EventArgs args) {
-            NodeEconomyUpdated.Invoke(sender, args);
+            NodeEconomyUpdated?.Invoke(sender, args);
         }
 
         #endregion //Handlers

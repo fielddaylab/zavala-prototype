@@ -183,6 +183,26 @@ namespace Zavala.Tiles
             m_pips.Remove(pip);
         }
 
+        public bool TrySkimPip() {
+            if (m_pips.Count == 0) {
+                return false;
+            }
+
+            PhosphPip toRemove = m_pips[0];
+            m_pips.Remove(toRemove);
+            Destroy(toRemove.gameObject);
+
+            Debug.Log("[Tile] Does removed pip exist?");
+            if (m_stagedToAdd.Contains(toRemove)) {
+                Debug.Log("[Tile] Yes, in to add");
+            }
+            if (m_stagedToRemove.Contains(toRemove)) {
+                Debug.Log("[Tile] Yes, in to remove");
+            }
+            OnPhosphRefresh?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
         public int GetPipCount() {
             return m_pips.Count;
         }

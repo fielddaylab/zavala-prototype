@@ -44,7 +44,7 @@ namespace Zavala
         }
 
         private void CloseTimer() {
-            TimerCompleted.Invoke(this, EventArgs.Empty);
+            TimerCompleted?.Invoke(this, EventArgs.Empty);
         }
     }
 }

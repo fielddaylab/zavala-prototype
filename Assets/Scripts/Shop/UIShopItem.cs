@@ -21,6 +21,7 @@ namespace Zavala.Shop.Items
 
         [SerializeField] private Image m_icon;
         [SerializeField] private Text m_costText;
+        [SerializeField] private Text m_labelText;
 
         private ShopItemData m_data;
 
@@ -29,6 +30,7 @@ namespace Zavala.Shop.Items
             m_icon.sprite = data.Icon;
             m_icon.SetNativeSize();
             m_costText.text = "" + data.Cost;
+            m_labelText.text = data.Label;
 
             m_button.onClick.AddListener(delegate { ShopMgr.Instance.SelectShopItem(m_data); });
         }

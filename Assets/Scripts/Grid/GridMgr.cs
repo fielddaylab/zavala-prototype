@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using Zavala.Tiles;
 
@@ -29,13 +30,25 @@ namespace Zavala
             Ray ray;
             RaycastHit hit;
 
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            ray = Camera.main.ScreenPointToRay(pos);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
                 return hit.collider.gameObject.GetComponent<Tile>();
             }
             else {
                 return null;
             }
+        }
+
+        public static Zavala.Tiles.Tile TileAtPos(Vector3 pos) {
+            // raise ray and point downward
+            RaycastHit hit;
+            Vector3 origin = pos + Vector3.up * 50; // arbitrary height above all tiles
+            Vector3 rayDir = (pos - origin).normalized;
+            if (Physics.Raycast(origin, rayDir, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
+                return hit.collider.gameObject.GetComponent<Tile>();
+            }
+
+            return null;
         }
 
         public static List<Tile> GetAdjTiles(Tile centerTile) {

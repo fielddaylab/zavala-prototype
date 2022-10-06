@@ -38,6 +38,10 @@ namespace Zavala
             EventMgr.Instance.LensModeUpdated += HandleLensModeUpdated;
         }
 
+        private void OnDisable() {
+            EventMgr.Instance.LensModeUpdated -= HandleLensModeUpdated;
+        }
+
         #region Handlers
 
         private void HandleLensModeUpdated(object sender, LensModeEventArgs args) {

@@ -29,6 +29,16 @@ namespace Zavala
             m_bloomObj.SetActive(false);
         }
 
+        public bool TrySkim(int skimAmt) {
+            bool skimmedAny = false;
+            for (int p = 0; p < skimAmt; p++) {
+                if (m_tileComponent.TrySkimPip()) {
+                    skimmedAny = true;
+                }
+            }
+            return skimmedAny;
+        }
+
         #region Handlers
 
         private void HandlePhosphRefresh(object sender, EventArgs args) {

@@ -126,7 +126,7 @@ namespace Zavala
         #region Triggers 
 
         public void UpdateEconomy() {
-            EconomyUpdated.Invoke(this, EventArgs.Empty);
+            EconomyUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         public bool TrySummonTruck(Resources.Type resourceType, StoresProduct supplier, Requests recipient) {
