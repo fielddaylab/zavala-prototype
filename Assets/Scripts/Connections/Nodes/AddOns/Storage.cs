@@ -22,7 +22,9 @@ namespace Zavala
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_storesComponent.RemovedStorage += HandleRemovedStorage;
+        }
 
+        private void Start() {
             m_requestsComponent.QueueRequest();
         }
 
