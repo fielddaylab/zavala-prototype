@@ -3403,10 +3403,40 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3933340923403894969, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3933340923403894969, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613357011901648610, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613357011901648610, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613357011901648610, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4634340456602551431, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_Name
       value: PhosphMgr
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055962512674747005, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6715597374621099143, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}

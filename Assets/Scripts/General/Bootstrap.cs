@@ -20,6 +20,7 @@ namespace Zavala
         [SerializeField] private RoadMgr m_roadMgr;
         [SerializeField] private PhosphMgr m_phosphMgr;
         [SerializeField] private LensMgr m_lensMgr;
+        [SerializeField] private SettingsMgr m_settingsMgr;
 
         private void Awake() {
             if (Instance == null) {
@@ -40,10 +41,13 @@ namespace Zavala
             GridMgr.Init();
             m_phosphMgr.Init();
             m_lensMgr.Init();
+            m_settingsMgr.Init();
         }
 
         private void Update() {
+            if (Time.timeScale == 0) { return; }
             m_phosphMgr.SimulateRunoff();
+
         }
     }
 }

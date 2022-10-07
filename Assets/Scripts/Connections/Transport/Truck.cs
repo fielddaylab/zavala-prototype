@@ -39,7 +39,8 @@ namespace Zavala
         [SerializeField] private AudioClip m_engineContinueClip;
         [SerializeField] private AudioClip m_engineEndClip;
 
-        private enum EngineState {
+        private enum EngineState
+        {
             Start,
             Continue,
             End
@@ -72,6 +73,7 @@ namespace Zavala
         }
 
         private void Update() {
+            if (Time.timeScale == 0) { return; }
             TraverseRoad();
             UpdateAudio();
         }
@@ -114,7 +116,7 @@ namespace Zavala
         }
 
         private void UpdateAudio() {
-            switch(m_engineState) {
+            switch (m_engineState) {
                 case EngineState.Start:
                     if (!m_audioSource.isPlaying) {
                         m_engineState = EngineState.Continue;
