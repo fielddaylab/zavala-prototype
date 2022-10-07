@@ -114,6 +114,11 @@ namespace Zavala
         private void HandleCycleCompleted(object sender, EventArgs e) {
             Debug.Log("[City] Cycle completed");
 
+            // Cities grow by 1 when no requests remain at the end of a cycle
+            if (m_requestsComponent.GetNumActiveRequests() == 0) {
+                IncrementPopulation();
+            }
+
             // Cities request 1 milk / population
             for (int i = 0; i < m_population; i++) {
                 m_requestsComponent.QueueRequest();
