@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9147480315904030786}
   - component: {fileID: 2727964874066396847}
   - component: {fileID: 8569882783960909683}
+  - component: {fileID: 8191731850188869162}
   m_Layer: 0
   m_Name: Truck
   m_TagString: Untagged
@@ -51,6 +52,7 @@ MonoBehaviour:
   m_resourceIcon: {fileID: 587461136687814127}
   m_speed: 0.5
   m_leakRate: 0.25
+  m_roadDamage: 5
   m_engineStartClip: {fileID: 8300000, guid: 1913d0a8d95d9d641b3541abe9e8056a, type: 3}
   m_engineContinueClip: {fileID: 8300000, guid: 43b4c583e56bec440a7f4d51d602be94,
     type: 3}
@@ -168,6 +170,23 @@ MonoBehaviour:
     Amt: 2
   - Type: 1
     Amt: 1
+--- !u!114 &8191731850188869162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822282256533157029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 650fd71e01b463c449744ae6c1c90fd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damageMap:
+  - ResourceType: 4
+    Damage: 10
+  - ResourceType: 1
+    Damage: 5
 --- !u!1 &2711059554620248408
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ namespace Zavala
 
         // Road creation
         [SerializeField] private GameObject m_roadPrefab;
+        [SerializeField] private float m_roadStartHealth;
 
         private bool m_startedRoad;
         private List<Tile> m_tracedTiles;
@@ -170,14 +171,15 @@ namespace Zavala
 
         private void FinalizeRoad() {
             // on tiles
-            for (int i = 0; i < m_tracedTiles.Count; i++) {
-                Debug.Log("[RoadMgr] constructing road");
-                m_tracedTiles[i].ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
-                Debug.Log("[RoadMgr] constructing end");
-            }
+            Debug.Log("[RoadMgr] constructing road");
+            // m_tracedTiles[i].ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
+            m_roadInProgress.ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
+            Debug.Log("[RoadMgr] constructing end");
 
             // in connection nodes
             m_roadInProgress.FinalizeConnections();
+
+            m_roadInProgress.SetHealth(m_roadStartHealth);
 
             Debug.Log("[InteractMgr] Road saved!");
         }

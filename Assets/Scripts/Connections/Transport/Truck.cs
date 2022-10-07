@@ -9,12 +9,14 @@ namespace Zavala
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(GeneratesPhosphorus))]
+    [RequireComponent(typeof(DamagesRoad))]
     public class Truck : MonoBehaviour
     {
         [SerializeField] private Canvas m_canvas;
         [SerializeField] private Image m_resourceIcon;
         [SerializeField] private float m_speed;
         [SerializeField] private float m_leakRate;
+        [SerializeField] private float m_roadDamage;
 
         private Resources.Type m_resourceType;
         private Requests m_recipient;
@@ -31,6 +33,7 @@ namespace Zavala
         private bool m_delivered;
 
         private GeneratesPhosphorus m_generatesComponent;
+        private DamagesRoad m_damagesComponent;
 
         // Audio
         private AudioSource m_audioSource;
@@ -70,6 +73,7 @@ namespace Zavala
             m_audioSource.Play();
 
             m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
+            m_damagesComponent = this.GetComponent<DamagesRoad>();
         }
 
         private void Update() {
@@ -90,11 +94,11 @@ namespace Zavala
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     if (!m_delivered) {
                         Deliver();
+                        m_damagesComponent.DamageRoad(m_roadToFollow, m_resourceType);
                         Debug.Log("[Truck] Delivered to final destination");
                     }
                 }
                 else {
-
                     if (m_currRoadSegmentIndex < m_destRoadSegmentIndex) {
                         m_currRoadSegmentIndex++;
                     }

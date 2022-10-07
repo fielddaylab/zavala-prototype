@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Tiles;
@@ -14,8 +15,12 @@ namespace Zavala
 
         //private List<RoadSegment> m_segments;
         private List<Tile> m_segments;
+        private List<GameObject> m_roadPrefabInstances;
 
         public event EventHandler EconomyUpdated;
+
+        private float m_health; // road health
+        private bool m_isUsable;
 
         #region Road Creation
 
@@ -48,12 +53,30 @@ namespace Zavala
             }
         }
 
+        public void SetHealth(float health) {
+            m_health = health;
+        }
+
+        public void ConstructRoad(GameObject roadSegmentPrefab) {
+            m_roadPrefabInstances = new List<GameObject>();
+
+            for (int i = 0; i < m_segments.Count; i++) {
+                GameObject roadPrefabInstance = Instantiate(roadSegmentPrefab, m_segments[i].transform);
+                m_roadPrefabInstances.Add(roadPrefabInstance);
+            }
+
+            m_isUsable = true;
+        }
+
         #endregion // Road Creation
 
         #region Queries
 
         // Wether a connected node has the specified resource in storage
         public bool ResourceOnRoad(Resources.Type resourceType, GameObject requester) {
+            if (!m_isUsable) {
+                return false;
+            }
             if (ResourceInList(m_end1Nodes, resourceType, requester)) {
                 return true;
             }
@@ -65,6 +88,10 @@ namespace Zavala
         }
 
         public StoresProduct GetSupplierOnRoad(Resources.Type resourceType, out Resources.Type foundResourceType) {
+            if (!m_isUsable) {
+                foundResourceType = Resources.Type.None;
+                return null;
+            }
             StoresProduct supplier = GetSupplierInList(m_end1Nodes, resourceType, out foundResourceType);
             if (supplier != null) {
                 return supplier;
@@ -143,6 +170,26 @@ namespace Zavala
             }
             else {
                 return false;
+            }
+        }
+
+        public void ApplyDamage(float dmg) {
+            m_health -= dmg;
+
+            Debug.Log("[Road] Curr health: " + m_health);
+
+            if (m_health <= 0) {
+                m_health = 0;
+
+                // TODO: trigger repair needed
+                Debug.Log("[Road] Road has fallen into disrepair!");
+                for (int i = 0; i < m_roadPrefabInstances.Count; i++) {
+                    Debug.Log("[Road] Hiding road instance...");
+
+                    m_roadPrefabInstances[i].SetActive(false);
+
+                    m_isUsable = false;
+                }
             }
         }
 

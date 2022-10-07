@@ -166,11 +166,6 @@ namespace Zavala.Tiles
             }
         }
 
-        public void ConstructRoad(GameObject roadPrefab) {
-            GameObject itemInstance = Instantiate(roadPrefab, this.transform);
-            m_addOns.Add(itemInstance.GetComponent<AddOn>());
-        }
-
         #endregion // Actions
 
         #region Phosphorus Pips

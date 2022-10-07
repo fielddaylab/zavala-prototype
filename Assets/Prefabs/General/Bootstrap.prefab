@@ -1342,6 +1342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_roadPrefab: {fileID: 6291261227990647790, guid: 7b28fbc3b251d384ead1797c5789d64c,
     type: 3}
+  m_roadStartHealth: 100
 --- !u!1 &6183943566493479881
 GameObject:
   m_ObjectHideFlags: 0
