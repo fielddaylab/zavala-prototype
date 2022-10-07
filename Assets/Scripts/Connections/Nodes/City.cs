@@ -23,6 +23,12 @@ namespace Zavala
 
         [SerializeField] private int m_population;
 
+        [SerializeField] private GameObject m_placeholderBlock;
+
+        private List<GameObject> m_cityBlocks;
+
+        private static float BLOCK_EXTENTS = 0.06f * 4;
+
         private void Awake() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
@@ -35,6 +41,15 @@ namespace Zavala
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
 
             m_firstCycle = true;
+
+            m_cityBlocks = new List<GameObject>();
+            // create city blocks for initial population
+            for (int p = 0; p < m_population; p++) {
+                SpawnNewCityBlock();
+            }
+
+            // hide placeholder block
+            m_placeholderBlock.SetActive(false);
         }
 
         private void StraightToStorage() {
@@ -56,6 +71,43 @@ namespace Zavala
             }
         }
 
+        private void IncrementPopulation() {
+            Debug.Log("[City] Incrementing population...");
+            m_population++;
+
+            SpawnNewCityBlock();
+        }
+
+        private void DecrementPopulation() {
+            Debug.Log("[City] Decrementing population...");
+
+            if (m_population == 0) {
+                Debug.Log("[City] City is already empty!");
+            }
+            else {
+                m_population--;
+
+                // remove most recent district
+                GameObject toRemove = m_cityBlocks[m_cityBlocks.Count - 1];
+                m_cityBlocks.RemoveAt(m_cityBlocks.Count - 1);
+                Destroy(toRemove);
+
+                m_requestsComponent.CancelLastRequest(m_requestsComponent.RequestTypes);
+            }
+        }
+
+        private void SpawnNewCityBlock() {
+            float randX = UnityEngine.Random.Range(-BLOCK_EXTENTS, BLOCK_EXTENTS);
+            float randZ = UnityEngine.Random.Range(-BLOCK_EXTENTS, BLOCK_EXTENTS);
+
+            GameObject newBlock = Instantiate(GameDB.Instance.CityBlockPrefab, this.transform);
+            newBlock.transform.position = new Vector3(
+                newBlock.transform.position.x + randX,
+                newBlock.transform.position.y,
+                newBlock.transform.position.z + randZ
+                );
+            m_cityBlocks.Add(newBlock);
+        }
 
         #region Handlers
 
@@ -83,11 +135,7 @@ namespace Zavala
             Debug.Log("[City] Request expired");
 
             // city shrinks by 1
-            m_population--;
-            if (m_population < 0) {
-                Debug.Log("City is empty!");
-                m_population = 0;
-            }
+            DecrementPopulation();
         }
 
         #endregion // Handlers

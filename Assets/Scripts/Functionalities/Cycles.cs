@@ -10,6 +10,7 @@ namespace Zavala.Functionalities
 
         private UITimer m_uiTimer;
 
+        public event EventHandler PreCycleCompleted; // just before cycle completes
         public event EventHandler CycleCompleted; // when the cycle completes
 
         private void Start() {
@@ -27,6 +28,7 @@ namespace Zavala.Functionalities
         public void CompleteCycle() {
             Destroy(m_uiTimer.gameObject);
             m_uiTimer = null;
+            PreCycleCompleted?.Invoke(this, EventArgs.Empty);
             CycleCompleted?.Invoke(this, EventArgs.Empty);
 
             // if repeating

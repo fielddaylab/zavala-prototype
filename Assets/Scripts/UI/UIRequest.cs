@@ -41,7 +41,7 @@ namespace Zavala
         public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync) {
             InitBasics(resourceType);
 
-            cycleSync.CycleCompleted += HandleCycleCompleted;
+            cycleSync.PreCycleCompleted += HandlePreCycleCompleted;
             m_remainingCycles = requestTimeout;
 
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
@@ -71,7 +71,7 @@ namespace Zavala
         }
         */
 
-        private void HandleCycleCompleted(object sender, EventArgs e) {
+        private void HandlePreCycleCompleted(object sender, EventArgs e) {
             if (m_remainingCycles == -1) {
                 // request has no expiry
                 return;

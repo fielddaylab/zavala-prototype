@@ -37,6 +37,9 @@ namespace Zavala
         [Header("Transport")]
         public GameObject TruckPrefab;
 
+        [Header("Node Prefabs")]
+        public GameObject CityBlockPrefab;
+
         #endregion // Inspector
 
         public void Init() {

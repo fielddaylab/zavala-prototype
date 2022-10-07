@@ -69,6 +69,14 @@ namespace Zavala.Functionalities
             }
         }
 
+        public void CancelLastRequest(List<Resources.Type> resourceTypes) {
+            if (m_activeRequests.Count == 0) { return; }
+
+            for (int i = 0; i < resourceTypes.Count; i++) {
+                CloseRequest(m_activeRequests.Count - 1, resourceTypes[i], false);
+            }
+        }
+
         private void RedistributeQueue() {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 // order requests with newer on the left and older on the right
@@ -117,27 +125,29 @@ namespace Zavala.Functionalities
         public void ReceiveRequestedProduct(Resources.Type resourceType) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
-                    CloseRequest(i, resourceType);
+                    CloseRequest(i, resourceType, true);
                     return;
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher) {
                     if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
-                        CloseRequest(i, resourceType);
+                        CloseRequest(i, resourceType, true);
                         return;
                     }
                 }
             }
         }
 
-        private void CloseRequest(int requestIndex, Resources.Type resourceType) {
-            UIRequest toFulfill = m_activeRequests[requestIndex];
-            toFulfill.TimerExpired -= HandleTimerExpired;
+        private void CloseRequest(int requestIndex, Resources.Type resourceType, bool fulfilled) {
+            UIRequest toClose = m_activeRequests[requestIndex];
+            toClose.TimerExpired -= HandleTimerExpired;
             m_activeRequests.RemoveAt(requestIndex);
-            Destroy(toFulfill.gameObject);
-            // trigger request fulfilled event
-            RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType));
-            Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
+            Destroy(toClose.gameObject);
+            if (fulfilled) {
+                // trigger request fulfilled event
+                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType));
+                Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
+            }
         }
 
         public int GetNumActiveRequests() {
