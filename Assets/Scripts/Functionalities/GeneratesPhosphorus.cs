@@ -8,13 +8,29 @@ namespace Zavala.Functionalities
 {
     public class GeneratesPhosphorus : MonoBehaviour
     {
-        [SerializeField] private int m_amt;
+        [Serializable]
+        private struct ResourceAmtPair
+        {
+            public Resources.Type Type;
+            public int Amt;
 
-        public void GeneratePipBatch(Tile destTile) {
-            Debug.Log("[GeneratesPhosph] Generating " + m_amt + " units");
-            for (int i = 0; i < m_amt; i++) {
-                PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
-                newPip.Init(destTile);
+            public ResourceAmtPair(Resources.Type type, int amt) {
+                Type = type;
+                Amt = amt;
+            }
+        }
+
+        [SerializeField] private List<ResourceAmtPair> m_resourceAmtMap;
+
+        public void GeneratePipBatch(Tile destTile, Resources.Type resourceType) {
+            for (int p = 0; p < m_resourceAmtMap.Count; p++) {
+                if (m_resourceAmtMap[p].Type == resourceType) {
+                    Debug.Log("[GeneratesPhosph] Generating " + m_resourceAmtMap[p].Amt + " units");
+                    for (int i = 0; i < m_resourceAmtMap[p].Amt; i++) {
+                        PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
+                        newPip.Init(destTile);
+                    }
+                }
             }
         }
     }

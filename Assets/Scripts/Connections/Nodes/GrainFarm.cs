@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
+using Zavala.Resources;
+using Zavala.Tiles;
 
 namespace Zavala
 {
@@ -10,7 +12,9 @@ namespace Zavala
     [RequireComponent(typeof(Requests))]
     [RequireComponent(typeof(Produces))]
     [RequireComponent(typeof(StoresProduct))]
+    [RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Cycles))]
+    [RequireComponent(typeof(Tile))]
     public class GrainFarm : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -18,6 +22,8 @@ namespace Zavala
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
+        private GeneratesPhosphorus m_generatesComponent;
+        private Tile m_tileComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -29,6 +35,8 @@ namespace Zavala
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
+            m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
+            m_tileComponent = this.GetComponent<Tile>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
@@ -54,6 +62,10 @@ namespace Zavala
             }
         }
 
+        private void GenerateRunoff(Resources.Type resourceType) {
+            m_generatesComponent.GeneratePipBatch(m_tileComponent, resourceType);
+        }
+
 
         #region Handlers
 
@@ -69,13 +81,15 @@ namespace Zavala
             }
         }
 
-        private void HandleRequestFulfilled(object sender, EventArgs e) {
+        private void HandleRequestFulfilled(object sender, ResourceEventArgs args) {
             Debug.Log("[GrainFarm] Request fulfilled");
 
             StraightToStorage();
+
+            GenerateRunoff(args.ResourceType);
         }
 
-        private void HandleRequestExpired(object sender, EventArgs e) {
+        private void HandleRequestExpired(object sender, ResourceEventArgs args) {
             Debug.Log("[GrainFarm] Request expired");
             Debug.Log("[GrainFarm] Attempting to purchase import...");
 

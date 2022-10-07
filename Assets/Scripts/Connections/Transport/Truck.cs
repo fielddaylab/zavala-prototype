@@ -105,7 +105,7 @@ namespace Zavala
                     // if per time, reference cycles component
                     // if per tile, 25% chance per tile
                     if (Random.Range(0.0f, 1.0f) <= m_leakRate) {
-                        m_generatesComponent.GeneratePipBatch(m_immediateNextDest);
+                        m_generatesComponent.GeneratePipBatch(m_immediateNextDest, m_resourceType);
                     }
 
                     Debug.Log("[Truck] Updated immediate next destination");

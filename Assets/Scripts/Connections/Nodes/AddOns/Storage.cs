@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
+using Zavala.Resources;
 
 namespace Zavala
 {
@@ -49,7 +50,7 @@ namespace Zavala
             }
         }
 
-        private void HandleRemovedStorage(object sender, EventArgs e) {
+        private void HandleRemovedStorage(object sender, ResourceEventArgs e) {
             Debug.Log("[Storage] Resource removed");
 
             // add request

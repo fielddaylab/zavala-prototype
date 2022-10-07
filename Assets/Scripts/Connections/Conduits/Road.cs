@@ -64,12 +64,12 @@ namespace Zavala
             return false;
         }
 
-        public StoresProduct GetSupplierOnRoad(Resources.Type resourceType) {
-            StoresProduct supplier = GetSupplierInList(m_end1Nodes, resourceType);
+        public StoresProduct GetSupplierOnRoad(Resources.Type resourceType, out Resources.Type foundResourceType) {
+            StoresProduct supplier = GetSupplierInList(m_end1Nodes, resourceType, out foundResourceType);
             if (supplier != null) {
                 return supplier;
             }
-            supplier = GetSupplierInList(m_end2Nodes, resourceType);
+            supplier = GetSupplierInList(m_end2Nodes, resourceType, out foundResourceType);
             if (supplier != null) {
                 return supplier;
             }
@@ -84,20 +84,22 @@ namespace Zavala
         private bool ResourceInList(List<ConnectionNode> nodeList, Resources.Type resourceType, GameObject requester) {
             for (int i = 0; i < nodeList.Count; i++) {
                 StoresProduct storeComponent = nodeList[i].gameObject.GetComponent<StoresProduct>();
-                if (storeComponent != null && storeComponent.StorageContains(resourceType) && storeComponent.gameObject != requester) {
+                Resources.Type foundResourceType;
+                if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
                     return true;
                 }
             }
             return false;
         }
 
-        private StoresProduct GetSupplierInList(List<ConnectionNode> nodeList, Resources.Type resourceType) {
+        private StoresProduct GetSupplierInList(List<ConnectionNode> nodeList, Resources.Type resourceType, out Resources.Type foundResourceType) {
             for (int i = 0; i < nodeList.Count; i++) {
                 StoresProduct storeComponent = nodeList[i].gameObject.GetComponent<StoresProduct>();
-                if (storeComponent != null && storeComponent.StorageContains(resourceType)) {
+                if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType)) {
                     return storeComponent;
                 }
             }
+            foundResourceType = Resources.Type.None;
             return null;
         }
 

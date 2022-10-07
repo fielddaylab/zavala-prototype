@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
+using Zavala.Resources;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -55,9 +56,9 @@ namespace Zavala
             return skimmedAny;
         }
 
-        private void LeakBack() {
+        private void LeakBack(Resources.Type resourceType) {
             Tile tileUnderneath = GridMgr.TileAtPos(this.transform.position);
-            m_generatesComponent.GeneratePipBatch(tileUnderneath);
+            m_generatesComponent.GeneratePipBatch(tileUnderneath, resourceType);
         }
 
         private void StraightToStorage() {
@@ -85,9 +86,9 @@ namespace Zavala
             }
         }
 
-        private void HandleStorageExpired(object sender, EventArgs args) {
+        private void HandleStorageExpired(object sender, ResourceEventArgs args) {
             Debug.Log("[Skimmer] storage expired");
-            LeakBack();
+            LeakBack(args.ResourceType);
         }
 
         #endregion // Handlers

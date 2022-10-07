@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Mono.Cecil;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using UnityEngine;
+using Zavala.Resources;
 
 namespace Zavala.Functionalities
-{
+{ 
     // requests are usually created on a cycle
     // once the request is created, individual requests have individual timers
     [RequireComponent(typeof(ConnectionNode))]
@@ -19,8 +21,8 @@ namespace Zavala.Functionalities
 
         [SerializeField] private float m_iconOffsetZ = 0.25f;
 
-        public event EventHandler RequestFulfilled;
-        public event EventHandler RequestExpired;
+        public event EventHandler<ResourceEventArgs> RequestFulfilled;
+        public event EventHandler<ResourceEventArgs> RequestExpired;
 
         private List<UIRequest> m_activeRequests;
 
@@ -95,9 +97,10 @@ namespace Zavala.Functionalities
                     if (connectedRoads[roadIndex].ResourceOnRoad(resourceType, this.gameObject)) {
                         // summon a truck from road fleet with this as recipient
                         // remove from supplier
-                        StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType);
+                        Resources.Type foundResourceType; // the specific type provided by this supplier
+                        StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType, out foundResourceType);
 
-                        if (connectedRoads[roadIndex].TrySummonTruck(resourceType, supplier, this)) {
+                        if (connectedRoads[roadIndex].TrySummonTruck(foundResourceType, supplier, this)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
@@ -114,17 +117,27 @@ namespace Zavala.Functionalities
         public void ReceiveRequestedProduct(Resources.Type resourceType) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
-                    UIRequest toFulfill = m_activeRequests[i];
-                    toFulfill.TimerExpired -= HandleTimerExpired;
-                    m_activeRequests.RemoveAt(i);
-                    Destroy(toFulfill.gameObject);
-                    // trigger request fulfilled event
-                    // TODO: pass the resource type through this event
-                    RequestFulfilled?.Invoke(this, EventArgs.Empty);
-                    Debug.Log("[Requests] Request fulfilled!");
+                    CloseRequest(i, resourceType);
                     return;
                 }
+                // handle SoilEnricher case (Manure OR Fertilizer)
+                else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher) {
+                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
+                        CloseRequest(i, resourceType);
+                        return;
+                    }
+                }
             }
+        }
+
+        private void CloseRequest(int requestIndex, Resources.Type resourceType) {
+            UIRequest toFulfill = m_activeRequests[requestIndex];
+            toFulfill.TimerExpired -= HandleTimerExpired;
+            m_activeRequests.RemoveAt(requestIndex);
+            Destroy(toFulfill.gameObject);
+            // trigger request fulfilled event
+            RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType));
+            Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
         }
 
         public int GetNumActiveRequests() {
@@ -134,11 +147,12 @@ namespace Zavala.Functionalities
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
+            UIRequest expiredRequest = (UIRequest)sender;
             Debug.Log("[Requests] request expired");
-            RequestExpired?.Invoke(this, EventArgs.Empty);
+            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType()));
 
-            m_activeRequests.Remove((UIRequest)sender);
-            Destroy(((UIRequest)sender).gameObject);
+            m_activeRequests.Remove(expiredRequest);
+            Destroy(expiredRequest.gameObject);
             RedistributeQueue();
         }
 

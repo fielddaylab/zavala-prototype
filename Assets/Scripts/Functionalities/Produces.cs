@@ -16,6 +16,15 @@ namespace Zavala.Resources
         Manure,
         SoilEnricher
     }
+
+    public class ResourceEventArgs : EventArgs
+    {
+        public Resources.Type ResourceType { get; set; }
+
+        public ResourceEventArgs(Resources.Type resourceType) {
+            ResourceType = resourceType;
+        }
+    }
 }
 
 namespace Zavala.Functionalities

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
+using Zavala.Resources;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -12,7 +13,7 @@ namespace Zavala
     [RequireComponent(typeof(Produces))]
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
-    [RequireComponent(typeof(GeneratesPhosphorus))]
+    //[RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Tile))]
     public class DairyFarm : MonoBehaviour
     {
@@ -21,7 +22,7 @@ namespace Zavala
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
-        private GeneratesPhosphorus m_generatesComponent;
+        //private GeneratesPhosphorus m_generatesComponent;
         private Tile m_tileComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
@@ -34,7 +35,7 @@ namespace Zavala
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
-            m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
+            //m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
             m_tileComponent = this.GetComponent<Tile>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
@@ -74,18 +75,17 @@ namespace Zavala
                 StraightToStorage();
                 m_firstCycle = false;
             }
-
-            // Dairy farms produce phosph
-            m_generatesComponent.GeneratePipBatch(m_tileComponent);
         }
 
-        private void HandleRequestFulfilled(object sender, EventArgs e) {
+        private void HandleRequestFulfilled(object sender, ResourceEventArgs args) {
             Debug.Log("[DiaryFarm] Request fulfilled");
 
             StraightToStorage();
+
+            // m_generatesComponent.GeneratePipBatch(m_tileComponent, args.ResourceType);
         }
 
-        private void HandleRequestExpired(object sender, EventArgs e) {
+        private void HandleRequestExpired(object sender, EventArgs args) {
             Debug.Log("[DairyFarm] Request expired");
             Debug.Log("[DairyFarm] Attempting to purchase import...");
 

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
+using Zavala.Resources;
 
 namespace Zavala.Functionalities
 {
@@ -22,8 +23,8 @@ namespace Zavala.Functionalities
         public int MaxProducts; // the max number of products this can store
 
         public event EventHandler StorageExceeded; // when a product would be added but there is no room
-        public event EventHandler RemovedStorage;
-        public event EventHandler StorageExpired;
+        public event EventHandler<ResourceEventArgs> RemovedStorage;
+        public event EventHandler<ResourceEventArgs> StorageExpired;
 
         [SerializeField] private bool m_hasTimeout;
         [SerializeField] private int m_storageTimeout; // num Cycles
@@ -41,20 +42,23 @@ namespace Zavala.Functionalities
             m_initialQueuePos = GameDB.Instance.UIStoredProductPrefab.transform.localPosition;
         }
 
-        public bool StorageContains(Resources.Type resourceType) {
+        public bool StorageContains(Resources.Type resourceType, out Resources.Type foundResourceType) {
             Debug.Log("[StoresProduct] Checking if storage contains " + resourceType);
             for (int i = 0; i < m_storageList.Count; i++) {
                 Debug.Log("[StoresProduct] store component type: " + m_storageList[i].Type);
                 if (m_storageList[i].Type == resourceType) {
+                    foundResourceType = resourceType;
                     return true;
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (resourceType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
+                        foundResourceType = m_storageList[i].Type;
                         return true;
                     }
                 }
             }
+            foundResourceType = Resources.Type.None;
             return false;
         }
 
@@ -96,7 +100,7 @@ namespace Zavala.Functionalities
                 RemoveFromStorageList(productType);
 
                 RedistributeQueue();
-                RemovedStorage?.Invoke(this, EventArgs.Empty);
+                RemovedStorage?.Invoke(this, new ResourceEventArgs(productType));
                 return true;
             }
         }
@@ -142,10 +146,11 @@ namespace Zavala.Functionalities
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
+            UIStoredProduct expiredProduct = (UIStoredProduct)sender;
             Debug.Log("[StoresProduct] storage expired");
-            StorageExpired?.Invoke(this, EventArgs.Empty);
+            StorageExpired?.Invoke(this, new ResourceEventArgs(expiredProduct.GetResourceType()));
 
-            if (TryRemoveFromStorage(((UIStoredProduct)sender).GetResourceType())) {
+            if (TryRemoveFromStorage(expiredProduct.GetResourceType())) {
                 RedistributeQueue();
             }
             else {
