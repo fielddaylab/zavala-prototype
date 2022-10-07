@@ -757,7 +757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_movePercent: 40
-  m_tickTime: 5
+  m_tickTime: 4
 --- !u!1 &4833446447728583819
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
@@ -15,8 +16,11 @@ namespace Zavala
         [SerializeField] private float m_tickTime; // time between simualtion ticks
         private float m_tickTimer;
 
+        private bool m_waterIteration;
+
         public void Init() {
             m_tickTimer = 0;
+            m_waterIteration = false;
         }
 
         public void SimulateRunoff() {
@@ -24,13 +28,29 @@ namespace Zavala
                 Debug.Log("[PhosphMgr] Start Runoff Tick");
                 List<Tile> allTiles = GridMgr.GetAllTiles();
 
-                // iterate through all tiles and allocate pip movement according to elevations
-                StageMovement(allTiles);
+                if (m_waterIteration) {
+                    Debug.Log("[PhosphMgr] Tick type is Water");
+                    List<Tile> waterTiles = allTiles.FindAll(t => t.GetComponent<Water>() != null);
 
-                // apply pip movement
-                ApplyMovement(allTiles);
+                    // iterate through all tiles and allocate pip movement according to elevations
+                    StageMovement(waterTiles);
 
+                    // apply pip movement
+                    ApplyMovement(waterTiles);
+                }
+                else {
+                    Debug.Log("[PhosphMgr] Tick type is All");
+
+                    // iterate through all tiles and allocate pip movement according to elevations
+                    StageMovement(allTiles);
+
+                    // apply pip movement
+                    ApplyMovement(allTiles);
+                }
                 m_tickTimer = m_tickTime;
+
+                // toggle between all and only water
+                m_waterIteration = !m_waterIteration;
             }
             else {
                 m_tickTimer = Mathf.Max(m_tickTimer - Time.deltaTime, 0);
