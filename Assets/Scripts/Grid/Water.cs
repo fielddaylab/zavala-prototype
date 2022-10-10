@@ -39,6 +39,10 @@ namespace Zavala
             return skimmedAny;
         }
 
+        public bool IsInBloom() {
+            return m_tileComponent.GetPipCount() >= m_bloomThreshold;
+        }
+
         #region Handlers
 
         private void HandlePhosphRefresh(object sender, EventArgs args) {

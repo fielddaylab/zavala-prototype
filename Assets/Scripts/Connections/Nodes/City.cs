@@ -11,6 +11,7 @@ namespace Zavala
     [RequireComponent(typeof(Produces))]
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
+    [RequireComponent(typeof(BloomAffectable))]
     public class City : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -18,6 +19,7 @@ namespace Zavala
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
+        private BloomAffectable m_bloomAffectableComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -35,10 +37,12 @@ namespace Zavala
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
+            m_bloomAffectableComponent = this.GetComponent<BloomAffectable>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
+            m_bloomAffectableComponent.BloomEffect += HandleBloomEffect;
 
             m_firstCycle = true;
 
@@ -111,7 +115,7 @@ namespace Zavala
 
         #region Handlers
 
-        private void HandleCycleCompleted(object sender, EventArgs e) {
+        private void HandleCycleCompleted(object sender, EventArgs args) {
             Debug.Log("[City] Cycle completed");
 
             // Cities grow by 1 when no requests remain at the end of a cycle
@@ -130,16 +134,22 @@ namespace Zavala
             }
         }
 
-        private void HandleRequestFulfilled(object sender, EventArgs e) {
+        private void HandleRequestFulfilled(object sender, EventArgs args) {
             Debug.Log("[City] Request fulfilled");
 
             StraightToStorage();
         }
 
-        private void HandleRequestExpired(object sender, EventArgs e) {
+        private void HandleRequestExpired(object sender, EventArgs args) {
             Debug.Log("[City] Request expired");
 
             // city shrinks by 1
+            DecrementPopulation();
+        }
+
+        private void HandleBloomEffect(object sender, EventArgs args) {
+            Debug.Log("[City] Bloom effect triggered");
+
             DecrementPopulation();
         }
 
