@@ -244,6 +244,7 @@ MonoBehaviour:
   HoverMesh: {fileID: 4300000, guid: 71982be591066184d958695cbf3d4875, type: 3}
   TruckPrefab: {fileID: 822282256533157029, guid: 34a476f04411dcc4d831fdcd43f0ffbb,
     type: 3}
+  RoadDamagedColor: {r: 1, g: 0, b: 0, a: 1}
   CityBlockPrefab: {fileID: 6221617669061876131, guid: 873498864247f09489ee0c7d3c217656,
     type: 3}
 --- !u!1 &809039409424542029

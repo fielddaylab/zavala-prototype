@@ -20,12 +20,17 @@ namespace Zavala
 
         public event EventHandler EconomyUpdated;
 
-        private float m_health; // road health
+        private float m_baseHealth; // road health
+        private float m_currHealth; // road health
         private bool m_isUsable;
+        private bool m_inDisrepair;
+
+        [SerializeField] private float m_disrepairThreshold;
 
 
         private void Awake() {
             m_roadSegments = new List<RoadSegment>();
+            m_inDisrepair = false;
         }
 
         #region Road Creation
@@ -62,7 +67,7 @@ namespace Zavala
         }
 
         public void SetHealth(float health) {
-            m_health = health;
+            m_baseHealth = m_currHealth = health;
         }
 
         public void NormalizeSegmentHeights() {
@@ -342,22 +347,33 @@ namespace Zavala
         }
 
         public void ApplyDamage(float dmg) {
-            m_health -= dmg;
+            m_currHealth -= dmg;
 
-            Debug.Log("[Road] Curr health: " + m_health);
+            Debug.Log("[Road] Curr health: " + m_currHealth);
+            if (!m_inDisrepair && (m_currHealth < m_disrepairThreshold * m_baseHealth)) {
+                m_inDisrepair = true;
 
-            if (m_health <= 0) {
-                m_health = 0;
+                for (int i = 0; i < m_roadSegments.Count; i++) {
+                    m_roadSegments[i].Disrepair();
+                }
 
                 // TODO: trigger repair needed
                 Debug.Log("[Road] Road has fallen into disrepair!");
+            }
+            if (m_currHealth <= 0) {
+                m_currHealth = 0;
+
+                Debug.Log("[Road] Road is completely borked!");
                 for (int i = 0; i < m_roadSegments.Count; i++) {
-                    Debug.Log("[Road] Hiding road instance...");
+                    Debug.Log("[Road] Destroying road instance...");
 
-                    m_roadSegments[i].gameObject.SetActive(false);
-
-                    m_isUsable = false;
+                    GameObject toDestroy = m_roadSegments[i].gameObject;
+                    Destroy(toDestroy);
                 }
+
+                m_isUsable = false;
+
+                m_roadSegments.Clear();
             }
         }
 

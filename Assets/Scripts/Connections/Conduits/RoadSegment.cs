@@ -12,6 +12,8 @@ namespace Zavala
         [HideInInspector] public bool MalleableDir = false;
         [HideInInspector] public RoadSegmentType SegmentType = RoadSegmentType.Straight;
 
+        private bool m_inDisrepair;
+
         private static int HEX_ANGLES = 60;
         private static int UP_OFFSET = 90;
 
@@ -104,6 +106,14 @@ namespace Zavala
             SegmentType = newType;
             Sprite newSprite = RoadMgr.Instance.GetRoadSprite(newType);
             m_sr.sprite = newSprite;
+        }
+
+        public void Disrepair() {
+            m_sr.color = GameDB.Instance.RoadDamagedColor;
+        }
+
+        public void Repair() {
+            m_sr.color = Color.white;
         }
 
     }

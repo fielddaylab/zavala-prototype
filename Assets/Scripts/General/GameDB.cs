@@ -36,6 +36,7 @@ namespace Zavala
 
         [Header("Transport")]
         public GameObject TruckPrefab;
+        public Color RoadDamagedColor;
 
         [Header("Node Prefabs")]
         public GameObject CityBlockPrefab;
