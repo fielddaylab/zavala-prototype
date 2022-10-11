@@ -11,6 +11,7 @@ namespace Zavala.Roads
         End,
         Straight,
         Bend,
+        TightBend,
         Roundabout
     }
 
@@ -31,7 +32,9 @@ namespace Zavala.Roads
         [SerializeField] private GameObject m_roadPrefab;
         [SerializeField] private float m_roadStartHealth;
 
-        [SerializeField] private GameObject m_roadEndPrefab, m_roadStraightPrefab, m_roadBendPrefab, m_roadRoundaboutPrefab;
+        [SerializeField] private GameObject m_roadSegmentPrefab;
+        [SerializeField] private Sprite m_roadStraightSprite, m_roadEndSprite, m_roadBendSprite, m_roadTightBendSprite;
+        //[SerializeField] private GameObject m_roadEndPrefab, m_roadStraightPrefab, m_roadBendPrefab, m_roadRoundaboutPrefab;
 
         private bool m_startedRoad;
         private List<Tile> m_tracedTiles;
@@ -77,7 +80,7 @@ namespace Zavala.Roads
                     m_lastKnownTile = currTile;
 
                     // place an initial road segment prefab
-                    m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, true, null);
+                    m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, true);
 
                     Debug.Log("Started building road");
                 }
@@ -102,6 +105,14 @@ namespace Zavala.Roads
                             m_tracedTiles.RemoveAt(i);
                             m_roadInProgress.RemoveRoadSegmentInstance(i);
                         }
+
+                        // reset latest tile to straight type (unless end)
+                        if (m_roadInProgress.GetSegmentType(m_tracedTiles.Count - 1) == RoadSegmentType.End) {
+                            m_roadInProgress.ConvertRoadSegment(RoadSegmentType.End, m_tracedTiles.Count - 1);
+                        }
+                        else {
+                            m_roadInProgress.ConvertRoadSegment(RoadSegmentType.Straight, m_tracedTiles.Count - 1);
+                        }
                         Debug.Log("[InteractMgr] rewound to index " + rewindIndex);
                     }
                     else {
@@ -116,7 +127,7 @@ namespace Zavala.Roads
 
                         Tile prevTile = m_tracedTiles[m_tracedTiles.Count - 1];
                         m_tracedTiles.Add(currTile);
-                        m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, false, prevTile.gameObject);
+                        m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, false);
                         Debug.Log("[InteractMgr] added new tile to road path");
                     }
                     m_lastKnownTile = currTile;
@@ -158,7 +169,7 @@ namespace Zavala.Roads
 
                 // convert last road segment to an end (or roundabout if 1)
                 RoadSegmentType endType = m_tracedTiles.Count == 1 ? RoadSegmentType.Roundabout : RoadSegmentType.End;
-                m_roadInProgress.ConvertRoadSegment(m_tracedTiles[m_tracedTiles.Count - 1].gameObject, endType, m_tracedTiles.Count - 1);
+                m_roadInProgress.ConvertRoadSegment(endType, m_tracedTiles.Count - 1);
 
                 // save road segments
                 m_roadInProgress.SetSegments(m_tracedTiles);
@@ -213,6 +224,8 @@ namespace Zavala.Roads
 
             m_roadInProgress.SetHealth(m_roadStartHealth);
 
+            //m_roadInProgress.NormalizeSegmentHeights();
+
             Debug.Log("[InteractMgr] Road saved!");
         }
 
@@ -220,20 +233,23 @@ namespace Zavala.Roads
 
         #region External
 
-        public GameObject GetRoadPrefab(RoadSegmentType segmentType) {
+        public Sprite GetRoadSprite(RoadSegmentType segmentType) {
             switch(segmentType) {
                 case RoadSegmentType.End:
-                    return m_roadEndPrefab;
+                    return m_roadEndSprite;
                 case RoadSegmentType.Straight:
-                    return m_roadStraightPrefab;
+                    return m_roadStraightSprite;
                 case RoadSegmentType.Bend:
-                    return m_roadBendPrefab; // <- disabled until we can get a tighter turn mesh
-                    //return m_roadRoundaboutPrefab;
-                case RoadSegmentType.Roundabout:
-                    return m_roadRoundaboutPrefab;
+                    return m_roadBendSprite;
+                case RoadSegmentType.TightBend:
+                    return m_roadTightBendSprite;
                 default:
                     return null;
             }
+        }
+
+        public GameObject GetRoadSegmentPrefab() {
+            return m_roadSegmentPrefab;
         }
 
         #endregion // External

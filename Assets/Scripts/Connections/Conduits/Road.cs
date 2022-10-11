@@ -23,6 +23,7 @@ namespace Zavala
         private float m_health; // road health
         private bool m_isUsable;
 
+
         private void Awake() {
             m_roadSegments = new List<RoadSegment>();
         }
@@ -64,19 +65,23 @@ namespace Zavala
             m_health = health;
         }
 
-        /*
-        public void ConstructRoad(GameObject roadSegmentPrefab) {
-            for (int i = 0; i < m_segments.Count; i++) {
-                GameObject roadPrefabInstance = Instantiate(roadSegmentPrefab, m_segments[i].transform);
-                m_roadPrefabInstances.Add(roadPrefabInstance);
+        public void NormalizeSegmentHeights() {
+            float highestHeight = 0;
+            for (int i = 0; i < m_roadSegments.Count; i++) {
+                if (m_roadSegments[i].gameObject.transform.position.y > highestHeight) {
+                    highestHeight = m_roadSegments[i].gameObject.transform.position.y;
+                }
             }
 
-            m_isUsable = true;
+            for (int i = 0; i < m_roadSegments.Count; i++) {
+                Vector3 newPos = m_roadSegments[i].gameObject.transform.position;
+                newPos.y = highestHeight;
+                m_roadSegments[i].gameObject.transform.position = newPos;
+            }
         }
-        */
 
         // prev tile exists
-        public void ConstructRoadSegmentInstance(GameObject tileUnderRoadObj, bool malleableDir, GameObject prevTileObj) {
+        public void ConstructRoadSegmentInstance(GameObject tileUnderRoadObj, bool malleableDir) {
             RoadSegment prevSegment;
             if (m_roadSegments.Count > 0) {
                 prevSegment = m_roadSegments[m_roadSegments.Count - 1];
@@ -85,22 +90,22 @@ namespace Zavala
                 prevSegment = null;
             }
             RoadSegmentType placeType = prevSegment == null ? RoadSegmentType.End : RoadSegmentType.Straight;
-            GameObject toPlace = RoadMgr.Instance.GetRoadPrefab(placeType);
+            GameObject toPlace = RoadMgr.Instance.GetRoadSegmentPrefab();
 
             RoadSegment roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
             roadSegmentInstance.MalleableDir = malleableDir;
-            roadSegmentInstance.SegmentType = placeType;
+            roadSegmentInstance.ModifySegmentType(placeType);
 
             if (prevSegment != null) {
                 // orient prev tile if malleable
                 if (prevSegment.MalleableDir) {
-                    RoadBuildDir prevDir = CalcPrevBuildDirByPos(prevSegment.transform.position, roadSegmentInstance.transform.position);
-                    prevSegment.ModifyBuildDir(prevDir);
+                    RoadBuildDir prevDir = CalcBuildDirByPos(prevSegment.transform.position, roadSegmentInstance.transform.position);
+                    prevSegment.ModifyBuildDir(prevDir, prevDir);
                 }
 
                 // orient this tile
-                RoadBuildDir currDir = CalcCurrBuildDirByPos(prevSegment.transform.position, roadSegmentInstance.transform.position);
-                roadSegmentInstance.ModifyBuildDir(currDir);
+                RoadBuildDir currDir = CalcBuildDirByPos(prevSegment.transform.position, roadSegmentInstance.transform.position);
+                roadSegmentInstance.ModifyBuildDir(currDir, currDir);
 
                 // determine prev tile type
                 if (prevSegment.SegmentType != RoadSegmentType.End) {
@@ -111,15 +116,15 @@ namespace Zavala
                         // straight
                         if (prevSegment.SegmentType != RoadSegmentType.Straight) {
                             // convert
-                            ConvertRoadSegment(prevTileObj, RoadSegmentType.Straight, m_roadSegments.Count - 1);
+                            ConvertRoadSegment(RoadSegmentType.Straight, m_roadSegments.Count - 1, currDir);
                         }
                     }
                     else if (Mathf.Abs((int)currDir - (int)prevSegment.BuildDir) == 2 || Mathf.Abs((int)currDir - (int)prevSegment.BuildDir) == 4) {
                         Debug.Log("[Curving] Road should be tight curve");
                         // tight corner -- roundabout for now
-                        if (prevSegment.SegmentType != RoadSegmentType.Roundabout) {
+                        if (prevSegment.SegmentType != RoadSegmentType.TightBend) {
                             // convert
-                            ConvertRoadSegment(prevTileObj, RoadSegmentType.Roundabout, m_roadSegments.Count - 1);
+                            ConvertRoadSegment(RoadSegmentType.TightBend, m_roadSegments.Count - 1, currDir);
                         }
                     }
                     else {
@@ -127,7 +132,7 @@ namespace Zavala
                         Debug.Log("[Curving] Road should be curved");
                         if (prevSegment.SegmentType != RoadSegmentType.Bend) {
                             // convert
-                            ConvertRoadSegment(prevTileObj, RoadSegmentType.Bend, m_roadSegments.Count - 1);
+                            ConvertRoadSegment(RoadSegmentType.Bend, m_roadSegments.Count - 1, currDir);
                         }
                     }
                 }
@@ -136,13 +141,7 @@ namespace Zavala
             m_roadSegments.Add(roadSegmentInstance);
         }
 
-        private RoadBuildDir CalcPrevBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
-            Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
-
-            return CalcBuildDirFromVector(dirVector);
-        }
-
-        private RoadBuildDir CalcCurrBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
+        private RoadBuildDir CalcBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
             Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
 
             return CalcBuildDirFromVector(dirVector);
@@ -181,22 +180,54 @@ namespace Zavala
             }
         }
 
-        public void ConvertRoadSegment(GameObject tileUnderRoadObj, RoadSegmentType placeType, int roadSegmentIndex) {
-            GameObject toConvert = m_roadSegments[roadSegmentIndex].gameObject;
-            RoadBuildDir existingDir = toConvert.GetComponent<RoadSegment>().BuildDir;
-            m_roadSegments.RemoveAt(m_roadSegments.Count - 1);
-            Destroy(toConvert);
+        public RoadSegmentType GetSegmentType(int roadSegmentIndex) {
+            return m_roadSegments[roadSegmentIndex].SegmentType;
+        }
 
-            GameObject toPlace = RoadMgr.Instance.GetRoadPrefab(placeType);
+        public void OrientRoadSegment(int roadSegmentIndex, RoadBuildDir dir) {
+            m_roadSegments[roadSegmentIndex].ModifyBuildDir(dir, dir);
+        }
 
-            RoadSegment roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
+        public void ConvertRoadSegment(RoadSegmentType placeType, int roadSegmentIndex) {
+            RoadSegment toConvert = m_roadSegments[roadSegmentIndex];
+
+            RoadBuildDir prevDir;
+            RoadBuildDir newDir;
+            if (m_roadSegments.Count > 1) {
+                prevDir = m_roadSegments[roadSegmentIndex - 1].BuildDir;
+                newDir = prevDir;
+            }
+            else {
+                prevDir = toConvert.BuildDir;
+                newDir = 0;
+            }
+
+            if (placeType == RoadSegmentType.End && m_roadSegments.Count > 1) {
+                // flip dir for final endpoint
+                newDir = (RoadBuildDir)(((int)newDir + 3) % 6);
+            }
+            toConvert.ModifySegmentType(placeType);
+            toConvert.ModifyBuildDir(newDir, prevDir);
+        }
+
+        public void ConvertRoadSegment(RoadSegmentType placeType, int roadSegmentIndex, RoadBuildDir newDir) {
+            RoadSegment toConvert = m_roadSegments[roadSegmentIndex];
+
+            RoadBuildDir prevDir = toConvert.BuildDir;
+
+            //m_roadSegments.RemoveAt(m_roadSegments.Count - 1);
+            //Destroy(toConvert);
+
+            //GameObject toPlace = RoadMgr.Instance.GetRoadPrefab(placeType);
+
+            //RoadSegment roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
             if (placeType == RoadSegmentType.End) {
                 // flip dir for final endpoint
-                existingDir = (RoadBuildDir)(((int)existingDir + 3) % 6);
+                newDir = (RoadBuildDir)(((int)newDir + 3) % 6);
             }
-            roadSegmentInstance.SegmentType = placeType;
-            roadSegmentInstance.ModifyBuildDir(existingDir);
-            m_roadSegments.Add(roadSegmentInstance);
+            toConvert.ModifySegmentType(placeType);
+            toConvert.ModifyBuildDir(newDir, prevDir);
+            //m_roadSegments.Add(roadSegmentInstance);
         }
 
         public void RemoveRoadSegmentInstance(int segmentIndex) {
