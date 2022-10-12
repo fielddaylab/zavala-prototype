@@ -161,9 +161,11 @@ namespace Zavala.Tiles
 
         public void TryRemoveAddOn(AddOn addOn) {
             if (!m_addOns.Contains(addOn)) {
+                Debug.Log("[Tile] No AddOns to remove");
                 return;
             }
 
+            Debug.Log("[Tile] Removed an AddOn");
             m_addOns.Remove(addOn);
         }
 

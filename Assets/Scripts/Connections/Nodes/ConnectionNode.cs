@@ -36,6 +36,12 @@ namespace Zavala
             }
         }
 
+        public void RemoveFromRoad() {
+            foreach(Road road in m_connectedRoads) {
+                road.RemoveConnection(this);
+            }
+        }
+
         #region Handlers
 
         // from road to nodes

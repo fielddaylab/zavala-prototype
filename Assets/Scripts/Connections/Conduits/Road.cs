@@ -327,6 +327,15 @@ namespace Zavala
 
         #region Triggers 
 
+        public void RemoveConnection(ConnectionNode toRemove) {
+            if (m_end1Nodes.Contains(toRemove)) {
+                m_end1Nodes.Remove(toRemove);
+            }
+            if (m_end2Nodes.Contains(toRemove)) {
+                m_end2Nodes.Remove(toRemove);
+            }
+        }
+
         public void UpdateEconomy() {
             EconomyUpdated?.Invoke(this, EventArgs.Empty);
         }

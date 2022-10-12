@@ -53,10 +53,15 @@ namespace Zavala
             AddOn addOnComp = this.GetComponent<AddOn>();
             if (addOnComp != null) {
                 // remove from tile list beneath
-                Tile tileUnder = GridMgr.OverTile(this.transform.position);
+                Tile tileUnder = GridMgr.TileAtPos(this.transform.position);
 
                 if (tileUnder != null) {
                     tileUnder.TryRemoveAddOn(addOnComp);
+
+                    ConnectionNode nodeUnder = tileUnder.GetComponent<ConnectionNode>();
+                    if (nodeUnder != null) {
+                        nodeUnder.RemoveFromRoad();
+                    }
                 }
             }
 

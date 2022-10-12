@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zavala.Events;
 
@@ -26,7 +27,15 @@ namespace Zavala
         [SerializeField] private float m_slowestSpeed, m_fastestSpeed;
         [SerializeField] private Text m_speedText;
         private float m_speedRange;
-        private float m_stashedTimescale;
+
+        [SerializeField] private Button m_restartButton;
+
+        [Space(5)]
+
+        [Header("Adjustment")]
+        [SerializeField] private Button m_adjustActivateButton;
+        [SerializeField] private GameObject m_adjustCanvas;
+        [SerializeField] private Button m_adjustCancelButton, m_adjustRevertButton, m_adjustApplyButton;
 
         public void Init() {
             m_speedRange = m_fastestSpeed - m_slowestSpeed;
@@ -36,13 +45,19 @@ namespace Zavala
             // start at 1
             float startSpeed = 1.0f;
             m_timescaleSlider.value = (startSpeed - m_slowestSpeed) / m_speedRange;
-            m_stashedTimescale = m_timescaleSlider.value;
 
             m_paused = m_stashedPaused = false;
             m_pauseButton.onClick.AddListener(HandlePauseClicked);
 
             EventMgr.Instance.NarrativeBlurbTriggered += HandleNarrativeBlurbTriggered;
             EventMgr.Instance.NarrativeBlurbClosed += HandleNarrativeBlurbClosed;
+
+            m_adjustActivateButton.onClick.AddListener(HandleAdjustActivateClicked);
+            m_restartButton.onClick.AddListener(HandleRestartClicked);
+
+            m_adjustCancelButton.onClick.AddListener(HandleAdjustCancelClicked);
+            m_adjustRevertButton.onClick.AddListener(HandleAdjustRevertClicked);
+            m_adjustApplyButton.onClick.AddListener(HandleAdjustApplyClicked);
         }
 
         private void ApplySliderToTimescale(float newVal) {
@@ -99,6 +114,35 @@ namespace Zavala
             if (!m_stashedPaused) {
                 UnpauseSequence();
             }
+        }
+
+        private void HandleAdjustActivateClicked() {
+            m_adjustCanvas.SetActive(true);
+        }
+
+        private void HandleRestartClicked() {
+            SceneManager.LoadScene("GridScene");
+        }
+
+        private void HandleAdjustCancelClicked() {
+
+
+            // hide adjustment canvas
+            m_adjustCanvas.SetActive(false);
+        }
+
+        private void HandleAdjustRevertClicked() {
+
+
+            // hide adjustment canvas
+            m_adjustCanvas.SetActive(false);
+        }
+
+        private void HandleAdjustApplyClicked() {
+
+
+            // hide adjustment canvas
+            m_adjustCanvas.SetActive(false);
         }
 
         #endregion // Handlers
