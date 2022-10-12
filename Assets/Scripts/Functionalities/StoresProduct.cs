@@ -74,6 +74,7 @@ namespace Zavala.Functionalities
             }
             else {
                 Debug.Log("[StoresProduct] Added to storage list");
+                Debug.Log("[Instantiate] Instantiating UIStoredProduct prefab");
                 UIStoredProduct newProductUI = Instantiate(GameDB.Instance.UIStoredProductPrefab, this.transform).GetComponent<UIStoredProduct>();
                 if (m_hasTimeout) {
                     newProductUI.Init(productType, m_storageTimeout, this.GetComponent<Cycles>());

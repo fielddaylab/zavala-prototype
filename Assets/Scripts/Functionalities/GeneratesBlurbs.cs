@@ -13,6 +13,7 @@ namespace Zavala.Functionalities
                 return false;
             }
 
+            Debug.Log("[Instantiate] Instantiating blurb icon");
             UIBlurbIcon blurb = Instantiate(GameDB.Instance.UIBlurbIconPrefab, this.transform).GetComponent<UIBlurbIcon>();
             blurb.Init(toGenerate);
             toGenerate.Seen = true;

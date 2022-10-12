@@ -97,6 +97,7 @@ namespace Zavala
             RoadSegmentType placeType = prevSegment == null ? RoadSegmentType.End : RoadSegmentType.Straight;
             GameObject toPlace = RoadMgr.Instance.GetRoadSegmentPrefab();
 
+            Debug.Log("[Instantiate] Instantiating road segment prefab");
             RoadSegment roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
             roadSegmentInstance.MalleableDir = malleableDir;
             roadSegmentInstance.ModifySegmentType(placeType);
@@ -346,6 +347,7 @@ namespace Zavala
 
                 // find start tile
                 Transform startTransform = m_tileSegments[GetStartIndex(supplier)].gameObject.transform;
+                Debug.Log("[Instantiate] Instantiating truck prefab");
                 Truck newTruck = Instantiate(GameDB.Instance.TruckPrefab).GetComponent<Truck>();
                 newTruck.Init(resourceType, supplier, recipient, this);
                 return true;

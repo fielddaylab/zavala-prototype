@@ -20,6 +20,7 @@ namespace Zavala.Functionalities
         }
 
         public void StartCycle() {
+            Debug.Log("[Instantiate] Instantiating UITimer prefab");
             m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
             m_uiTimer.Init(CycleTime, SettingsMgr.VisibleCycles);
             m_uiTimer.TimerCompleted += HandleTimerCompleted;

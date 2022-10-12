@@ -20,7 +20,7 @@ namespace Zavala
                 Debug.Log("[Inspectable] Inspectable object " + this.gameObject.name + " not set to layer Inspect!");
             }
 
-            Debug.Log("Trying to instantiate UIInspect");
+            Debug.Log("[Instantiate] Instantiating UIInspect prefab");
             m_inspectUI = Instantiate(GameDB.Instance.UIInspectPrefab, this.transform).GetComponent<UIInspect>();
             m_inspectUI.Init();
             m_inspectUI.Removed += HandleRemoval;

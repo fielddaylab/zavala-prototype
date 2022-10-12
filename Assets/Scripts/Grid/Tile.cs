@@ -146,6 +146,7 @@ namespace Zavala.Tiles
             if (!AnyBlockers()) {
                 // attempt purchase
                 if (ShopMgr.Instance.TryPurchaseSelection()) {
+                    Debug.Log("[Instantiate] Instantiating ShopMgr's current purchase prefab");
                     GameObject itemInstance = Instantiate(ShopMgr.Instance.GetPurchasePrefab(), this.transform);
                     m_addOns.Add(itemInstance.GetComponent<AddOn>());
                     Debug.Log("purchased the item!");

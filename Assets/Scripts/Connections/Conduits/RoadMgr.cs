@@ -73,6 +73,7 @@ namespace Zavala.Roads
                 if (adjNodes.Count > 0) {
                     // if so, save tile as starting node and start tracking
                     m_startedRoad = true;
+                    Debug.Log("[Instantiate] Instantiating road prefab");
                     m_roadInProgress = Instantiate(m_roadPrefab).GetComponent<Road>();
                     m_roadInProgress.SetStartConnectionNodes(adjNodes);
                     Tile currTile = GridMgr.OverTile(Input.mousePosition);

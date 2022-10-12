@@ -27,6 +27,7 @@ namespace Zavala.Functionalities
                 if (m_resourceAmtMap[p].Type == resourceType) {
                     Debug.Log("[GeneratesPhosph] Generating " + m_resourceAmtMap[p].Amt + " units");
                     for (int i = 0; i < m_resourceAmtMap[p].Amt; i++) {
+                        Debug.Log("[Instantiate] Instantiating pip prefab");
                         PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
                         newPip.Init(destTile);
                     }

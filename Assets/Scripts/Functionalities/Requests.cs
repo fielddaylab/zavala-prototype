@@ -52,6 +52,7 @@ namespace Zavala.Functionalities
                 Resources.Type resourceType = RequestTypes[i];
 
                 // init and display
+                Debug.Log("[Instantiate] Instantiating UIRequest prefab");
                 UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
                 if (m_hasTimeout) {
                     newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>());

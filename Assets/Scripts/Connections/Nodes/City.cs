@@ -115,6 +115,7 @@ namespace Zavala
             float randX = UnityEngine.Random.Range(-BLOCK_EXTENTS, BLOCK_EXTENTS);
             float randZ = UnityEngine.Random.Range(-BLOCK_EXTENTS, BLOCK_EXTENTS);
 
+            Debug.Log("[Instantiate] Instantiating CityBlock prefab");
             GameObject newBlock = Instantiate(GameDB.Instance.CityBlockPrefab, this.transform);
             newBlock.transform.position = new Vector3(
                 newBlock.transform.position.x + randX,
