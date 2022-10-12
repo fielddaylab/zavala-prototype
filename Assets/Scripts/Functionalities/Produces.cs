@@ -53,5 +53,17 @@ namespace Zavala.Functionalities
                 return null;
             }
         }
+
+        #region AllVars Gets & Sets
+
+        public void SetProduceAmt(int newVal) {
+            m_amt = newVal;
+        }
+
+        public int GetProduceAmt() {
+            return m_amt;
+        }
+
+        #endregion // AllVars Gets & Sets
     }
 }

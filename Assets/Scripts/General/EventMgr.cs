@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zavala.Settings;
 
 namespace Zavala.Events
 {
@@ -23,7 +24,10 @@ namespace Zavala.Events
 
         // Narrative
         NarrativeBlurbTriggered,
-        NarrativeBlurbClosed
+        NarrativeBlurbClosed,
+
+        // Settings
+        AllVarsUpdated
     }
 
     #endregion // Enums
@@ -75,6 +79,15 @@ namespace Zavala.Events
         }
     }
 
+    public class AllVarsEventArgs : EventArgs
+    {
+        public AllVars UpdatedVars;
+
+        public AllVarsEventArgs(AllVars updatedVars) {
+            UpdatedVars = updatedVars;
+        }
+    }
+
     #endregion // EventArgs
 
     public class EventMgr : MonoBehaviour
@@ -104,6 +117,12 @@ namespace Zavala.Events
         public event EventHandler NarrativeBlurbClosed;
 
         #endregion // Narrative
+
+        #region Settings
+
+        public event EventHandler<AllVarsEventArgs> AllVarsUpdated;
+
+        #endregion // Settings
 
         #region Lenses
 
@@ -146,6 +165,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.NarrativeBlurbClosed:
                     NarrativeBlurbClosed?.Invoke(this, args);
+                    break;
+                case Events.ID.AllVarsUpdated:
+                    AllVarsUpdated?.Invoke(this, (AllVarsEventArgs)args);
                     break;
                 default:
                     break;

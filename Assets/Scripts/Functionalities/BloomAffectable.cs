@@ -69,5 +69,17 @@ namespace Zavala.Functionalities
         }
 
         #endregion // Handlers
+
+        #region AllVars Gets & Sets
+
+        public void SetBloomTolerance(int newVal) {
+            m_bloomTolerance = newVal;
+        }
+
+        public int GetBloomTolerance() {
+            return m_bloomTolerance;
+        }
+
+        #endregion // AllVars Gets & Sets
     }
 }

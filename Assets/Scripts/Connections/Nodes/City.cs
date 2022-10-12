@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
+using Zavala.Settings;
 
 namespace Zavala
 {
@@ -13,7 +15,7 @@ namespace Zavala
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(BloomAffectable))]
     [RequireComponent(typeof(Inspectable))]
-    public class City : MonoBehaviour
+    public class City : MonoBehaviour, IAllVars
     {
         private ConnectionNode m_connectionNodeComponent;
         private Requests m_requestsComponent;
@@ -57,11 +59,17 @@ namespace Zavala
 
             // hide placeholder block
             m_placeholderBlock.SetActive(false);
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
         }
 
         private void Start() {
             m_inspectComponent.Init();
             m_inspectComponent.SetAdditionalText("Population: " + m_population);
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private void StraightToStorage() {
@@ -166,6 +174,48 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.CityPopStart = m_population;
+            defaultVars.CityCycleTime = this.GetComponent<Cycles>().CycleTime;
+
+            defaultVars.CityRequestTimeout = this.GetComponent<Requests>().GetRequestTimeout();
+            defaultVars.CityProduceMoneyAmt = this.GetComponent<Produces>().GetProduceAmt();
+            defaultVars.CityBloomTolerance = this.GetComponent<BloomAffectable>().GetBloomTolerance();
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            m_population = args.UpdatedVars.CityPopStart;
+            CleanUpPrevPop();
+            this.GetComponent<Cycles>().CycleTime = args.UpdatedVars.CityCycleTime;
+
+            this.GetComponent<Requests>().SetRequestTimeout(args.UpdatedVars.CityRequestTimeout);
+            this.GetComponent<Produces>().SetProduceAmt(args.UpdatedVars.CityProduceMoneyAmt);
+            this.GetComponent<BloomAffectable>().SetBloomTolerance(args.UpdatedVars.CityBloomTolerance);
+
+            m_inspectComponent.SetAdditionalText("Population: " + m_population);
+        }
+
+        #endregion // All Vars Settings
+
+        #region All Vars Helpers
+
+        private void CleanUpPrevPop() {
+            // remove old population blocks
+            for (int p = 0; p < m_cityBlocks.Count; p++) {
+                Destroy(m_cityBlocks[p]);
+            }
+
+            m_cityBlocks = new List<GameObject>();
+            // create city blocks for initial population
+            for (int p = 0; p < m_population; p++) {
+                SpawnNewCityBlock();
+            }
+        }
+
+        #endregion // All Vars Helpers
 
     }
 }

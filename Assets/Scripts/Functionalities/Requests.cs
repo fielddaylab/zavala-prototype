@@ -172,5 +172,17 @@ namespace Zavala.Functionalities
         }
 
         #endregion // Handlers
+
+        #region AllVars Gets & Sets
+
+        public void SetRequestTimeout(int newVal) {
+            m_requestTimeout = newVal;
+        }
+
+        public int GetRequestTimeout() {
+            return m_requestTimeout;
+        }
+
+        #endregion // AllVars Gets & Sets
     }
 }
