@@ -16,6 +16,7 @@ namespace Zavala.Events
 
         // Interact
         InteractModeUpdated,
+        InspectableOpened,
 
         // Lenses
         LensModeUpdated,
@@ -93,6 +94,7 @@ namespace Zavala.Events
         #region Interaction
 
         public event EventHandler<InteractModeEventArgs> InteractModeUpdated;
+        public event EventHandler InspectableOpened;
 
         #endregion // Interaction
 
@@ -132,6 +134,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.InteractModeUpdated:
                     InteractModeUpdated?.Invoke(this, (InteractModeEventArgs)args);
+                    break;
+                case Events.ID.InspectableOpened:
+                    InspectableOpened?.Invoke(this, args);
                     break;
                 case Events.ID.LensModeUpdated:
                     LensModeUpdated?.Invoke(this, (LensModeEventArgs)args);

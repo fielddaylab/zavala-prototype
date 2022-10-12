@@ -49,10 +49,10 @@ namespace Zavala.Interact
 
             switch (m_interactMode) {
                 case Interact.Mode.Select:
-                    CheckForClick();
+                    CheckForInspectClick();
                     break;
                 case Interact.Mode.PlaceItem:
-                    CheckForClick();
+                    CheckForPlacementClick();
                     break;
                 case Interact.Mode.DrawRoad:
                     CheckForDrawingRoad();
@@ -65,13 +65,24 @@ namespace Zavala.Interact
         }
 
 
-        private void CheckForClick() {
+        private void CheckForInspectClick() {
             // detect for clicks
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetMouseButtonUp(0)) {
+                Inspectable hoverInspectable = GridMgr.OverInspectable(Input.mousePosition);
+
+                if (hoverInspectable != null) {
+                    hoverInspectable.Inspect();
+                }
+            }
+        }
+
+        private void CheckForPlacementClick() {
+            // detect for clicks
+            if (Input.GetMouseButtonUp(0)) {
                 Tile hoverTile = GridMgr.OverTile(Input.mousePosition);
 
                 if (hoverTile != null) {
-                    hoverTile.ClickTile();
+                    hoverTile.ClickTilePlace();
                 }
             }
         }

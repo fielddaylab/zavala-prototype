@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 6458409256630919425}
   - component: {fileID: 2056162314735009204}
   - component: {fileID: 1991616955187662310}
+  - component: {fileID: 7289466619251000839}
   m_Layer: 6
   m_Name: DairyFarm
   m_TagString: Untagged
@@ -313,8 +314,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f815b955d4c48574f8538626480110b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blurbIDs:
-  - offload-1
+--- !u!114 &7289466619251000839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690466091820418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f765609a837a3946bae1a3eb2bdc53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2771330085608216508
 GameObject:
   m_ObjectHideFlags: 0

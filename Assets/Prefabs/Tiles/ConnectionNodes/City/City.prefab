@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: -8263272586884739805}
   - component: {fileID: 6404179969610108376}
   - component: {fileID: -7963281852163712780}
+  - component: {fileID: 8485288732576273091}
   m_Layer: 6
   m_Name: City
   m_TagString: Untagged
@@ -232,6 +233,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bloomTolerance: 4
+--- !u!114 &8485288732576273091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758621474890702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f765609a837a3946bae1a3eb2bdc53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canRemove: 0
 --- !u!1 &26575358000590593
 GameObject:
   m_ObjectHideFlags: 0

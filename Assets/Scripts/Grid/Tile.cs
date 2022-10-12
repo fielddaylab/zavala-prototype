@@ -142,28 +142,29 @@ namespace Zavala.Tiles
 
         #region Actions
 
-        public void ClickTile() {
-            switch (InteractMgr.Instance.GetCurrMode()) {
-                case Interact.Mode.PlaceItem:
-                    if (!AnyBlockers()) {
-                        // attempt purchase
-                        if (ShopMgr.Instance.TryPurchaseSelection()) {
-                            GameObject itemInstance = Instantiate(ShopMgr.Instance.GetPurchasePrefab(), this.transform);
-                            m_addOns.Add(itemInstance.GetComponent<AddOn>());
-                            Debug.Log("purchased the item!");
-                        }
-                        else {
-                            Debug.Log("failed to purchase the item: shop rejection");
-                        }
-                    }
-                    else {
-                        Debug.Log("failed to purchase the item: blockers");
-                    }
-
-                    break;
-                default:
-                    break;
+        public void ClickTilePlace() {
+            if (!AnyBlockers()) {
+                // attempt purchase
+                if (ShopMgr.Instance.TryPurchaseSelection()) {
+                    GameObject itemInstance = Instantiate(ShopMgr.Instance.GetPurchasePrefab(), this.transform);
+                    m_addOns.Add(itemInstance.GetComponent<AddOn>());
+                    Debug.Log("purchased the item!");
+                }
+                else {
+                    Debug.Log("failed to purchase the item: shop rejection");
+                }
             }
+            else {
+                Debug.Log("failed to purchase the item: blockers");
+            }
+        }
+
+        public void TryRemoveAddOn(AddOn addOn) {
+            if (!m_addOns.Contains(addOn)) {
+                return;
+            }
+
+            m_addOns.Remove(addOn);
         }
 
         #endregion // Actions

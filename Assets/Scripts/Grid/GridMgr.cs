@@ -39,6 +39,32 @@ namespace Zavala
             }
         }
 
+        public static Inspectable OverInspectable(Vector2 pos) {
+            // Look for inspectable
+            Ray ray;
+            RaycastHit[] hits;
+
+            ray = Camera.main.ScreenPointToRay(pos);
+            hits = Physics.RaycastAll(ray, Mathf.Infinity, 1 << LayerMask.NameToLayer("Inspect"));
+            foreach (RaycastHit inspectHit in hits) {
+                if (inspectHit.collider.gameObject.GetComponent<Inspectable>() != null) {
+                    return inspectHit.collider.gameObject.GetComponent<Inspectable>();
+                }
+            }
+
+            // look on tiles
+            RaycastHit hit;
+
+            ray = Camera.main.ScreenPointToRay(pos);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
+                if (hit.collider.gameObject.GetComponent<Inspectable>() != null) {
+                    return hit.collider.gameObject.GetComponent<Inspectable>();
+                }
+            }
+
+            return null;
+        }
+
         public static Zavala.Tiles.Tile TileAtPos(Vector3 pos) {
             // raise ray and point downward
             RaycastHit hit;
@@ -64,7 +90,7 @@ namespace Zavala
             RaycastHit hit;
 
             for (int dir = 0; dir < 6; dir++) {
-                switch(dir) {
+                switch (dir) {
                     case 0:
                         // up
                         adjPos = startPos + new Vector3(1f, 0f, 0f);

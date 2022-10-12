@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: -150613178662610011}
   - component: {fileID: 6694986199899361739}
   - component: {fileID: 6531838379950034688}
+  - component: {fileID: -2757541128342434232}
   m_Layer: 6
   m_Name: GrainFarm
   m_TagString: Untagged
@@ -318,6 +319,18 @@ MonoBehaviour:
     Amt: 2
   - Type: 1
     Amt: 1
+--- !u!114 &-2757541128342434232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708391978254754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f765609a837a3946bae1a3eb2bdc53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5249573324808159469
 GameObject:
   m_ObjectHideFlags: 0

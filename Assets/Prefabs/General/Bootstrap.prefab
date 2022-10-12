@@ -237,6 +237,8 @@ MonoBehaviour:
     type: 3}
   UIBlurbIconPrefab: {fileID: 6226420018551096720, guid: c57da804202c2c84db3255092066625f,
     type: 3}
+  UIInspectPrefab: {fileID: 3851472478283005355, guid: 7471f935dd4269044ad8b7c2913c1bf7,
+    type: 3}
   NoneIcon: {fileID: 21300000, guid: 427fd88dd7eaa044e8f0f2213562049e, type: 3}
   FertilizerIcon: {fileID: 21300000, guid: 442e58d2fd6d6664f9bec585946ceb06, type: 3}
   GrainIcon: {fileID: 21300000, guid: d1ee23437c285404886c1e5ec2a9b5c1, type: 3}

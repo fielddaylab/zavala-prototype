@@ -3500,6 +3500,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PhosphMgr
       objectReference: {fileID: 0}
+    - target: {fileID: 5063322814862192118, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6055962512674747005, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_SortingOrder
