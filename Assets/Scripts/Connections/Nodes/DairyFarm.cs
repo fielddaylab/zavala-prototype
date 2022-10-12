@@ -15,6 +15,7 @@ namespace Zavala
     [RequireComponent(typeof(Cycles))]
     //[RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Tile))]
+    [RequireComponent(typeof(GeneratesBlurbs))]
     public class DairyFarm : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -23,6 +24,7 @@ namespace Zavala
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
         //private GeneratesPhosphorus m_generatesComponent;
+        private GeneratesBlurbs m_generatesBlurbsComponent;
         private Tile m_tileComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
@@ -37,10 +39,12 @@ namespace Zavala
             m_cyclesComponent = this.GetComponent<Cycles>();
             //m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
             m_tileComponent = this.GetComponent<Tile>();
+            m_generatesBlurbsComponent = this.GetComponent<GeneratesBlurbs>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
+            m_storesComponent.RemovedStorage += HandleStorageRemoved;
 
             m_firstCycle = true;
         }
@@ -94,6 +98,12 @@ namespace Zavala
             }
             else {
                 Debug.Log("[DairyFarm] Couldn't purchase import!");
+            }
+        }
+
+        private void HandleStorageRemoved(object sender, ResourceEventArgs args) {
+            if (args.ResourceType == Resources.Type.Manure) {
+                m_generatesBlurbsComponent.TryGenerateBlurb("offload-1");
             }
         }
 

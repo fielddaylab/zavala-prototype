@@ -1,8 +1,10 @@
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Events;
 
 namespace Zavala
 {
@@ -17,6 +19,7 @@ namespace Zavala
         private static int PAUSE_INDEX = 0;
         private static int RESUME_INDEX = 1;
         private bool m_paused;
+        private bool m_stashedPaused; // whether the game was paused before narrative blurb was triggered
 
         [SerializeField] private GameObject m_sliderGroup;
         [SerializeField] private Slider m_timescaleSlider;
@@ -35,14 +38,35 @@ namespace Zavala
             m_timescaleSlider.value = (startSpeed - m_slowestSpeed) / m_speedRange;
             m_stashedTimescale = m_timescaleSlider.value;
 
-            m_paused = false;
+            m_paused = m_stashedPaused = false;
             m_pauseButton.onClick.AddListener(HandlePauseClicked);
+
+            EventMgr.Instance.NarrativeBlurbTriggered += HandleNarrativeBlurbTriggered;
+            EventMgr.Instance.NarrativeBlurbClosed += HandleNarrativeBlurbClosed;
         }
 
         private void ApplySliderToTimescale(float newVal) {
             Time.timeScale = m_slowestSpeed + newVal * m_speedRange;
 
             m_speedText.text = "Game Speed: " + Math.Round(m_slowestSpeed + newVal * m_speedRange, 2) + "x";
+        }
+
+        private void PauseSequence() {
+            m_timescaleSlider.enabled = false;
+
+            Time.timeScale = 0;
+            m_pauseButton.image.sprite = m_pauseSprites[RESUME_INDEX];
+
+            m_sliderGroup.SetActive(false);
+        }
+
+        private void UnpauseSequence() {
+            m_timescaleSlider.enabled = true;
+
+            ApplySliderToTimescale(m_timescaleSlider.value);
+            m_pauseButton.image.sprite = m_pauseSprites[PAUSE_INDEX];
+
+            m_sliderGroup.SetActive(true);
         }
 
         #region Handlers 
@@ -56,21 +80,24 @@ namespace Zavala
 
             if (m_paused) {
                 // game was just paused
-                m_timescaleSlider.enabled = false;
-
-                Time.timeScale = 0;
-                m_pauseButton.image.sprite = m_pauseSprites[RESUME_INDEX];
-
-                m_sliderGroup.SetActive(false);
+                PauseSequence();
             }
             else {
                 // game was just unpaused
-                m_timescaleSlider.enabled = true;
+                UnpauseSequence();
+            }
+        }
 
-                ApplySliderToTimescale(m_timescaleSlider.value);
-                m_pauseButton.image.sprite = m_pauseSprites[PAUSE_INDEX];
+        private void HandleNarrativeBlurbTriggered(object sender, NarrativeBlurbEventArgs args) {
+            m_stashedPaused = m_paused;
+            if (!m_paused) {
+                PauseSequence();
+            }
+        }
 
-                m_sliderGroup.SetActive(true);
+        private void HandleNarrativeBlurbClosed(object sender, EventArgs args) {
+            if (!m_stashedPaused) {
+                UnpauseSequence();
             }
         }
 

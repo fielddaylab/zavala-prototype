@@ -18,7 +18,11 @@ namespace Zavala.Events
         InteractModeUpdated,
 
         // Lenses
-        LensModeUpdated
+        LensModeUpdated,
+
+        // Narrative
+        NarrativeBlurbTriggered,
+        NarrativeBlurbClosed
     }
 
     #endregion // Enums
@@ -61,6 +65,15 @@ namespace Zavala.Events
         }
     }
 
+    public class NarrativeBlurbEventArgs : EventArgs
+    {
+        public string BlurbText;
+
+        public NarrativeBlurbEventArgs(string text) {
+            BlurbText = text;
+        }
+    }
+
     #endregion // EventArgs
 
     public class EventMgr : MonoBehaviour
@@ -82,6 +95,13 @@ namespace Zavala.Events
         public event EventHandler<InteractModeEventArgs> InteractModeUpdated;
 
         #endregion // Interaction
+
+        #region Narrative 
+
+        public event EventHandler<NarrativeBlurbEventArgs> NarrativeBlurbTriggered;
+        public event EventHandler NarrativeBlurbClosed;
+
+        #endregion // Narrative
 
         #region Lenses
 
@@ -115,6 +135,12 @@ namespace Zavala.Events
                     break;
                 case Events.ID.LensModeUpdated:
                     LensModeUpdated?.Invoke(this, (LensModeEventArgs)args);
+                    break;
+                case Events.ID.NarrativeBlurbTriggered:
+                    NarrativeBlurbTriggered?.Invoke(this, (NarrativeBlurbEventArgs)args);
+                    break;
+                case Events.ID.NarrativeBlurbClosed:
+                    NarrativeBlurbClosed?.Invoke(this, args);
                     break;
                 default:
                     break;

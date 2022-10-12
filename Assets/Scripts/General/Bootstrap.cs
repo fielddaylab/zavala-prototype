@@ -22,6 +22,7 @@ namespace Zavala
         [SerializeField] private PhosphMgr m_phosphMgr;
         [SerializeField] private LensMgr m_lensMgr;
         [SerializeField] private SettingsMgr m_settingsMgr;
+        [SerializeField] private NarrativeMgr m_narrativeMgr;
 
         private void Awake() {
             if (Instance == null) {
@@ -43,6 +44,7 @@ namespace Zavala
             m_phosphMgr.Init();
             m_lensMgr.Init();
             m_settingsMgr.Init();
+            m_narrativeMgr.Init();
         }
 
         private void Update() {

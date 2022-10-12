@@ -16,6 +16,7 @@ namespace Zavala
         public GameObject UIRequestPrefab;
         public GameObject UIStoredProductPrefab;
         public GameObject PipPrefab;
+        public GameObject UIBlurbIconPrefab;
 
         [Space(5)]
 
