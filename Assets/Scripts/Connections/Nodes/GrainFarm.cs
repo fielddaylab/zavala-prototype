@@ -15,6 +15,8 @@ namespace Zavala
     [RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(Tile))]
+    [RequireComponent(typeof(Inspectable))]
+
     public class GrainFarm : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -24,6 +26,7 @@ namespace Zavala
         private Cycles m_cyclesComponent;
         private GeneratesPhosphorus m_generatesComponent;
         private Tile m_tileComponent;
+        private Inspectable m_inspectComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -37,12 +40,17 @@ namespace Zavala
             m_cyclesComponent = this.GetComponent<Cycles>();
             m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
             m_tileComponent = this.GetComponent<Tile>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
 
             m_firstCycle = true;
+        }
+
+        private void Start() {
+            m_inspectComponent.Init();
         }
 
         private void StraightToStorage() {

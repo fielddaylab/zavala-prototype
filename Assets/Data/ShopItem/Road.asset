@@ -15,5 +15,5 @@ MonoBehaviour:
   m_itemType: 0
   m_cost: 10
   m_icon: {fileID: 21300000, guid: cf00fc184eedf0942912d766c6d345c3, type: 3}
-  m_prefab: {fileID: 1410689929301814, guid: 3864eba8d1eb1d24e981c7cc03639684, type: 3}
+  m_prefab: {fileID: 1324876000603432, guid: be422d8b06db01a459d2b7303c5d1c0c, type: 3}
   m_label: Road

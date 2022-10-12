@@ -14,6 +14,7 @@ namespace Zavala
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(GeneratesPhosphorus))]
+    [RequireComponent(typeof(Inspectable))]
     public class Skimmer : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -21,6 +22,7 @@ namespace Zavala
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
         private GeneratesPhosphorus m_generatesComponent;
+        private Inspectable m_inspectComponent;
 
         [SerializeField] private int m_skimAmt;
 
@@ -30,9 +32,14 @@ namespace Zavala
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
             m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
             m_storesComponent.StorageExpired += HandleStorageExpired;
+        }
+
+        private void Start() {
+            m_inspectComponent.Init();
         }
 
         private bool TrySkimLakes() {

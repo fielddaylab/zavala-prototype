@@ -5,8 +5,11 @@ using Zavala.Roads;
 
 namespace Zavala
 {
+    [RequireComponent(typeof(Inspectable))]
     public class RoadSegment : MonoBehaviour
     {
+        private Inspectable m_inspectComponent;
+
         [SerializeField] private SpriteRenderer m_sr;
         [HideInInspector] public RoadBuildDir BuildDir;
         [HideInInspector] public bool MalleableDir = false;
@@ -16,6 +19,14 @@ namespace Zavala
 
         private static int HEX_ANGLES = 60;
         private static int UP_OFFSET = 90;
+
+        private void Awake() {
+            m_inspectComponent = this.GetComponent<Inspectable>();
+        }
+
+        private void Start() {
+            m_inspectComponent.Init();
+        }
 
         public void ModifyBuildDir(RoadBuildDir newDir, RoadBuildDir prevDir) {
             BuildDir = newDir;

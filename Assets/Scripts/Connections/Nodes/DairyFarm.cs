@@ -16,6 +16,7 @@ namespace Zavala
     //[RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Tile))]
     [RequireComponent(typeof(GeneratesBlurbs))]
+    [RequireComponent(typeof(Inspectable))]
     public class DairyFarm : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -26,6 +27,7 @@ namespace Zavala
         //private GeneratesPhosphorus m_generatesComponent;
         private GeneratesBlurbs m_generatesBlurbsComponent;
         private Tile m_tileComponent;
+        private Inspectable m_inspectComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -40,6 +42,8 @@ namespace Zavala
             //m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
             m_tileComponent = this.GetComponent<Tile>();
             m_generatesBlurbsComponent = this.GetComponent<GeneratesBlurbs>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
+
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
@@ -47,6 +51,10 @@ namespace Zavala
             m_storesComponent.RemovedStorage += HandleStorageRemoved;
 
             m_firstCycle = true;
+        }
+
+        private void Start() {
+            m_inspectComponent.Init();
         }
 
         private void StraightToStorage() {

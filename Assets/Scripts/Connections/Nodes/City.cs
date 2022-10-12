@@ -54,10 +54,14 @@ namespace Zavala
             for (int p = 0; p < m_population; p++) {
                 SpawnNewCityBlock();
             }
-            m_inspectComponent.SetAdditionalText("Population: " + m_population);
 
             // hide placeholder block
             m_placeholderBlock.SetActive(false);
+        }
+
+        private void Start() {
+            m_inspectComponent.Init();
+            m_inspectComponent.SetAdditionalText("Population: " + m_population);
         }
 
         private void StraightToStorage() {

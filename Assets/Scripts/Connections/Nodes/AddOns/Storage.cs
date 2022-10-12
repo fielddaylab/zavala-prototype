@@ -10,22 +10,26 @@ namespace Zavala
     [RequireComponent(typeof(ConnectionNode))]
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Requests))]
+    [RequireComponent(typeof(Inspectable))]
     public class Storage : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
         private Requests m_requestsComponent;
         private StoresProduct m_storesComponent;
+        private Inspectable m_inspectComponent;
 
         private void Awake() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
             m_storesComponent = this.GetComponent<StoresProduct>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_storesComponent.RemovedStorage += HandleRemovedStorage;
         }
 
         private void Start() {
+            m_inspectComponent.Init();
             m_requestsComponent.QueueRequest();
         }
 

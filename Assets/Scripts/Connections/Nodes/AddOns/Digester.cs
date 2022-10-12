@@ -11,23 +11,29 @@ namespace Zavala
     [RequireComponent(typeof(Requests))]
     [RequireComponent(typeof(Produces))]
     [RequireComponent(typeof(StoresProduct))]
+    [RequireComponent(typeof(Inspectable))]
+
     public class Digester : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
         private Requests m_requestsComponent;
+        private Inspectable m_inspectComponent;
 
         private void Awake() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_producesComponent = this.GetComponent<Produces>();
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_requestsComponent = this.GetComponent<Requests>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
+
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
         }
 
         private void Start() {
+            m_inspectComponent.Init();
             m_requestsComponent.QueueRequest();
         }
 
