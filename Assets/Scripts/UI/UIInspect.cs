@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
@@ -10,16 +11,33 @@ namespace Zavala
 {
     public class UIInspect : MonoBehaviour
     {
+        [SerializeField] private TMP_Text m_titleText;
+        [SerializeField] private TMP_Text m_additionalText;
         [SerializeField] private Button m_removeButton;
 
         public event EventHandler Removed;
 
         public void Init() {
-            EventMgr.Instance.InspectableOpened += HandleInspectableOpened;
             this.gameObject.SetActive(false);
         }
 
-        public void Show(bool canRemove) {
+        private void OnEnable() {
+            EventMgr.Instance.InspectableOpened += HandleInspectableOpened;
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.InspectableOpened -= HandleInspectableOpened;
+        }
+
+        public void Show(string title, string additionalText, bool canRemove) {
+            //title
+            m_titleText.text = title;
+
+            // additional text
+            m_additionalText.text = additionalText;
+
+            // remove button
+            m_removeButton.onClick.RemoveAllListeners();
             if (canRemove) {
                 m_removeButton.onClick.AddListener(HandleRemoveClicked);
             }
@@ -39,12 +57,12 @@ namespace Zavala
 
         public void Remove() {
             Hide();
-            EventMgr.Instance.InspectableOpened -= HandleInspectableOpened;
         }
 
         #region Handlers
 
         private void HandleRemoveClicked() {
+            Debug.Log("Remove clicked");
             // remove object
             Removed?.Invoke(this, EventArgs.Empty);
         }

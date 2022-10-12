@@ -245,6 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f765609a837a3946bae1a3eb2bdc53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_title: City
   m_canRemove: 0
 --- !u!1 &26575358000590593
 GameObject:

@@ -9,6 +9,8 @@ namespace Zavala
 {
     public class Inspectable : MonoBehaviour
     {
+        [SerializeField] private string m_title;
+        private string m_additionalText;
         [SerializeField] private bool m_canRemove;
 
         private UIInspect m_inspectUI;
@@ -30,8 +32,17 @@ namespace Zavala
             EventMgr.Instance.TriggerEvent(ID.InspectableOpened, EventArgs.Empty);
 
             if (!wasOpen) {
-                m_inspectUI.Show(m_canRemove);
+                m_inspectUI.Show(m_title, m_additionalText, m_canRemove);
                 Debug.Log("[Inspectable] Inspecting!");
+            }
+        }
+
+        public void SetAdditionalText(string newText) {
+            m_additionalText = newText;
+
+            // refresh text
+            if (m_inspectUI != null && m_inspectUI.gameObject.activeSelf) {
+                m_inspectUI.Show(m_title, m_additionalText, m_canRemove);
             }
         }
 
@@ -48,6 +59,7 @@ namespace Zavala
                 }
             }
 
+            Debug.Log("Removal");
             m_inspectUI.Remove();
 
             // TODO: Sell?

@@ -183,6 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f765609a837a3946bae1a3eb2bdc53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_title: Storage
   m_canRemove: 1
 --- !u!65 &147193990289003469
 BoxCollider:

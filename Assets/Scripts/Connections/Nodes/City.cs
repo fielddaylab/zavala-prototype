@@ -12,6 +12,7 @@ namespace Zavala
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(BloomAffectable))]
+    [RequireComponent(typeof(Inspectable))]
     public class City : MonoBehaviour
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -20,6 +21,7 @@ namespace Zavala
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
         private BloomAffectable m_bloomAffectableComponent;
+        private Inspectable m_inspectComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -38,6 +40,7 @@ namespace Zavala
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
             m_bloomAffectableComponent = this.GetComponent<BloomAffectable>();
+            m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
@@ -51,6 +54,7 @@ namespace Zavala
             for (int p = 0; p < m_population; p++) {
                 SpawnNewCityBlock();
             }
+            m_inspectComponent.SetAdditionalText("Population: " + m_population);
 
             // hide placeholder block
             m_placeholderBlock.SetActive(false);
@@ -79,6 +83,7 @@ namespace Zavala
             Debug.Log("[City] Incrementing population...");
             m_population++;
 
+            m_inspectComponent.SetAdditionalText("Population: " + m_population);
             SpawnNewCityBlock();
         }
 
@@ -95,6 +100,8 @@ namespace Zavala
                 GameObject toRemove = m_cityBlocks[m_cityBlocks.Count - 1];
                 m_cityBlocks.RemoveAt(m_cityBlocks.Count - 1);
                 Destroy(toRemove);
+
+                m_inspectComponent.SetAdditionalText("Population: " + m_population);
 
                 m_requestsComponent.CancelLastRequest(m_requestsComponent.RequestTypes);
             }
