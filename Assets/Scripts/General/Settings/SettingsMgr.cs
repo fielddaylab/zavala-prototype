@@ -43,6 +43,8 @@ namespace Zavala.Settings
         public float RoadStartHealth;
         public float RoadDisrepairThreshold;
 
+        // PhosphMgr
+
 
         // Dairy Farm
 

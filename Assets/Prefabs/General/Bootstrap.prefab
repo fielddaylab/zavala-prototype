@@ -3275,6 +3275,8 @@ MonoBehaviour:
   m_roadBendSprite: {fileID: 21300000, guid: d3d3381ad89d94043a506d06922da259, type: 3}
   m_roadTightBendSprite: {fileID: 21300000, guid: 8e1226cd30172b84695d5510d693d1f6,
     type: 3}
+  m_roadRoundaboutSprite: {fileID: 21300000, guid: 2cdaa140d02a77b489d5d68b113dae22,
+    type: 3}
 --- !u!1 &5886405102411042718
 GameObject:
   m_ObjectHideFlags: 0

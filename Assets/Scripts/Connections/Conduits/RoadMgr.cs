@@ -32,7 +32,7 @@ namespace Zavala.Roads
         [SerializeField] private GameObject m_roadPrefab;
 
         [SerializeField] private GameObject m_roadSegmentPrefab;
-        [SerializeField] private Sprite m_roadStraightSprite, m_roadEndSprite, m_roadBendSprite, m_roadTightBendSprite;
+        [SerializeField] private Sprite m_roadStraightSprite, m_roadEndSprite, m_roadBendSprite, m_roadTightBendSprite, m_roadRoundaboutSprite;
         //[SerializeField] private GameObject m_roadEndPrefab, m_roadStraightPrefab, m_roadBendPrefab, m_roadRoundaboutPrefab;
 
         private bool m_startedRoad;
@@ -241,6 +241,8 @@ namespace Zavala.Roads
                     return m_roadBendSprite;
                 case RoadSegmentType.TightBend:
                     return m_roadTightBendSprite;
+                case RoadSegmentType.Roundabout:
+                    return m_roadRoundaboutSprite;
                 default:
                     return null;
             }
