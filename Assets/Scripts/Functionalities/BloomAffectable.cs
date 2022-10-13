@@ -22,6 +22,10 @@ namespace Zavala.Functionalities
             m_cyclesComponent.PreCycleCompleted += HandlePreCycleCompleted;
         }
 
+        private void OnDisable() {
+            m_cyclesComponent.PreCycleCompleted -= HandlePreCycleCompleted;
+        }
+
         private bool BloomAdjacent() {
             Tile tileUnderneath = GridMgr.TileAtPos(this.transform.position);
             List<Tile> neighborTiles = GridMgr.GetAdjTiles(tileUnderneath);

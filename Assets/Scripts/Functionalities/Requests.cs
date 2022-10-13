@@ -39,6 +39,10 @@ namespace Zavala.Functionalities
             m_initialQueuePos = Vector3.zero;
         }
 
+        private void OnDisable() {
+            m_connectionNodeComponent.NodeEconomyUpdated -= HandleNodeEconomyUpdated;
+        }
+
         private void Start() {
             m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
         }

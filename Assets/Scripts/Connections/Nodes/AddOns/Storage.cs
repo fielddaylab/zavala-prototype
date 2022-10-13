@@ -33,6 +33,15 @@ namespace Zavala
             m_requestsComponent.QueueRequest();
         }
 
+        private void OnDisable() {
+            if (m_requestsComponent != null) {
+                m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
+            }
+            if (m_storesComponent != null) {
+                m_storesComponent.RemovedStorage += HandleRemovedStorage;
+            }
+        }
+
         private void StraightToStorage() {
             if (!m_storesComponent.TryAddToStorage(m_requestsComponent.RequestTypes[0])) {
                 Debug.Log("[Storage] Request fulfilled, but storage full!");

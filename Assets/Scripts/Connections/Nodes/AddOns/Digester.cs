@@ -37,6 +37,12 @@ namespace Zavala
             m_requestsComponent.QueueRequest();
         }
 
+        private void OnDisable() {
+            if (m_requestsComponent != null) {
+                m_requestsComponent.RequestFulfilled -= HandleRequestFulfilled;
+            }
+        }
+
         private void StraightToStorage() {
             List<Resources.Type> newProducts = m_producesComponent.Produce();
             if (newProducts == null) {

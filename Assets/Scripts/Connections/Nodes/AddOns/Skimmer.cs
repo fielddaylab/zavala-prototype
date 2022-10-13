@@ -42,6 +42,15 @@ namespace Zavala
             m_inspectComponent.Init();
         }
 
+        private void OnDisable() {
+            if (m_cyclesComponent != null) {
+                m_cyclesComponent.CycleCompleted -= HandleCycleCompleted;
+            }
+            if (m_storesComponent != null) {
+                m_storesComponent.StorageExpired -= HandleStorageExpired;
+            }
+        }
+
         private bool TrySkimLakes() {
             bool skimmedAny = false;
 

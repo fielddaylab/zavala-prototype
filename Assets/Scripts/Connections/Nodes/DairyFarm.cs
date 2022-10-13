@@ -57,6 +57,19 @@ namespace Zavala
             m_inspectComponent.Init();
         }
 
+        private void OnDisable() {
+            if (m_requestsComponent != null) {
+                m_requestsComponent.RequestFulfilled -= HandleRequestFulfilled;
+                m_requestsComponent.RequestExpired -= HandleRequestExpired;
+            }
+            if (m_cyclesComponent != null) {
+                m_cyclesComponent.CycleCompleted -= HandleCycleCompleted;
+            }
+            if (m_storesComponent != null) {
+                m_storesComponent.RemovedStorage -= HandleStorageRemoved;
+            }
+        }
+
         private void StraightToStorage() {
             // produce and add to storage
             List<Resources.Type> newProducts = m_producesComponent.Produce();

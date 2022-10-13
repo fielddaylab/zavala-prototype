@@ -1718,8 +1718,8 @@ MonoBehaviour:
   m_itemsContainer: {fileID: 4833446447728583819}
   ShopItems:
   - {fileID: 11400000, guid: 0a9dafb7db5fe8343b9bab4e6a491f52, type: 2}
-  - {fileID: 11400000, guid: 8df27107e7c643a4e89813c98fccef43, type: 2}
-  - {fileID: 11400000, guid: 412c71a7d05f4e347b202ae9971d8adb, type: 2}
+  - {fileID: 11400000, guid: 21d4afad362d951458e9df36e477db42, type: 2}
+  - {fileID: 11400000, guid: 14e0e509f083c3b4cb57bff93c960e3b, type: 2}
   - {fileID: 11400000, guid: ad7bf8a65d0e80e41b211f77dfaa0dfb, type: 2}
 --- !u!1 &3326699251793777311
 GameObject:
