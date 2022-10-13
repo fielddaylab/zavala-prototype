@@ -27,7 +27,10 @@ namespace Zavala.Events
         NarrativeBlurbClosed,
 
         // Settings
-        AllVarsUpdated
+        AllVarsUpdated,
+
+        // Restart
+        LevelRestarted
     }
 
     #endregion // Enums
@@ -124,6 +127,12 @@ namespace Zavala.Events
 
         #endregion // Settings
 
+        #region Restart 
+
+        public event EventHandler LevelRestarted;
+
+        #endregion // Restart
+
         #region Lenses
 
         public event EventHandler<LensModeEventArgs> LensModeUpdated;
@@ -168,6 +177,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.AllVarsUpdated:
                     AllVarsUpdated?.Invoke(this, (AllVarsEventArgs)args);
+                    break;
+                case Events.ID.LevelRestarted:
+                    LevelRestarted?.Invoke(this, args);
                     break;
                 default:
                     break;

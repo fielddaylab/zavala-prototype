@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Resources;
+using Zavala.Settings;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -15,7 +17,7 @@ namespace Zavala
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Inspectable))]
-    public class Skimmer : MonoBehaviour
+    public class Skimmer : MonoBehaviour, IAllVars
     {
         private ConnectionNode m_connectionNodeComponent;
         private Produces m_producesComponent;
@@ -36,6 +38,9 @@ namespace Zavala
 
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
             m_storesComponent.StorageExpired += HandleStorageExpired;
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
+            ProcessUpdatedVars(SettingsMgr.Instance.GetCurrAllVars());
         }
 
         private void Start() {
@@ -49,6 +54,8 @@ namespace Zavala
             if (m_storesComponent != null) {
                 m_storesComponent.StorageExpired -= HandleStorageExpired;
             }
+
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private bool TrySkimLakes() {
@@ -108,5 +115,33 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.SkimmerSkimAmt = m_skimAmt;
+            defaultVars.SkimmerCycleTime = this.GetComponent<Cycles>().CycleTime;
+            defaultVars.SkimmerExpiredRunoffAmt = this.GetComponent<GeneratesPhosphorus>().GetAmtForResource(Resources.Type.Fertilizer);
+            if (defaultVars.SkimmerExpiredRunoffAmt == -1) {
+                Debug.Log("[Skimmer] Skimmer does not produce phosph for fertilizer.");
+            }
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            ProcessUpdatedVars(args.UpdatedVars);
+        }
+
+        #endregion // All Vars Settings
+
+
+        #region AllVars Helpers
+
+        private void ProcessUpdatedVars(AllVars updatedVars) {
+            m_skimAmt = updatedVars.SkimmerSkimAmt;
+            this.GetComponent<Cycles>().CycleTime = updatedVars.SkimmerCycleTime;
+            this.GetComponent<GeneratesPhosphorus>().SetAmtForResource(Resources.Type.Fertilizer, updatedVars.SkimmerExpiredRunoffAmt);
+        }
+
+        #endregion // AllVars Helpers
     }
 }

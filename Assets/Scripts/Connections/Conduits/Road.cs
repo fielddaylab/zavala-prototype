@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Roads;
+using Zavala.Settings;
 using Zavala.Tiles;
 
 namespace Zavala
 {
-    public class Road : MonoBehaviour
+    public class Road : MonoBehaviour, IAllVars
     {
         private List<ConnectionNode> m_end1Nodes; // arbitrary start
         private List<ConnectionNode> m_end2Nodes; // arbitrary end
@@ -20,6 +22,7 @@ namespace Zavala
 
         public event EventHandler EconomyUpdated;
 
+        [SerializeField] private float m_roadStartHealth;
         private float m_baseHealth; // road health
         private float m_currHealth; // road health
         private bool m_isUsable;
@@ -31,6 +34,13 @@ namespace Zavala
         private void Awake() {
             m_roadSegments = new List<RoadSegment>();
             m_inDisrepair = false;
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
+            ProcessUpdatedVars(SettingsMgr.Instance.GetCurrAllVars());
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         #region Road Creation
@@ -57,6 +67,9 @@ namespace Zavala
 
             m_isUsable = true;
 
+            // set health
+            m_baseHealth = m_currHealth = m_roadStartHealth;
+
             UpdateEconomy();
         }
 
@@ -64,10 +77,6 @@ namespace Zavala
             for (int i = 0; i < nodeList.Count; i++) {
                 nodeList[i].AddRoad(this);
             }
-        }
-
-        public void SetHealth(float health) {
-            m_baseHealth = m_currHealth = health;
         }
 
         public void NormalizeSegmentHeights() {
@@ -361,7 +370,7 @@ namespace Zavala
             m_currHealth -= dmg;
 
             Debug.Log("[Road] Curr health: " + m_currHealth);
-            if (!m_inDisrepair && (m_currHealth < m_disrepairThreshold * m_baseHealth)) {
+            if (!m_inDisrepair && (m_currHealth <= m_disrepairThreshold * m_baseHealth)) {
                 m_inDisrepair = true;
 
                 for (int i = 0; i < m_roadSegments.Count; i++) {
@@ -407,5 +416,27 @@ namespace Zavala
                 return m_tileSegments.Count - 1;
             }
         }
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.RoadStartHealth = m_roadStartHealth;
+            defaultVars.RoadDisrepairThreshold = m_disrepairThreshold;
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            ProcessUpdatedVars(args.UpdatedVars);
+        }
+
+        #endregion // All Vars Settings
+
+        #region AllVars Helpers
+
+        private void ProcessUpdatedVars(AllVars updatedVars) {
+            m_roadStartHealth = m_baseHealth = m_currHealth = updatedVars.RoadStartHealth;
+            m_disrepairThreshold = updatedVars.RoadDisrepairThreshold;
+        }
+
+        #endregion // AllVars Helpers
     }
 }

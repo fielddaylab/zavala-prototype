@@ -27,12 +27,21 @@ namespace Zavala.Settings
         public int GrainPhosphPerFertilizer;
 
         // Truck
-
+        public float TruckSpeed;
+        public float TruckLeakRate;
+        public int TruckLeakAmtManure;
+        public int TruckLeakAmtFertilizer;
+        public float TruckRoadDmgManure;
+        public float TruckRoadDmgFertilizer;
 
         // Skimmer
-
+        public int SkimmerSkimAmt;
+        public float SkimmerCycleTime;
+        public int SkimmerExpiredRunoffAmt;
 
         // Road
+        public float RoadStartHealth;
+        public float RoadDisrepairThreshold;
 
 
         // Dairy Farm
@@ -45,6 +54,8 @@ namespace Zavala.Settings
 
     public class SettingsMgr : MonoBehaviour
     {
+        public static SettingsMgr Instance;
+
         [Header("Timescale")]
 
         [SerializeField] private Button m_pauseButton;
@@ -71,12 +82,18 @@ namespace Zavala.Settings
 
         [SerializeField] private TMP_InputField[] m_cityInputs;
         [SerializeField] private TMP_InputField[] m_grainInputs;
+        [SerializeField] private TMP_InputField[] m_truckInputs;
+        [SerializeField] private TMP_InputField[] m_skimmerInputs;
+        [SerializeField] private TMP_InputField[] m_roadInputs;
 
         [Space(5)]
 
         [Header("Default Vars Source Prefabs")]
         [SerializeField] private GameObject m_cityPrefab;
         [SerializeField] private GameObject m_grainPrefab;
+        [SerializeField] private GameObject m_truckPrefab;
+        [SerializeField] private GameObject m_skimmerPrefab;
+        [SerializeField] private GameObject m_roadPrefab;
 
         private AllVars m_defaultVars; // the default vars
         private AllVars m_modifyingVars; // the vars actively being modified
@@ -86,6 +103,8 @@ namespace Zavala.Settings
 
 
         public void Init() {
+            Instance = this;
+
             m_speedRange = m_fastestSpeed - m_slowestSpeed;
 
             m_timescaleSlider.onValueChanged.AddListener(HandleTimescaleValueChanged);
@@ -179,6 +198,7 @@ namespace Zavala.Settings
         }
 
         private void HandleRestartClicked() {
+            EventMgr.Instance.TriggerEvent(ID.LevelRestarted, EventArgs.Empty);
             SceneManager.LoadScene("GridScene");
         }
 
@@ -228,6 +248,15 @@ namespace Zavala.Settings
             // Grain Farm
             m_grainPrefab.GetComponent<GrainFarm>().SetRelevantVars(ref m_defaultVars);
 
+            // Truck
+            m_truckPrefab.GetComponent<Truck>().SetRelevantVars(ref m_defaultVars);
+
+            // Skimmer
+            m_skimmerPrefab.GetComponent<Skimmer>().SetRelevantVars(ref m_defaultVars);
+
+            // Road
+            m_roadPrefab.GetComponent<Road>().SetRelevantVars(ref m_defaultVars);
+
             // set current to defaults
             m_currVars = m_defaultVars;
         }
@@ -250,13 +279,21 @@ namespace Zavala.Settings
             m_modifyingVars.GrainPhosphPerFertilizer = int.Parse(m_grainInputs[4].text);
 
             // Truck
-
+            m_modifyingVars.TruckSpeed = float.Parse(m_truckInputs[0].text);
+            m_modifyingVars.TruckLeakRate = float.Parse(m_truckInputs[1].text);
+            m_modifyingVars.TruckLeakAmtManure = int.Parse(m_truckInputs[2].text);
+            m_modifyingVars.TruckLeakAmtFertilizer = int.Parse(m_truckInputs[3].text);
+            m_modifyingVars.TruckRoadDmgManure = float.Parse(m_truckInputs[4].text);
+            m_modifyingVars.TruckRoadDmgFertilizer = float.Parse(m_truckInputs[5].text);
 
             // Skimmer
-
+            m_modifyingVars.SkimmerSkimAmt = int.Parse(m_skimmerInputs[0].text);
+            m_modifyingVars.SkimmerCycleTime = float.Parse(m_skimmerInputs[1].text);
+            m_modifyingVars.SkimmerExpiredRunoffAmt = int.Parse(m_skimmerInputs[2].text);
 
             // Road
-
+            m_modifyingVars.RoadStartHealth = float.Parse(m_roadInputs[0].text);
+            m_modifyingVars.RoadDisrepairThreshold = float.Parse(m_roadInputs[1].text);
 
             // TODO: all below
             // Dairy Farm
@@ -286,13 +323,21 @@ namespace Zavala.Settings
             m_grainInputs[4].text = "" + m_currVars.GrainPhosphPerFertilizer;
 
             // Truck
-
+            m_truckInputs[0].text = "" + m_currVars.TruckSpeed;
+            m_truckInputs[1].text = "" + m_currVars.TruckLeakRate;
+            m_truckInputs[2].text = "" + m_currVars.TruckLeakAmtManure;
+            m_truckInputs[3].text = "" + m_currVars.TruckLeakAmtFertilizer;
+            m_truckInputs[4].text = "" + m_currVars.TruckRoadDmgManure;
+            m_truckInputs[5].text = "" + m_currVars.TruckRoadDmgFertilizer;
 
             // Skimmer
-
+            m_skimmerInputs[0].text = "" + m_currVars.SkimmerSkimAmt;
+            m_skimmerInputs[1].text = "" + m_currVars.SkimmerCycleTime;
+            m_skimmerInputs[2].text = "" + m_currVars.SkimmerExpiredRunoffAmt;
 
             // Road
-
+            m_roadInputs[0].text = "" + m_currVars.RoadStartHealth;
+            m_roadInputs[1].text = "" + m_currVars.RoadDisrepairThreshold;
 
             // Dairy Farm
 
@@ -301,5 +346,10 @@ namespace Zavala.Settings
         }
 
         #endregion // Helpers
+    
+        public AllVars GetCurrAllVars() {
+            return m_currVars;
+        }
+    
     }
 }

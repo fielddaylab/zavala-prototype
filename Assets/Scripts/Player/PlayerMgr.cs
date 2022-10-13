@@ -15,11 +15,17 @@ namespace Zavala
 
         public void Init() {
             Instance = this;
-            m_moneyUnits = 0;
-            AddMoney(m_startingMoney);
+
+            ResetMoney();
 
             EventMgr.Instance.ProduceMoney += HandleProduceMoney;
             EventMgr.Instance.PurchaseSuccessful += HandlePurchaseSuccessful;
+            EventMgr.Instance.LevelRestarted += HandleLevelRestarted;
+        }
+
+        private void ResetMoney() {
+            m_moneyUnits = 0;
+            AddMoney(m_startingMoney);
         }
 
         private void AddMoney(int units) {
@@ -49,6 +55,10 @@ namespace Zavala
 
         private void HandlePurchaseSuccessful(object sender, PurchaseSuccessfulEventArgs args) {
             SpendMoney(args.Amt);
+        }
+        
+        private void HandleLevelRestarted(object sender, EventArgs args) {
+            ResetMoney();
         }
 
         #endregion // Handlers

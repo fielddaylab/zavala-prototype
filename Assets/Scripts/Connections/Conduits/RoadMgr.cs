@@ -30,7 +30,6 @@ namespace Zavala.Roads
 
         // Road creation
         [SerializeField] private GameObject m_roadPrefab;
-        [SerializeField] private float m_roadStartHealth;
 
         [SerializeField] private GameObject m_roadSegmentPrefab;
         [SerializeField] private Sprite m_roadStraightSprite, m_roadEndSprite, m_roadBendSprite, m_roadTightBendSprite;
@@ -222,8 +221,6 @@ namespace Zavala.Roads
 
             // in connection nodes
             m_roadInProgress.FinalizeConnections();
-
-            m_roadInProgress.SetHealth(m_roadStartHealth);
 
             //m_roadInProgress.NormalizeSegmentHeights();
 

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f8785dc64d5fc94892396d12cd879c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_roadStartHealth: 100
   m_disrepairThreshold: 0.25
 --- !u!114 &5227570151557769574
 MonoBehaviour:

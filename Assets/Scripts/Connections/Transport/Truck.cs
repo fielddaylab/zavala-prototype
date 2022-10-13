@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Events;
 using Zavala.Functionalities;
+using Zavala.Settings;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -10,13 +12,12 @@ namespace Zavala
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(DamagesRoad))]
-    public class Truck : MonoBehaviour
+    public class Truck : MonoBehaviour, IAllVars
     {
         [SerializeField] private Canvas m_canvas;
         [SerializeField] private Image m_resourceIcon;
         [SerializeField] private float m_speed;
         [SerializeField] private float m_leakRate;
-        [SerializeField] private float m_roadDamage;
 
         private Resources.Type m_resourceType;
         private Requests m_recipient;
@@ -74,6 +75,13 @@ namespace Zavala
 
             m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
             m_damagesComponent = this.GetComponent<DamagesRoad>();
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
+            ProcessUpdatedVars(SettingsMgr.Instance.GetCurrAllVars());
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private void Update() {
@@ -160,5 +168,49 @@ namespace Zavala
             // hide truck
             m_canvas.gameObject.SetActive(false);
         }
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.TruckSpeed = m_speed;
+
+            defaultVars.TruckLeakRate = m_leakRate;
+            defaultVars.TruckLeakAmtManure = this.GetComponent<GeneratesPhosphorus>().GetAmtForResource(Resources.Type.Manure);
+            if (defaultVars.TruckLeakAmtManure == -1) {
+                Debug.Log("[Truck] Truck does not leak when transporting manure.");
+            }
+            defaultVars.TruckLeakAmtFertilizer = this.GetComponent<GeneratesPhosphorus>().GetAmtForResource(Resources.Type.Fertilizer);
+            if (defaultVars.TruckLeakAmtFertilizer == -1) {
+                Debug.Log("[Truck] Truck does not leak when transporting fertilizer.");
+            }
+            defaultVars.TruckRoadDmgManure = this.GetComponent<DamagesRoad>().GetAmtForResource(Resources.Type.Manure);
+            if (defaultVars.TruckRoadDmgManure == -1) {
+                Debug.Log("[Truck] Truck does not damage road for manure.");
+            }
+            defaultVars.TruckRoadDmgFertilizer = this.GetComponent<DamagesRoad>().GetAmtForResource(Resources.Type.Fertilizer);
+            if (defaultVars.TruckRoadDmgFertilizer == -1) {
+                Debug.Log("[Truck] Truck does not damage road for fertilizer.");
+            }
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            ProcessUpdatedVars(args.UpdatedVars);
+        }
+
+        #endregion // All Vars Settings
+
+        #region AllVars Helpers
+
+        private void ProcessUpdatedVars(AllVars updatedVars) {
+            m_speed = updatedVars.TruckSpeed;
+
+            m_leakRate = updatedVars.TruckLeakRate;
+            this.GetComponent<GeneratesPhosphorus>().SetAmtForResource(Resources.Type.Manure, updatedVars.TruckLeakAmtManure);
+            this.GetComponent<GeneratesPhosphorus>().SetAmtForResource(Resources.Type.Fertilizer, updatedVars.TruckLeakAmtFertilizer);
+            this.GetComponent<DamagesRoad>().SetAmtForResource(Resources.Type.Manure, updatedVars.TruckRoadDmgManure);
+            this.GetComponent<DamagesRoad>().SetAmtForResource(Resources.Type.Fertilizer, updatedVars.TruckRoadDmgFertilizer);
+        }
+
+        #endregion // AllVars Helpers
     }
 }
