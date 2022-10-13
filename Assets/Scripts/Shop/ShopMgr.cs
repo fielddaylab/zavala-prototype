@@ -45,6 +45,7 @@ namespace Zavala
             m_toggleButton.onClick.AddListener(ToggleShopExpand);
             m_itemsContainer.SetActive(false);
 
+            Debug.Log("[DebugNulls] Selected item set to null in init");
             m_selectedItem = null;
         }
 
@@ -57,6 +58,9 @@ namespace Zavala
         }
 
         public GameObject GetPurchasePrefab() {
+            Debug.Log("[DebugNulls] Getting purchase prefab...");
+            Debug.Log("[DebugNulls] selected item is null?: " + (m_selectedItem == null));
+            Debug.Log("[DebugNulls] Selected item prefab is null?: " + (m_selectedItem.Prefab == null));
             return m_selectedItem.Prefab;
         }
 
@@ -109,6 +113,7 @@ namespace Zavala
             Debug.Log("Selected " + data.ItemType.ToString());
 
             m_selectedItem = data;
+            Debug.Log("[DebugNulls] New selected item set (" + data.ItemType.ToString() + "). Prefab is null?: " + (data.Prefab == null));
 
             EventMgr.Instance.TriggerEvent(Events.ID.InteractModeUpdated, new InteractModeEventArgs(GetInteractMode(data.ItemType)));
         }
@@ -121,6 +126,7 @@ namespace Zavala
 
         private void HandleInteractModeUpdated(object sender, InteractModeEventArgs args) {
             if (args.Mode == Mode.Select) {
+                Debug.Log("[DebugNulls] Selected item set to null when interact mode switched to Select");
                 m_selectedItem = null;
             }
         }
