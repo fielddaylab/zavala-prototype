@@ -20,18 +20,22 @@ namespace Zavala.Settings
         public int CityBloomTolerance;
 
         // Grain Farm
-
-
-        // Dairy Farm
-
+        public float GrainCycleTime;
+        public int GrainRequestTimeout;
+        public int GrainImportCost;
+        public int GrainPhosphPerManure;
+        public int GrainPhosphPerFertilizer;
 
         // Truck
+
+
+        // Skimmer
 
 
         // Road
 
 
-        // Skimmer
+        // Dairy Farm
 
 
         // Digester
@@ -66,18 +70,19 @@ namespace Zavala.Settings
         [SerializeField] private Button m_adjustCancelButton, m_adjustRevertButton, m_adjustApplyButton;
 
         [SerializeField] private TMP_InputField[] m_cityInputs;
+        [SerializeField] private TMP_InputField[] m_grainInputs;
 
         [Space(5)]
 
         [Header("Default Vars Source Prefabs")]
         [SerializeField] private GameObject m_cityPrefab;
+        [SerializeField] private GameObject m_grainPrefab;
 
         private AllVars m_defaultVars; // the default vars
         private AllVars m_modifyingVars; // the vars actively being modified
         private AllVars m_currVars; // the currently saved vars
 
         public static bool VisibleCycles = true;
-
 
 
         public void Init() {
@@ -217,7 +222,11 @@ namespace Zavala.Settings
 
         private void InitDefaultAllVars() {
             // Save default all vars
+            // City
             m_cityPrefab.GetComponent<City>().SetRelevantVars(ref m_defaultVars);
+
+            // Grain Farm
+            m_grainPrefab.GetComponent<GrainFarm>().SetRelevantVars(ref m_defaultVars);
 
             // set current to defaults
             m_currVars = m_defaultVars;
@@ -233,20 +242,24 @@ namespace Zavala.Settings
             m_modifyingVars.CityProduceMoneyAmt = int.Parse(m_cityInputs[3].text);
             m_modifyingVars.CityBloomTolerance = int.Parse(m_cityInputs[4].text);
 
-            // TODO: all below
             // Grain Farm
-
-
-            // Dairy Farm
-
+            m_modifyingVars.GrainCycleTime = float.Parse(m_grainInputs[0].text);
+            m_modifyingVars.GrainRequestTimeout = int.Parse(m_grainInputs[1].text);
+            m_modifyingVars.GrainImportCost = int.Parse(m_grainInputs[2].text);
+            m_modifyingVars.GrainPhosphPerManure = int.Parse(m_grainInputs[3].text);
+            m_modifyingVars.GrainPhosphPerFertilizer = int.Parse(m_grainInputs[4].text);
 
             // Truck
+
+
+            // Skimmer
 
 
             // Road
 
 
-            // Skimmer
+            // TODO: all below
+            // Dairy Farm
 
 
             // Digester
@@ -258,11 +271,33 @@ namespace Zavala.Settings
 
         private void DisplayCurrAllVars() {
             // Set all values to default values
+            // City
             m_cityInputs[0].text = "" + m_currVars.CityPopStart;
             m_cityInputs[1].text = "" + m_currVars.CityCycleTime;
             m_cityInputs[2].text = "" + m_currVars.CityRequestTimeout;
             m_cityInputs[3].text = "" + m_currVars.CityProduceMoneyAmt;
             m_cityInputs[4].text = "" + m_currVars.CityBloomTolerance;
+
+            // Grain Farm
+            m_grainInputs[0].text = "" + m_currVars.GrainCycleTime;
+            m_grainInputs[1].text = "" + m_currVars.GrainRequestTimeout;
+            m_grainInputs[2].text = "" + m_currVars.GrainImportCost;
+            m_grainInputs[3].text = "" + m_currVars.GrainPhosphPerManure;
+            m_grainInputs[4].text = "" + m_currVars.GrainPhosphPerFertilizer;
+
+            // Truck
+
+
+            // Skimmer
+
+
+            // Road
+
+
+            // Dairy Farm
+
+
+            // Digester
         }
 
         #endregion // Helpers

@@ -18,6 +18,10 @@ namespace Zavala.Functionalities
                 Type = type;
                 Amt = amt;
             }
+
+            public void SetAmt(int newAmt) {
+                Amt = newAmt;
+            }
         }
 
         [SerializeField] private List<ResourceAmtPair> m_resourceAmtMap;
@@ -34,5 +38,30 @@ namespace Zavala.Functionalities
                 }
             }
         }
+
+        #region AllVars Gets & Sets
+
+        public int GetAmtForResource(Resources.Type resourceType) {
+            for (int i = 0; i < m_resourceAmtMap.Count; i++) {
+                if (m_resourceAmtMap[i].Type == resourceType) {
+                    return m_resourceAmtMap[i].Amt;
+                }
+            }
+
+            return -1;
+        }
+
+        public void SetAmtForResource(Resources.Type resourceType, int newAmt) {
+            for (int i = 0; i < m_resourceAmtMap.Count; i++) {
+                if (m_resourceAmtMap[i].Type == resourceType) {
+                    ResourceAmtPair newPair = new ResourceAmtPair(resourceType, newAmt);
+                    m_resourceAmtMap.RemoveAt(i);
+                    m_resourceAmtMap.Add(newPair);
+                    break;
+                }
+            }
+        }
+
+        #endregion // AllVars Gets & Sets
     }
 }

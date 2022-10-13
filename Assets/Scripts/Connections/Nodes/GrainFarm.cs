@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Resources;
+using Zavala.Settings;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -17,7 +19,7 @@ namespace Zavala
     [RequireComponent(typeof(Tile))]
     [RequireComponent(typeof(Inspectable))]
 
-    public class GrainFarm : MonoBehaviour
+    public class GrainFarm : MonoBehaviour, IAllVars
     {
         private ConnectionNode m_connectionNodeComponent;
         private Requests m_requestsComponent;
@@ -47,6 +49,8 @@ namespace Zavala
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
 
             m_firstCycle = true;
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
         }
 
         private void Start() {
@@ -61,6 +65,8 @@ namespace Zavala
             if (m_cyclesComponent != null) {
                 m_cyclesComponent.CycleCompleted -= HandleCycleCompleted;
             }
+
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private void StraightToStorage() {
@@ -120,5 +126,33 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.GrainCycleTime = this.GetComponent<Cycles>().CycleTime;
+
+            defaultVars.GrainRequestTimeout = this.GetComponent<Requests>().GetRequestTimeout();
+            defaultVars.GrainImportCost = m_importCost;
+            defaultVars.GrainPhosphPerManure = this.GetComponent<GeneratesPhosphorus>().GetAmtForResource(Resources.Type.Manure);
+            if (defaultVars.GrainPhosphPerManure == -1) {
+                Debug.Log("[GrainFarm] Grain Farm does not generate phosph for manure.");
+            }
+            defaultVars.GrainPhosphPerFertilizer = this.GetComponent<GeneratesPhosphorus>().GetAmtForResource(Resources.Type.Fertilizer);
+            if (defaultVars.GrainPhosphPerManure == -1) {
+                Debug.Log("[GrainFarm] Grain Farm does not generate phosph for fertilizer.");
+            }
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            this.GetComponent<Cycles>().CycleTime = args.UpdatedVars.GrainCycleTime;
+
+            this.GetComponent<Requests>().SetRequestTimeout(args.UpdatedVars.GrainRequestTimeout);
+            m_importCost = args.UpdatedVars.GrainImportCost;
+            this.GetComponent<GeneratesPhosphorus>().SetAmtForResource(Resources.Type.Manure, args.UpdatedVars.GrainPhosphPerManure);
+            this.GetComponent<GeneratesPhosphorus>().SetAmtForResource(Resources.Type.Fertilizer, args.UpdatedVars.GrainPhosphPerFertilizer);
+        }
+
+        #endregion // All Vars Settings
     }
 }

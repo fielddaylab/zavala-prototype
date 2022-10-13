@@ -69,8 +69,6 @@ namespace Zavala
         }
 
         private void OnDisable() {
-            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
-
             if (m_requestsComponent != null) {
                 m_requestsComponent.RequestFulfilled -= HandleRequestFulfilled;
                 m_requestsComponent.RequestExpired -= HandleRequestExpired;
@@ -81,6 +79,8 @@ namespace Zavala
             if (m_bloomAffectableComponent != null) {
                 m_bloomAffectableComponent.BloomEffect -= HandleBloomEffect;
             }
+
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private void StraightToStorage() {
