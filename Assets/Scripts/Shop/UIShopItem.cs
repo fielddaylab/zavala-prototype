@@ -32,6 +32,8 @@ namespace Zavala.Shop.Items
             m_costText.text = "" + data.Cost;
             m_labelText.text = data.Label;
 
+            Debug.Log("[DebugNulls] Initing data. Item " + data.Label + " prefab is null?: " + (data.Prefab == null));
+
             m_button.onClick.AddListener(delegate { ShopMgr.Instance.SelectShopItem(m_data); });
         }
 
