@@ -15,5 +15,5 @@ MonoBehaviour:
   m_itemType: 2
   m_cost: 80
   m_icon: {fileID: 21300000, guid: 7be44d0a90e351a4ba66e25d560e9cd7, type: 3}
-  m_prefab: {fileID: 675585182139899117, guid: 7ad6ab3f52c12424d856253951cb1c6b, type: 3}
+  m_prefab: {fileID: 1097627780168390, guid: 597f1fc0ba7ae0444ba257d4b5f0350b, type: 3}
   m_label: Skimmer
