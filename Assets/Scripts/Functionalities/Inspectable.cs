@@ -67,6 +67,10 @@ namespace Zavala
                         nodeUnder.RemoveFromRoad();
                     }
                 }
+
+                if (this.GetComponent<ConnectionNode>() != null) {
+                    this.GetComponent<ConnectionNode>().RemoveFromRoad();
+                }
             }
 
             Debug.Log("Removal");

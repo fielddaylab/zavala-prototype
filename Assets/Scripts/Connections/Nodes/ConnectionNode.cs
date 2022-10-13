@@ -15,6 +15,14 @@ namespace Zavala
             m_connectedRoads = new List<Road>();
         }
 
+        private void OnDisable() {
+            foreach(Road road in m_connectedRoads) {
+                if (road != null) {
+                    road.EconomyUpdated -= HandleEconomyUpdated;
+                }
+            }
+        }
+
         public void AddRoad(Road road) {
             m_connectedRoads.Add(road);
             road.EconomyUpdated += HandleEconomyUpdated;
