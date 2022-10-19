@@ -52,6 +52,9 @@ namespace Zavala.Settings
         // Digester
 
 
+        // TileGenerator
+        public float TileGeneratorCycleTime;
+        public TileGenerator.GenerateMode TileGeneratorMode;
     }
 
     public class SettingsMgr : MonoBehaviour
@@ -87,6 +90,8 @@ namespace Zavala.Settings
         [SerializeField] private TMP_InputField[] m_truckInputs;
         [SerializeField] private TMP_InputField[] m_skimmerInputs;
         [SerializeField] private TMP_InputField[] m_roadInputs;
+        [SerializeField] private TMP_InputField[] m_tileGeneratorInputs;
+        [SerializeField] private TMP_Dropdown[] m_tileGeneratorDropdowns;
 
         [Space(5)]
 
@@ -96,6 +101,7 @@ namespace Zavala.Settings
         [SerializeField] private GameObject m_truckPrefab;
         [SerializeField] private GameObject m_skimmerPrefab;
         [SerializeField] private GameObject m_roadPrefab;
+        [SerializeField] private GameObject m_tileGeneratorObj;
 
         private AllVars m_defaultVars; // the default vars
         private AllVars m_modifyingVars; // the vars actively being modified
@@ -259,6 +265,9 @@ namespace Zavala.Settings
             // Road
             m_roadPrefab.GetComponent<Road>().SetRelevantVars(ref m_defaultVars);
 
+            // TileGenerator
+            m_tileGeneratorObj.GetComponent<TileGenerator>().SetRelevantVars(ref m_defaultVars);
+
             // set current to defaults
             m_currVars = m_defaultVars;
         }
@@ -296,6 +305,14 @@ namespace Zavala.Settings
             // Road
             m_modifyingVars.RoadStartHealth = float.Parse(m_roadInputs[0].text);
             m_modifyingVars.RoadDisrepairThreshold = float.Parse(m_roadInputs[1].text);
+
+            // Tile Generator
+            m_modifyingVars.TileGeneratorCycleTime = float.Parse(m_tileGeneratorInputs[0].text);
+            TileGenerator.GenerateMode newMode = TileGenerator.GenerateMode.Replace;
+            Debug.Log("[SettingsMgr] new tile dropdown str value: " + m_tileGeneratorDropdowns[0].value);
+            if (m_tileGeneratorDropdowns[0].value == 1) { newMode = TileGenerator.GenerateMode.Boundary; }
+            m_modifyingVars.TileGeneratorMode = newMode;
+
 
             // TODO: all below
             // Dairy Farm
@@ -340,6 +357,10 @@ namespace Zavala.Settings
             // Road
             m_roadInputs[0].text = "" + m_currVars.RoadStartHealth;
             m_roadInputs[1].text = "" + m_currVars.RoadDisrepairThreshold;
+
+            // Tile Generator
+            m_tileGeneratorInputs[0].text = "" + m_currVars.TileGeneratorCycleTime;
+            m_tileGeneratorDropdowns[0].value = m_currVars.TileGeneratorMode == TileGenerator.GenerateMode.Replace ? 0 : 1;
 
             // Dairy Farm
 

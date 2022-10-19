@@ -9,6 +9,8 @@ namespace Zavala.Functionalities
     public class Cycles : MonoBehaviour {
         public float CycleTime; // how long a cycle lasts
 
+        [SerializeField] private bool m_isVisible = true;
+
         private UITimer m_uiTimer;
 
         public event EventHandler PreCycleCompleted; // just before cycle completes
@@ -23,7 +25,8 @@ namespace Zavala.Functionalities
         public void StartCycle() {
             Debug.Log("[Instantiate] Instantiating UITimer prefab");
             m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
-            m_uiTimer.Init(CycleTime, SettingsMgr.VisibleCycles);
+            bool visible = SettingsMgr.VisibleCycles && m_isVisible;
+            m_uiTimer.Init(CycleTime, visible);
             m_uiTimer.TimerCompleted += HandleTimerCompleted;
         }
 
