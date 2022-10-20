@@ -135,10 +135,7 @@ namespace Zavala.Settings
             m_adjustApplyButton.onClick.AddListener(HandleAdjustApplyClicked);
 
             InitDefaultAllVars();
-        }
 
-        private void Awake() {
-            // update
             EventMgr.Instance.TriggerEvent(ID.AllVarsUpdated, new AllVarsEventArgs(m_currVars));
         }
 

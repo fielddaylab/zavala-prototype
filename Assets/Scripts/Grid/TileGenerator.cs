@@ -37,7 +37,7 @@ namespace Zavala
         #region Helpers
 
         private void GenerateReplaceTile() {
-            Debug.Log("[TileGenerator] Generating replacement tile");
+            Debug.Log("[TileGenerator] Generating replacement tile...");
             Tile toReplace = GridMgr.GetRandomTile(true);
             if (toReplace == null) {
                 Debug.Log("[TileGenerator] Generation failed: GridMgr yielded a null tile");
@@ -46,6 +46,7 @@ namespace Zavala
             GameObject newPrefab = SelectNextPrefab();
             Tile newTile = Instantiate(newPrefab).GetComponent<Tile>();
             GridMgr.ReplaceTile(toReplace, newTile);
+            Debug.Log("[TileGenerator] Finished generating replacement tile");
         }
 
         private void GenerateBoundaryTile() {
@@ -84,6 +85,8 @@ namespace Zavala
             else if (m_generateMode == GenerateMode.Boundary) {
                 GenerateBoundaryTile();
             }
+
+            Debug.Log("[TileGenerator] Cycle Handling completed from sender: " + sender);
         }
 
         #endregion // Handlers
@@ -97,6 +100,8 @@ namespace Zavala
 
         public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
             this.GetComponent<Cycles>().CycleTime = args.UpdatedVars.TileGeneratorCycleTime;
+            Debug.Log("[TileGenerator] new cycle time: " + args.UpdatedVars.TileGeneratorCycleTime);
+
             m_generateMode = args.UpdatedVars.TileGeneratorMode;
             Debug.Log("[TileGenerator] Setting new mode: " + m_generateMode);
         }
