@@ -160,44 +160,7 @@ namespace Zavala
 
         */
 
-        private RoadBuildDir CalcBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
-            Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
-
-            return CalcBuildDirFromVector(dirVector);
-        }
-
-        private RoadBuildDir CalcBuildDirFromVector(Vector3 dirVector) {
-            if (dirVector.x > 0) {
-                // up, up-left, or up-right
-                if (dirVector.z < 0) {
-                    // up-right
-                    return RoadBuildDir.Up_Right;
-                }
-                else if (dirVector.z > 0) {
-                    // up-left
-                    return RoadBuildDir.Up_Left;
-                }
-                else {
-                    // up
-                    return RoadBuildDir.Up;
-                }
-            }
-            else {
-                // down, down-left, or down-right
-                if (dirVector.z < 0) {
-                    // down-right
-                    return RoadBuildDir.Down_Right;
-                }
-                else if (dirVector.z > 0) {
-                    // down-left
-                    return RoadBuildDir.Down_Left;
-                }
-                else {
-                    // down
-                    return RoadBuildDir.Down;
-                }
-            }
-        }
+        
 
         /*
         public RoadSegmentType GetSegmentType(int roadSegmentIndex) {

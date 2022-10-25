@@ -71,7 +71,8 @@ namespace Zavala.Roads
                 }
 
                 // check if next to at least one connection node
-                List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdj(Input.mousePosition);
+                Tile centerTile = GridMgr.OverTile(Input.mousePosition);
+                List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
 
                 if (adjNodes.Count > 0) {
 
@@ -159,7 +160,8 @@ namespace Zavala.Roads
             bool validEnd = false;
 
             // check if next to at least one connection node
-            List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdj(Input.mousePosition);
+            Tile centerTile = GridMgr.OverTile(Input.mousePosition);
+            List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
             if (adjNodes.Count > 0) {
                 validEnd = true;
             }
@@ -170,14 +172,7 @@ namespace Zavala.Roads
             }
 
             if (validEnd) {
-                // if so, save nodes as ending nodes
-                //m_roadInProgress.SetEndConnectionNodes(adjNodes);
-
-                // convert last road segment to an end (or roundabout if 1)
-                //m_roadInProgress.ConvertRoadSegment(endType, m_tracedTiles.Count - 1);
-
-                // save road segments
-                //m_roadInProgress.SetSegments(m_tracedTiles);
+                // TODO: refresh connecting edges
 
                 Debug.Log("[RoadMgr] try purchase road");
 
@@ -216,19 +211,42 @@ namespace Zavala.Roads
             m_startedRoad = false;
             m_tracedTiles.Clear();
             m_stagedSegments.Clear();
-            //Destroy(m_roadInProgress.gameObject);
-            //m_roadInProgress = null;
         }
 
         private void FinalizeRoad() {
-            // on tiles
-            // m_tracedTiles[i].ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
-            //m_roadInProgress.ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
+            for (int segIndex = 0; segIndex < m_stagedSegments.Count; segIndex++) {
+                // check if near a road or connection node
+                RoadSegment currSegment = m_stagedSegments[segIndex];
+                Tile centerTile = GridMgr.TileAtPos(currSegment.transform.position);
+                List<RoadSegment> adjSegments = GridMgr.AdjRoadSegments(centerTile);
 
-            // in connection nodes
-            //m_roadInProgress.FinalizeConnections();
+                // if road
+                if (adjSegments.Count > 0) {
+                    // generate an edge and scale
+                    for (int adjIndex = 0; adjIndex < adjSegments.Count; adjIndex++) {
+                        RoadSegment adjSegment = adjSegments[adjIndex];
+                        RoadBuildDir edgeDir = CalcBuildDirByPos(currSegment.transform.position, adjSegment.transform.position);
+                        float elevationDelta = CalcElevationDeltaByPos(currSegment.transform.position, adjSegment.transform.position);
+                        currSegment.ActivateEdge(edgeDir, elevationDelta);
 
-            //m_roadInProgress.NormalizeSegmentHeights();
+                        // add an edge to the other road
+                        RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
+                        adjSegment.ActivateEdge(reverseDir, -elevationDelta);
+                    }
+                }
+
+                // if connection node
+                List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
+                if (adjNodes.Count > 0) {
+                    // generate an edge and scale
+                    for (int adjIndex = 0; adjIndex < adjNodes.Count; adjIndex++) {
+                        RoadBuildDir edgeDir = CalcBuildDirByPos(currSegment.transform.position, adjNodes[adjIndex].transform.position);
+                        float elevationDelta = CalcElevationDeltaByPos(currSegment.transform.position, adjNodes[adjIndex].transform.position);
+                        currSegment.ActivateEdge(edgeDir, elevationDelta);
+                    }
+                    // add this road to the connection node's list of road outlets
+                }
+            }
 
             Debug.Log("[InteractMgr] Road saved!");
         }
@@ -248,6 +266,49 @@ namespace Zavala.Roads
             RoadSegment toUnstage = m_stagedSegments[i];
             Destroy(toUnstage.gameObject);
             m_stagedSegments.RemoveAt(i);
+        }
+
+        private RoadBuildDir CalcBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
+            Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
+
+            return CalcBuildDirFromVector(dirVector);
+        }
+
+        private RoadBuildDir CalcBuildDirFromVector(Vector3 dirVector) {
+            if (dirVector.x > 0) {
+                // up, up-left, or up-right
+                if (dirVector.z < 0) {
+                    // up-right
+                    return RoadBuildDir.Up_Right;
+                }
+                else if (dirVector.z > 0) {
+                    // up-left
+                    return RoadBuildDir.Up_Left;
+                }
+                else {
+                    // up
+                    return RoadBuildDir.Up;
+                }
+            }
+            else {
+                // down, down-left, or down-right
+                if (dirVector.z < 0) {
+                    // down-right
+                    return RoadBuildDir.Down_Right;
+                }
+                else if (dirVector.z > 0) {
+                    // down-left
+                    return RoadBuildDir.Down_Left;
+                }
+                else {
+                    // down
+                    return RoadBuildDir.Down;
+                }
+            }
+        }
+
+        private float CalcElevationDeltaByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
+            return currSegmentPos.y - prevSegmentPos.y;
         }
 
         #endregion // Helpers

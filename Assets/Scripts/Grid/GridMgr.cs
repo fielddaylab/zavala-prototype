@@ -191,9 +191,8 @@ namespace Zavala
             return emptyDirs[Random.Range(0, emptyDirs.Count)];
         }
 
-        public static List<ConnectionNode> ConnectingNodesAdj(Vector3 queryPos) {
-            Tile currTile = GridMgr.OverTile(queryPos);
-            List<Tile> adjTiles = GridMgr.GetAdjTiles(currTile);
+        public static List<ConnectionNode> ConnectingNodesAdjToTile(Tile queryTile) {
+            List<Tile> adjTiles = GridMgr.GetAdjTiles(queryTile);
             List<ConnectionNode> adjNodes = new List<ConnectionNode>();
 
             for (int i = 0; i < adjTiles.Count; i++) {
@@ -211,7 +210,26 @@ namespace Zavala
             return adjNodes;
         }
 
-        public static List<RoadSegment> AdjRoadSegments(Tile queryTile, List<RoadSegment> ignoreList) {
+        public static List<ConnectionNode> ConnectingNodesAdjToPos(Tile queryTile) {
+            List<Tile> adjTiles = GridMgr.GetAdjTiles(queryTile);
+            List<ConnectionNode> adjNodes = new List<ConnectionNode>();
+
+            for (int i = 0; i < adjTiles.Count; i++) {
+                if (adjTiles[i].gameObject.GetComponent<ConnectionNode>() != null) {
+                    adjNodes.Add(adjTiles[i].GetComponent<ConnectionNode>());
+                }
+                List<AddOn> tileAddOns = adjTiles[i].GetAddOns();
+                for (int a = 0; a < tileAddOns.Count; a++) {
+                    if (tileAddOns[a].GetComponent<ConnectionNode>() != null) {
+                        adjNodes.Add(tileAddOns[a].GetComponent<ConnectionNode>());
+                    }
+                }
+            }
+
+            return adjNodes;
+        }
+
+        public static List<RoadSegment> AdjRoadSegments(Tile queryTile, List<RoadSegment> ignoreList = null) {
             List<RoadSegment> adjSegments = new List<RoadSegment>();
 
             // raycast in 6 directions
@@ -253,7 +271,7 @@ namespace Zavala
                 Vector3 rayDir = (adjPos - origin).normalized;
                 if (Physics.Raycast(origin, rayDir, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Road"))) {
                     // ignore the road segments currently being staged
-                    if (!ignoreList.Contains(hit.collider.GetComponent<RoadSegment>())) {
+                    if (ignoreList == null || !ignoreList.Contains(hit.collider.GetComponent<RoadSegment>())) {
                         adjSegments.Add(hit.collider.GetComponent<RoadSegment>());
                     }
                 }

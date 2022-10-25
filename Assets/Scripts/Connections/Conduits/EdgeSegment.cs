@@ -9,11 +9,20 @@ namespace Zavala
 {
     public class EdgeSegment : MonoBehaviour
     {
-        public GameObject Connection;
+        [HideInInspector] public GameObject Connection;
         private RoadBuildDir m_dir;
 
         private static int HEX_ANGLES = 60;
         private static int UP_OFFSET = 0;
+        private static float RAMP_BASE_HEIGHT = 0.19f;
+
+        public void Activate() {
+            this.gameObject.SetActive(true);
+        }
+
+        public void Deactivate() {
+            this.gameObject.SetActive(false);
+        }
 
         #region Rotation
 
@@ -48,6 +57,18 @@ namespace Zavala
             Vector3 currAngles = this.transform.eulerAngles;
             currAngles.y = UP_OFFSET + HEX_ANGLES * angleNum;
             this.transform.eulerAngles = currAngles;
+        }
+
+        public void ScaleEdge(float elevationDelta) {
+            float newYScale;
+
+            float baseYScale = this.transform.localScale.y;
+            newYScale = (baseYScale / RAMP_BASE_HEIGHT) * elevationDelta;
+
+            this.transform.localScale = new Vector3(
+                this.transform.localScale.x,
+                newYScale,
+                this.transform.localScale.z);
         }
 
         #endregion // Rotation
