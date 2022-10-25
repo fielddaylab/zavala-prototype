@@ -211,6 +211,57 @@ namespace Zavala
             return adjNodes;
         }
 
+        public static List<RoadSegment> AdjRoadSegments(Tile queryTile, List<RoadSegment> ignoreList) {
+            List<RoadSegment> adjSegments = new List<RoadSegment>();
+
+            // raycast in 6 directions
+            Vector3 startPos = queryTile.transform.position;
+            Vector3 adjPos = startPos;
+            RaycastHit hit;
+
+            for (int dir = 0; dir < 6; dir++) {
+                switch (dir) {
+                    case 0:
+                        // up
+                        adjPos = startPos + new Vector3(1f, 0f, 0f);
+                        break;
+                    case 1:
+                        // up-right
+                        adjPos = startPos + new Vector3(0.5f, 0f, -0.875f);
+                        break;
+                    case 2:
+                        // down-right
+                        adjPos = startPos + new Vector3(-0.5f, 0f, -0.875f);
+                        break;
+                    case 3:
+                        // down
+                        adjPos = startPos + new Vector3(-1f, 0f, 0f);
+                        break;
+                    case 4:
+                        // down-left
+                        adjPos = startPos + new Vector3(-0.5f, 0, 0.875f);
+                        break;
+                    case 5:
+                        // up-left
+                        adjPos = startPos + new Vector3(0.5f, 0, 0.875f);
+                        break;
+                    default:
+                        break;
+                }
+                // raise ray and point downward
+                Vector3 origin = adjPos + Vector3.up * 50; // arbitrary height above all tiles
+                Vector3 rayDir = (adjPos - origin).normalized;
+                if (Physics.Raycast(origin, rayDir, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Road"))) {
+                    // ignore the road segments currently being staged
+                    if (!ignoreList.Contains(hit.collider.GetComponent<RoadSegment>())) {
+                        adjSegments.Add(hit.collider.GetComponent<RoadSegment>());
+                    }
+                }
+            }
+
+            return adjSegments;
+        }
+
         public static Tile GetRandomTile(bool mustBeBuildable) {
             List<Tile> candidates = new List<Tile>();
             for (int i = 0; i < AllTiles.Count; i++) {

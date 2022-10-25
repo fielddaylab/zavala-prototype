@@ -38,6 +38,8 @@ namespace Zavala.Roads
         private bool m_startedRoad;
         private List<Tile> m_tracedTiles;
         private Tile m_lastKnownTile;
+
+        private List<RoadSegment> m_stagedSegments;
         private Road m_roadInProgress;
 
         public void Init() {
@@ -46,6 +48,7 @@ namespace Zavala.Roads
             m_startedRoad = false;
             m_tracedTiles = new List<Tile>();
             m_roadInProgress = null;
+            m_stagedSegments = new List<RoadSegment>();
         }
 
         // TODO: remove this temp debug
@@ -61,8 +64,9 @@ namespace Zavala.Roads
 
         public void StartDrawingRoad() {
             if (!RoadMgr.Instance.StartedRoad) {
-                // check if a tile blocks building
-                if (GridMgr.OverTile(Input.mousePosition) == null || GridMgr.OverTile(Input.mousePosition).GetComponent<BlocksBuild>() != null) {
+                // check if valid place for road (not empty, doesn't block build, and not road)
+                Tile startTile = GridMgr.OverTile(Input.mousePosition);
+                if (startTile == null || startTile.GetComponent<BlocksBuild>() != null || GridMgr.RoadAtPos(startTile.transform.position) != null) {
                     return;
                 }
 
@@ -70,17 +74,16 @@ namespace Zavala.Roads
                 List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdj(Input.mousePosition);
 
                 if (adjNodes.Count > 0) {
+
                     // if so, save tile as starting node and start tracking
                     m_startedRoad = true;
                     Debug.Log("[Instantiate] Instantiating road prefab");
-                    m_roadInProgress = Instantiate(m_roadPrefab).GetComponent<Road>();
-                    m_roadInProgress.SetStartConnectionNodes(adjNodes);
                     Tile currTile = GridMgr.OverTile(Input.mousePosition);
                     m_tracedTiles.Add(currTile);
                     m_lastKnownTile = currTile;
 
                     // place an initial road segment prefab
-                    m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, true);
+                    StageRoadSegment(currTile.gameObject);
 
                     Debug.Log("Started building road");
                 }
@@ -103,31 +106,24 @@ namespace Zavala.Roads
                         for (int i = m_tracedTiles.Count - 1; i > rewindIndex; i--) {
                             m_tracedTiles[i].UndoDebugHighlight();
                             m_tracedTiles.RemoveAt(i);
-                            m_roadInProgress.RemoveRoadSegmentInstance(i);
+                            UnstageSegment(i);
                         }
 
-                        // reset latest tile to straight type (unless end)
-                        if (m_roadInProgress.GetSegmentType(m_tracedTiles.Count - 1) == RoadSegmentType.End) {
-                            m_roadInProgress.ConvertRoadSegment(RoadSegmentType.End, m_tracedTiles.Count - 1);
-                        }
-                        else {
-                            m_roadInProgress.ConvertRoadSegment(RoadSegmentType.Straight, m_tracedTiles.Count - 1);
-                        }
                         Debug.Log("[InteractMgr] rewound to index " + rewindIndex);
                     }
                     else {
                         // not seen before -- add if able
 
                         // cannot add road to blocking tile -- cancel road build
-                        if (currTile == null || currTile.GetComponent<BlocksBuild>() != null) {
-                            Debug.Log("Cannot build road on blocking or empty tile");
+                        if (currTile == null || currTile.GetComponent<BlocksBuild>() != null || GridMgr.RoadAtPos(currTile.transform.position) != null) {
+                            Debug.Log("Cannot build road on blocking, empty, or road tile");
                             CancelRoad();
                             return;
                         }
 
                         Tile prevTile = m_tracedTiles[m_tracedTiles.Count - 1];
                         m_tracedTiles.Add(currTile);
-                        m_roadInProgress.ConstructRoadSegmentInstance(currTile.gameObject, false);
+                        StageRoadSegment(currTile.gameObject);
                         Debug.Log("[InteractMgr] added new tile to road path");
                     }
                     m_lastKnownTile = currTile;
@@ -160,19 +156,28 @@ namespace Zavala.Roads
         private bool TryCompleteRoad() {
             Debug.Log("[RoadMgr] try complete road");
 
+            bool validEnd = false;
+
             // check if next to at least one connection node
             List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdj(Input.mousePosition);
-
             if (adjNodes.Count > 0) {
+                validEnd = true;
+            }
+
+            List<RoadSegment> adjSegments = GridMgr.AdjRoadSegments(m_lastKnownTile, m_stagedSegments);
+            if (adjSegments.Count > 0) {
+                validEnd = true;
+            }
+
+            if (validEnd) {
                 // if so, save nodes as ending nodes
-                m_roadInProgress.SetEndConnectionNodes(adjNodes);
+                //m_roadInProgress.SetEndConnectionNodes(adjNodes);
 
                 // convert last road segment to an end (or roundabout if 1)
-                RoadSegmentType endType = m_tracedTiles.Count == 1 ? RoadSegmentType.Roundabout : RoadSegmentType.End;
-                m_roadInProgress.ConvertRoadSegment(endType, m_tracedTiles.Count - 1);
+                //m_roadInProgress.ConvertRoadSegment(endType, m_tracedTiles.Count - 1);
 
                 // save road segments
-                m_roadInProgress.SetSegments(m_tracedTiles);
+                //m_roadInProgress.SetSegments(m_tracedTiles);
 
                 Debug.Log("[RoadMgr] try purchase road");
 
@@ -196,7 +201,7 @@ namespace Zavala.Roads
 
         private void CancelRoad() {
             for (int i = m_tracedTiles.Count - 1; i > -1; i--) {
-                m_roadInProgress.RemoveRoadSegmentInstance(i);
+                Destroy(m_stagedSegments[i].gameObject);
             }
 
             RoadCleanUp();
@@ -210,8 +215,9 @@ namespace Zavala.Roads
             Debug.Log("Ended building road");
             m_startedRoad = false;
             m_tracedTiles.Clear();
-            Destroy(m_roadInProgress.gameObject);
-            m_roadInProgress = null;
+            m_stagedSegments.Clear();
+            //Destroy(m_roadInProgress.gameObject);
+            //m_roadInProgress = null;
         }
 
         private void FinalizeRoad() {
@@ -220,33 +226,33 @@ namespace Zavala.Roads
             //m_roadInProgress.ConstructRoad(ShopMgr.Instance.GetPurchasePrefab());
 
             // in connection nodes
-            m_roadInProgress.FinalizeConnections();
+            //m_roadInProgress.FinalizeConnections();
 
             //m_roadInProgress.NormalizeSegmentHeights();
 
             Debug.Log("[InteractMgr] Road saved!");
         }
 
+        private void StageRoadSegment(GameObject tileUnderRoadObj) {
+            GameObject toStage = m_roadSegmentPrefab;
+
+            Debug.Log("[Instantiate] Instantiating road segment prefab");
+            RoadSegment roadSegmentInstance = Instantiate(toStage, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
+
+            // TODO: reveal connections according to neighboring roads / connection nodes
+
+            m_stagedSegments.Add(roadSegmentInstance);
+        }
+
+        private void UnstageSegment(int i) {
+            RoadSegment toUnstage = m_stagedSegments[i];
+            Destroy(toUnstage.gameObject);
+            m_stagedSegments.RemoveAt(i);
+        }
+
         #endregion // Helpers
 
         #region External
-
-        public Sprite GetRoadSprite(RoadSegmentType segmentType) {
-            switch(segmentType) {
-                case RoadSegmentType.End:
-                    return m_roadEndSprite;
-                case RoadSegmentType.Straight:
-                    return m_roadStraightSprite;
-                case RoadSegmentType.Bend:
-                    return m_roadBendSprite;
-                case RoadSegmentType.TightBend:
-                    return m_roadTightBendSprite;
-                case RoadSegmentType.Roundabout:
-                    return m_roadRoundaboutSprite;
-                default:
-                    return null;
-            }
-        }
 
         public GameObject GetRoadSegmentPrefab() {
             return m_roadSegmentPrefab;

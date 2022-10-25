@@ -18,7 +18,7 @@ namespace Zavala
 
         //private List<RoadSegment> m_segments;
         private List<Tile> m_tileSegments;
-        private List<RoadSegment> m_roadSegments;
+        private List<RoadSegment_OLD> m_roadSegments;
 
         public event EventHandler EconomyUpdated;
 
@@ -32,7 +32,7 @@ namespace Zavala
 
 
         private void Awake() {
-            m_roadSegments = new List<RoadSegment>();
+            m_roadSegments = new List<RoadSegment_OLD>();
             m_inDisrepair = false;
 
             EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
@@ -45,6 +45,7 @@ namespace Zavala
 
         #region Road Creation
 
+        /*
         public void SetStartConnectionNodes(List<ConnectionNode> nodes) {
             m_end1Nodes = nodes;
         }
@@ -94,9 +95,10 @@ namespace Zavala
             }
         }
 
+        
         // prev tile exists
         public void ConstructRoadSegmentInstance(GameObject tileUnderRoadObj, bool malleableDir) {
-            RoadSegment prevSegment;
+            RoadSegment_OLD prevSegment;
             if (m_roadSegments.Count > 0) {
                 prevSegment = m_roadSegments[m_roadSegments.Count - 1];
             }
@@ -107,7 +109,7 @@ namespace Zavala
             GameObject toPlace = RoadMgr.Instance.GetRoadSegmentPrefab();
 
             Debug.Log("[Instantiate] Instantiating road segment prefab");
-            RoadSegment roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment>();
+            RoadSegment_OLD roadSegmentInstance = Instantiate(toPlace, tileUnderRoadObj.transform).GetComponent<RoadSegment_OLD>();
             roadSegmentInstance.MalleableDir = malleableDir;
             roadSegmentInstance.ModifySegmentType(placeType);
 
@@ -156,6 +158,8 @@ namespace Zavala
             m_roadSegments.Add(roadSegmentInstance);
         }
 
+        */
+
         private RoadBuildDir CalcBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
             Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
 
@@ -195,16 +199,21 @@ namespace Zavala
             }
         }
 
+        /*
         public RoadSegmentType GetSegmentType(int roadSegmentIndex) {
             return m_roadSegments[roadSegmentIndex].SegmentType;
         }
+        */
 
+        /*
         public void OrientRoadSegment(int roadSegmentIndex, RoadBuildDir dir) {
             m_roadSegments[roadSegmentIndex].ModifyBuildDir(dir, dir);
         }
+        */
 
+        /*
         public void ConvertRoadSegment(RoadSegmentType placeType, int roadSegmentIndex) {
-            RoadSegment toConvert = m_roadSegments[roadSegmentIndex];
+            RoadSegment_OLD toConvert = m_roadSegments[roadSegmentIndex];
 
             RoadBuildDir prevDir;
             RoadBuildDir newDir;
@@ -224,9 +233,11 @@ namespace Zavala
             toConvert.ModifySegmentType(placeType);
             toConvert.ModifyBuildDir(newDir, prevDir);
         }
+        */
 
+        /*
         public void ConvertRoadSegment(RoadSegmentType placeType, int roadSegmentIndex, RoadBuildDir newDir) {
-            RoadSegment toConvert = m_roadSegments[roadSegmentIndex];
+            RoadSegment_OLD toConvert = m_roadSegments[roadSegmentIndex];
 
             RoadBuildDir prevDir = toConvert.BuildDir;
 
@@ -244,12 +255,15 @@ namespace Zavala
             toConvert.ModifyBuildDir(newDir, prevDir);
             //m_roadSegments.Add(roadSegmentInstance);
         }
+        */
 
+        /*
         public void RemoveRoadSegmentInstance(int segmentIndex) {
             GameObject segmentInstance = m_roadSegments[segmentIndex].gameObject;
             m_roadSegments.RemoveAt(segmentIndex);
             Destroy(segmentInstance);
         }
+        */
 
         #endregion // Road Creation
 
