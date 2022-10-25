@@ -1105,7 +1105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5af74eb5dcb654ebec453d222ce493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CycleTime: 40
+  CycleTime: 60
   m_isVisible: 0
 --- !u!114 &1422745240562247153
 MonoBehaviour:
