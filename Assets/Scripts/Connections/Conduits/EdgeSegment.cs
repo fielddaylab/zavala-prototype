@@ -9,6 +9,8 @@ namespace Zavala
 {
     public class EdgeSegment : MonoBehaviour
     {
+        [SerializeField] private MeshRenderer m_meshRenderer;
+
         [HideInInspector] public GameObject Connection;
         private RoadBuildDir m_dir;
 
@@ -72,5 +74,9 @@ namespace Zavala
         }
 
         #endregion // Rotation
+
+        public void SetMaterial(Material material) {
+            m_meshRenderer.material = material;
+        }
     }
 }

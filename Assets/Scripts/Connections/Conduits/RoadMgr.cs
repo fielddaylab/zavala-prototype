@@ -449,8 +449,10 @@ namespace Zavala.Roads
             // This is usually implemented as a min-heap or priority queue rather than a hash-set.
             PriorityQueue<RoadSegment, float> openSet = new PriorityQueue<RoadSegment, float>();
             List<RoadSegment> openSetKeys = new List<RoadSegment>();
-            openSet.Enqueue(start, 0);
-            openSetKeys.Add(start);
+            if (start.IsUsable()) {
+                openSet.Enqueue(start, 0);
+                openSetKeys.Add(start);
+            }
 
             // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
             // to n currently known.
@@ -492,8 +494,10 @@ namespace Zavala.Roads
                         float hNeighbor = Heuristic(start.transform.position, neighbor.transform.position);
                         fScore[neighbor] = tentativeGScore + hNeighbor;
                         if (!openSetKeys.Contains(neighbor)) {
-                            openSet.Enqueue(neighbor, hNeighbor);
-                            openSetKeys.Add(neighbor);
+                            if (neighbor.IsUsable()) {
+                                openSet.Enqueue(neighbor, hNeighbor);
+                                openSetKeys.Add(neighbor);
+                            }
                         }
                     }
                 }

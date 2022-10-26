@@ -120,7 +120,7 @@ namespace Zavala
         }
 
         public void Disrepair() {
-            m_sr.color = GameDB.Instance.RoadDamagedColor;
+            //m_sr.color = GameDB.Instance.RoadDamagedColor;
         }
 
         public void Repair() {

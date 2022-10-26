@@ -133,6 +133,7 @@ MonoBehaviour:
     type: 3}
   m_roadStartHealth: 100
   m_disrepairThreshold: 0.25
+  m_meshRenderer: {fileID: 8248943959487619206}
 --- !u!1001 &9070668497886528914
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -205,6 +206,12 @@ PrefabInstance:
 --- !u!4 &5025274039232181765 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4061157169158386583, guid: 998873fd509fd8a4babce7fbe6e0ca5f,
+    type: 3}
+  m_PrefabInstance: {fileID: 9070668497886528914}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8248943959487619206 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1124596037290779924, guid: 998873fd509fd8a4babce7fbe6e0ca5f,
     type: 3}
   m_PrefabInstance: {fileID: 9070668497886528914}
   m_PrefabAsset: {fileID: 0}

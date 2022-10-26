@@ -40,7 +40,12 @@ namespace Zavala.Functionalities
 
             Debug.Log("[DamagesRoad] Damage amount: " + dmgAmt);
 
-            toDamage.ApplyDamage(dmgAmt);
+            if (toDamage.gameObject != null) {
+                toDamage.ApplyDamage(dmgAmt);
+            }
+            else {
+                Debug.Log("[DamagesRoad] tried to damage a road that was already destroyed!");
+            }
 
             if (!foundAny) {
                 Debug.Log("[DamagesRoad] No damage specified for carried resource of type " + carriedResourceType);

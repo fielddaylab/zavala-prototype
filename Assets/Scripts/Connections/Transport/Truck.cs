@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
 using Zavala.Functionalities;
+using Zavala.Roads;
 using Zavala.Settings;
 using Zavala.Tiles;
 
@@ -92,6 +93,7 @@ namespace Zavala
 
         private void TraverseRoad() {
             Vector3 nextDestPos = m_immediateNextDest.transform.position + new Vector3(0, m_yBuffer, 0);
+
             if (Vector3.Distance(this.transform.position, nextDestPos) > .1f) {
                 // move to immediate next dest
                 Debug.Log("[Truck] Moving towards next destination");
@@ -101,21 +103,38 @@ namespace Zavala
                 // update immediate next dest
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     if (!m_delivered) {
-                        Deliver();
                         m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType);
+
+                        Deliver();
                         Debug.Log("[Truck] Delivered to final destination");
                     }
                 }
                 else {
+                    m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType);
+
+                    int stageMoveIndex;
+
                     if (m_currRoadSegmentIndex < m_destRoadSegmentIndex) {
-                        m_currRoadSegmentIndex++;
+                        stageMoveIndex = m_currRoadSegmentIndex + 1;
                     }
                     else {
-                        m_currRoadSegmentIndex--;
+                        stageMoveIndex = m_currRoadSegmentIndex - 1;
                     }
-                    m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position);
 
-                    // TODO: if truck would enter a broken/nonexistent tile, reconstruct path
+                    // if truck would enter a broken/nonexistent tile, reconstruct path
+                    if (GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position) == null || !GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position).IsUsable()) {
+                        // TODO: reconstruct path (real-time)
+                        // RoadMgr.Instance.QueryRoadForResource();
+
+                        // TEMP: execute staged movement normally
+                        m_currRoadSegmentIndex = stageMoveIndex;
+                    }
+                    else {
+                        // execute staged movement normally
+                        m_currRoadSegmentIndex = stageMoveIndex;
+                    }
+
+                    m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position);
 
                     // leak phosphorus (TODO: leak according to time, or per tile?)
                     // if per time, reference cycles component

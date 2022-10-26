@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEditor.PackageManager.Requests;
 using Zavala.Settings;
 using Zavala.Events;
+using Zavala.Tiles;
 
 namespace Zavala
 {
@@ -28,6 +29,7 @@ namespace Zavala
         private bool m_inDisrepair;
 
         [SerializeField] private float m_disrepairThreshold;
+        [SerializeField] private MeshRenderer m_meshRenderer;
 
         private EdgeSegment[] m_edges;
 
@@ -37,6 +39,8 @@ namespace Zavala
             m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_edges = new EdgeSegment[NUM_HEX_EDGES];
+
+            m_isUsable = true;
 
             EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
 
@@ -129,6 +133,7 @@ namespace Zavala
 
         public bool ResourceInEdges(Resources.Type resourceType, GameObject requester, out StoresProduct supplier, out Resources.Type foundResourceType) {
             for (int e = 0; e < m_edges.Length; e++) {
+                if (!m_isUsable) { continue; }
                 if (m_edges[e] == null) { continue; }
 
                 StoresProduct storeComponent = m_edges[e].Connection.GetComponent<StoresProduct>();
@@ -136,6 +141,20 @@ namespace Zavala
                 if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
                     Debug.Log("[RoadSegment] Resource (" + resourceType + ") in edges in the form of (" + foundResourceType + "). Requester: " + requester + " || Supplier: " + storeComponent.gameObject);
                     return true;
+                }
+
+                // check add-ons
+                if (m_edges[e].Connection.GetComponent<Tile>() != null) {
+                    List<AddOn> addOns = m_edges[e].Connection.GetComponent<Tile>().GetAddOns();
+                    for (int a = 0; a < addOns.Count; a++) {
+                        storeComponent = addOns[a].GetComponent<StoresProduct>();
+                        
+                        if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
+                            Debug.Log("[RoadSegment] Resource (" + resourceType + ") in edges in the form of (" + foundResourceType + "). Requester: " + requester + " || Supplier: " + storeComponent.gameObject);
+                            supplier = storeComponent;
+                            return true;
+                        }
+                    }
                 }
             }
 
@@ -164,13 +183,13 @@ namespace Zavala
 
             Debug.Log("[Road] Curr health: " + m_currHealth);
             if (!m_inDisrepair && (m_currHealth <= m_disrepairThreshold * m_baseHealth)) {
-
                 Disrepair();
             }
             if (m_currHealth <= 0) {
                 m_currHealth = 0;
 
-                Destroy(this.gameObject);
+                // Destroy(this.gameObject);
+                this.gameObject.SetActive(false);
 
                 m_isUsable = false;
             }
@@ -179,9 +198,21 @@ namespace Zavala
         public void Disrepair() {
             Debug.Log("[RoadSegment] road entering disrepair!");
 
+            // visually indicate disrepair
+            m_meshRenderer.material = GameDB.Instance.RoadDisrepairMaterial;
+            for (int e = 0; e < m_edges.Length; e++) {
+                if (m_edges[e] == null) { continue; }
+                m_edges[e].SetMaterial(GameDB.Instance.RoadDisrepairMaterial);
+            }
+
+
             m_inDisrepair = true;
 
             // TODO: trigger repair needed
+        }
+
+        public bool IsUsable() {
+            return m_isUsable;
         }
 
         #endregion // External
