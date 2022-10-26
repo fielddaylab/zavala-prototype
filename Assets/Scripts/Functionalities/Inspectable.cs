@@ -61,17 +61,10 @@ namespace Zavala
 
                 if (tileUnder != null) {
                     tileUnder.TryRemoveAddOn(addOnComp);
-
-                    ConnectionNode nodeUnder = tileUnder.GetComponent<ConnectionNode>();
-                    if (nodeUnder != null) {
-                        nodeUnder.RemoveFromRoad();
-                    }
-                }
-
-                if (this.GetComponent<ConnectionNode>() != null) {
-                    this.GetComponent<ConnectionNode>().RemoveFromRoad();
                 }
             }
+
+            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, EventArgs.Empty);
 
             Debug.Log("Removal");
             m_inspectUI.Remove();

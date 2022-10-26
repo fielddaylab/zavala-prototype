@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Utils;
 using Zavala.Functionalities;
 using Zavala.Tiles;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Zavala.Roads
 {
@@ -34,7 +38,6 @@ namespace Zavala.Roads
 
         [SerializeField] private GameObject m_roadSegmentPrefab;
         [SerializeField] private Sprite m_roadStraightSprite, m_roadEndSprite, m_roadBendSprite, m_roadTightBendSprite, m_roadRoundaboutSprite;
-        //[SerializeField] private GameObject m_roadEndPrefab, m_roadStraightPrefab, m_roadBendPrefab, m_roadRoundaboutPrefab;
 
         private bool m_startedRoad;
         private List<Tile> m_tracedTiles;
@@ -74,11 +77,6 @@ namespace Zavala.Roads
 
                 bool validStart = true;
 
-                // check if next to at least one connection node
-                //Tile centerTile = GridMgr.OverTile(Input.mousePosition);
-                //List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
-                // validStart = adjNodes.Count > 0
-
                 if (validStart) {
                     // if so, save tile as starting node and start tracking
                     m_startedRoad = true;
@@ -86,9 +84,6 @@ namespace Zavala.Roads
                     Tile currTile = GridMgr.OverTile(Input.mousePosition);
                     m_tracedTiles.Add(currTile);
                     m_lastKnownTile = currTile;
-
-                    // place an initial road segment prefab
-                    // StageRoadSegment(currTile.gameObject);
 
                     Debug.Log("Started building road");
                 }
@@ -189,8 +184,6 @@ namespace Zavala.Roads
                 return false;
             }
 
-            // TODO: refresh connecting edges
-
             Debug.Log("[RoadMgr] try purchase road");
 
             // try to purchase road
@@ -228,16 +221,33 @@ namespace Zavala.Roads
         }
 
         private void FinalizeRoad() {
+            Debug.Log("[RoadMgr] Finalizing road");
             // check if start is a road
             Vector3 firstPos = m_tracedTiles[0].transform.position;
             RoadSegment firstRoad = GridMgr.RoadAtPos(firstPos);
             if (firstRoad != null) {
+                Debug.Log("[RoadMgr] First is road");
                 // road -- generate edge in direction of first segment
-                Vector3 secondPos = m_stagedSegments.Count > 0 ? m_stagedSegments[0].transform.position : m_tracedTiles[m_tracedTiles.Count - 1].transform.position;
-                RoadBuildDir dir = CalcBuildDirByPos(secondPos, firstPos);
-                float elevationDelta = CalcElevationDeltaByPos(secondPos, firstPos);
-                firstRoad.ActivateEdge(dir, elevationDelta);
+                GameObject secondObj = m_stagedSegments.Count > 0 ? m_stagedSegments[0].gameObject : m_tracedTiles[m_tracedTiles.Count - 1].gameObject;
+                RoadBuildDir dir = CalcBuildDirByPos(secondObj.transform.position, firstPos);
+                float elevationDelta = CalcElevationDeltaByPos(transform.position, firstPos);
+                firstRoad.ActivateEdge(dir, elevationDelta, secondObj);
             }
+            // check if start is connection node
+            Tile firstTile = GridMgr.TileAtPos(firstPos);
+            List<ConnectionNode> firstConnectionNodes = firstTile.GetAllConnectionNodes();
+            if (firstConnectionNodes.Count > 0) {
+                Debug.Log("[RoadMgr] First is connection node");
+                RoadSegment secondSegment = GridMgr.RoadAtPos(m_tracedTiles[1].transform.position);
+                if (secondSegment != null) {
+                    // Have this connection node track the adj road outlet
+                    for (int n = 0; n < firstConnectionNodes.Count; n++) {
+                        Debug.Log("[RoadMgr] Adding road to node " + firstConnectionNodes[n]);
+                        firstConnectionNodes[n].AddRoad(secondSegment);
+                    }
+                }
+            }
+
 
             // create edges for intermediate nodes
             Vector3 prevPos;
@@ -250,19 +260,33 @@ namespace Zavala.Roads
                 // add an edge from this road back to previous position
                 RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
                 float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
-                currSegment.ActivateEdge(edgeDir, elevationDelta);
+
+                GameObject prevObj;
+                if (segIndex == 0) {
+                    if (firstRoad != null) {
+                        prevObj = firstRoad.gameObject;
+                    }
+                    else {
+                        prevObj = m_tracedTiles[0].gameObject;
+                    }
+                }
+                else {
+                    prevObj = m_stagedSegments[segIndex - 1].gameObject;
+                }
+                currSegment.ActivateEdge(edgeDir, elevationDelta, prevObj);
 
                 if (segIndex != 0) {
                     // add an edge from previous road forward to this road
                     RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
 
                     RoadSegment prevSegment = m_stagedSegments[segIndex - 1];
-                    prevSegment.ActivateEdge(reverseDir, -elevationDelta);
+                    prevSegment.ActivateEdge(reverseDir, -elevationDelta, currSegment.gameObject);
                 }
             }
 
             // check end
-            Vector3 endPos = m_tracedTiles[m_tracedTiles.Count - 1].transform.position;
+            Tile endTile = m_tracedTiles[m_tracedTiles.Count - 1];
+            Vector3 endPos = endTile.transform.position;
             RoadSegment endSegment = GridMgr.RoadAtPos(endPos);
             prevPos = currPos;
             currPos = endPos;
@@ -272,19 +296,23 @@ namespace Zavala.Roads
                 // add an edge from this road back to previous road
                 RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
                 float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
-                endSegment.ActivateEdge(edgeDir, elevationDelta);
+                GameObject prevObj = m_tracedTiles[m_tracedTiles.Count - 2].gameObject;
+                if (GridMgr.RoadAtPos(prevObj.transform.position) != null) {
+                    prevObj = GridMgr.RoadAtPos(prevObj.transform.position).gameObject;
+                }
+                endSegment.ActivateEdge(edgeDir, elevationDelta, prevObj);
 
                 if (m_stagedSegments.Count > 0) {
                     // add an edge from previous road forward to this road
                     RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
 
                     RoadSegment prevSegment = m_stagedSegments[m_stagedSegments.Count - 1];
-                    prevSegment.ActivateEdge(reverseDir, -elevationDelta);
+                    prevSegment.ActivateEdge(reverseDir, -elevationDelta, endSegment.gameObject);
                 }
             }
             // if connection node
-            if (m_tracedTiles[m_tracedTiles.Count - 1].GetComponent<ConnectionNode>() != null 
-                || m_tracedTiles[m_tracedTiles.Count - 1].ConnectionInAddOns()) {
+            List<ConnectionNode> finalConnectionNodes = m_tracedTiles[m_tracedTiles.Count - 1].GetAllConnectionNodes();
+            if (finalConnectionNodes.Count > 0) {
                 Debug.Log("[RoadMgr] Final is connection node");
 
                 RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
@@ -294,7 +322,13 @@ namespace Zavala.Roads
                 RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
 
                 RoadSegment prevSegment = m_stagedSegments.Count > 0 ? m_stagedSegments[m_stagedSegments.Count - 1] : GridMgr.RoadAtPos(m_tracedTiles[0].transform.position);
-                prevSegment.ActivateEdge(reverseDir, -elevationDelta);
+                prevSegment.ActivateEdge(reverseDir, -elevationDelta, endTile.gameObject);
+
+                // Have connection node track this road outlet
+                for (int n = 0; n < finalConnectionNodes.Count; n++) {
+                    Debug.Log("[RoadMgr] Adding road to node " + finalConnectionNodes[n]);
+                    finalConnectionNodes[n].AddRoad(prevSegment);
+                }
             }
 
             Debug.Log("[InteractMgr] Road saved!");
@@ -371,5 +405,121 @@ namespace Zavala.Roads
         }
 
         #endregion // External
+
+        #region Pathfinding
+
+        public bool QueryRoadForResource(GameObject requester, RoadSegment road, Resources.Type resourceType, out List<RoadSegment> path, out StoresProduct supplier, out Resources.Type foundResourceType) {
+            // look for a node with the requested resource
+            path = AStarPathToResource(requester, road, resourceType, out supplier, out foundResourceType);
+
+            return path.Count != 0;
+        }
+
+        private List<RoadSegment> ReconstructPath(Dictionary<RoadSegment, RoadSegment> cameFrom, RoadSegment current) {
+            List<RoadSegment> totalPath = new List<RoadSegment>();
+            totalPath.Add(current);
+            Debug.Log("[A*] Path reconstruct start with " + current);
+
+            while (cameFrom.Keys.Contains(current)) {
+                current = cameFrom[current];
+                totalPath.Add(current);
+                Debug.Log("[A*] Adding " + current);
+            }
+
+            Debug.Log("[A*] Path reconstructing finished with length " + totalPath.Count);
+
+            return totalPath;
+        }
+
+        private float Heuristic(Vector3 start, Vector3 curr) {
+            // returns a lower value for closer to destination
+            return Vector3.Distance(start, curr);
+        }
+
+        private List<RoadSegment> AStarPathToResource(GameObject requester, RoadSegment start, Resources.Type resourceType, out StoresProduct supplier, out Resources.Type foundResourceType) {
+
+            List<RoadSegment> finalPath = new List<RoadSegment>();
+
+            // The set of discovered nodes that may need to be (re-)expanded.
+            // Initially, only the start node is known.
+            // This is usually implemented as a min-heap or priority queue rather than a hash-set.
+            PriorityQueue<RoadSegment, float> openSet = new PriorityQueue<RoadSegment, float>();
+            List<RoadSegment> openSetKeys = new List<RoadSegment>();
+            openSet.Enqueue(start, 0);
+            openSetKeys.Add(start);
+
+            // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
+            // to n currently known.
+            Dictionary<RoadSegment, RoadSegment> cameFrom = new Dictionary<RoadSegment, RoadSegment>();
+
+            // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
+            Dictionary<RoadSegment, float> gScore = new Dictionary<RoadSegment, float>();
+            gScore[start] = 0;
+
+            // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
+            // how cheap a path could be from start to finish if it goes through n.
+            Dictionary<RoadSegment, float> fScore = new Dictionary<RoadSegment, float>();
+            fScore[start] = Heuristic(start.transform.position, start.transform.position);
+
+            while (openSet.Count > 0) {
+                RoadSegment current = openSet.Dequeue();
+                openSetKeys.Remove(current);
+                if (current.ResourceInEdges(resourceType, requester, out supplier, out foundResourceType)) {
+                    finalPath = ReconstructPath(cameFrom, current);
+                    return finalPath;
+                }
+
+                List<RoadSegment> connectedRoads = current.GetConnectedRoads();
+                for (int r = 0; r < connectedRoads.Count; r++) {
+                    RoadSegment neighbor = connectedRoads[r];
+                    if (!gScore.ContainsKey(neighbor)) {
+                        gScore.Add(neighbor, int.MaxValue);
+                    }
+                    if (!fScore.ContainsKey(neighbor)) {
+                        fScore.Add(neighbor, int.MaxValue);
+                    }
+                    // d(current,neighbor) is the weight of the edge from current to neighbor
+                    // tentative_gScore is the distance from start to the neighbor through current
+                    float tentativeGScore = gScore[current] + Vector3.Distance(current.transform.position, neighbor.transform.position);
+                    if (tentativeGScore < gScore[neighbor]) {
+                        // This path to neighbor is better than any previous one. Record it!
+                        cameFrom[neighbor] = current;
+                        gScore[neighbor] = tentativeGScore;
+                        float hNeighbor = Heuristic(start.transform.position, neighbor.transform.position);
+                        fScore[neighbor] = tentativeGScore + hNeighbor;
+                        if (!openSetKeys.Contains(neighbor)) {
+                            openSet.Enqueue(neighbor, hNeighbor);
+                            openSetKeys.Add(neighbor);
+                        }
+                    }
+                }
+            }
+
+            foundResourceType = Resources.Type.None;
+            supplier = null;
+            return finalPath;
+        }
+
+        #endregion // Pathfinding
+
+        #region Truck Summons
+
+        public bool TrySummonTruck(Resources.Type resourceType, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
+            if (supplier.TryRemoveFromStorage(resourceType)) {
+                // send to recipient
+
+                // find start tile
+                Transform startTransform = path[0].gameObject.transform;
+                Debug.Log("[Instantiate] Instantiating truck prefab");
+                Truck newTruck = Instantiate(GameDB.Instance.TruckPrefab).GetComponent<Truck>();
+                newTruck.Init(resourceType, path, supplier, recipient);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        #endregion // Truck Summons
     }
 }

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Resources;
+using Zavala.Roads;
 
 namespace Zavala.Functionalities
 { 
@@ -34,13 +36,13 @@ namespace Zavala.Functionalities
             m_activeRequests = new List<UIRequest>();
 
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
-            m_connectionNodeComponent.NodeEconomyUpdated += HandleNodeEconomyUpdated;
+            EventMgr.Instance.EconomyUpdated += HandleEconomyUpdated;
 
             m_initialQueuePos = Vector3.zero;
         }
 
         private void OnDisable() {
-            m_connectionNodeComponent.NodeEconomyUpdated -= HandleNodeEconomyUpdated;
+            EventMgr.Instance.EconomyUpdated -= HandleEconomyUpdated;
         }
 
         private void Start() {
@@ -102,18 +104,22 @@ namespace Zavala.Functionalities
 
                 Resources.Type resourceType = m_activeRequests[requestIndex].GetResourceType();
 
-                List<Road> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
+                List<RoadSegment> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
                 Debug.Log("[Requests] Querying road... (" + connectedRoads.Count + " roads connected)");
 
                 // find first available
                 for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
-                    if (connectedRoads[roadIndex].ResourceOnRoad(resourceType, this.gameObject)) {
-                        // summon a truck from road fleet with this as recipient
-                        // remove from supplier
-                        Resources.Type foundResourceType; // the specific type provided by this supplier
-                        StoresProduct supplier = connectedRoads[roadIndex].GetSupplierOnRoad(resourceType, out foundResourceType);
+                    // TODO: get paths from each and pick shortest
 
-                        if (connectedRoads[roadIndex].TrySummonTruck(foundResourceType, supplier, this)) {
+                    // query the road
+                    List<RoadSegment> path;
+                    StoresProduct supplier;
+                    Resources.Type foundResourceType;
+                    if (RoadMgr.Instance.QueryRoadForResource(this.gameObject, connectedRoads[roadIndex], resourceType, out path, out supplier, out foundResourceType)) {
+                        // found resource -- try summon truck
+
+                        Debug.Log("[Requests] Query was successful. length of path: " + path.Count);
+                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, path, supplier, this)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
@@ -171,7 +177,7 @@ namespace Zavala.Functionalities
             RedistributeQueue();
         }
 
-        private void HandleNodeEconomyUpdated(object sender, EventArgs args) {
+        private void HandleEconomyUpdated(object sender, EventArgs args) {
             QueryRoadForProducts();
         }
 

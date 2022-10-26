@@ -327,52 +327,7 @@ namespace Zavala
             EconomyUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool TrySummonTruck(Resources.Type resourceType, StoresProduct supplier, Requests recipient) {
-            if (supplier.TryRemoveFromStorage(resourceType)) {
-                // send to recipient
-
-                // find start tile
-                Transform startTransform = m_tileSegments[GetStartIndex(supplier)].gameObject.transform;
-                Debug.Log("[Instantiate] Instantiating truck prefab");
-                Truck newTruck = Instantiate(GameDB.Instance.TruckPrefab).GetComponent<Truck>();
-                newTruck.Init(resourceType, supplier, recipient, this);
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        public void ApplyDamage(float dmg) {
-            m_currHealth -= dmg;
-
-            Debug.Log("[Road] Curr health: " + m_currHealth);
-            if (!m_inDisrepair && (m_currHealth <= m_disrepairThreshold * m_baseHealth)) {
-                m_inDisrepair = true;
-
-                for (int i = 0; i < m_roadSegments.Count; i++) {
-                    m_roadSegments[i].Disrepair();
-                }
-
-                // TODO: trigger repair needed
-                Debug.Log("[Road] Road has fallen into disrepair!");
-            }
-            if (m_currHealth <= 0) {
-                m_currHealth = 0;
-
-                Debug.Log("[Road] Road is completely borked!");
-                for (int i = 0; i < m_roadSegments.Count; i++) {
-                    Debug.Log("[Road] Destroying road instance...");
-
-                    GameObject toDestroy = m_roadSegments[i].gameObject;
-                    Destroy(toDestroy);
-                }
-
-                m_isUsable = false;
-
-                m_roadSegments.Clear();
-            }
-        }
+        
 
         #endregion // Triggers
 

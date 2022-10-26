@@ -15,6 +15,9 @@ namespace Zavala.Events
         PurchaseSuccessful,
         PurchaseFailure,
 
+        // Economy
+        EconomyUpdated,
+
         // Interact
         InteractModeUpdated,
         InspectableOpened,
@@ -107,6 +110,12 @@ namespace Zavala.Events
 
         #endregion // Money
 
+        #region Economy
+
+        public event EventHandler EconomyUpdated;
+
+        #endregion // Economy
+
         #region Interaction
 
         public event EventHandler<InteractModeEventArgs> InteractModeUpdated;
@@ -159,6 +168,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.PurchaseFailure:
                     PurchaseFailure?.Invoke(this, args);
+                    break;
+                case Events.ID.EconomyUpdated:
+                    EconomyUpdated?.Invoke(this, args);
                     break;
                 case Events.ID.InteractModeUpdated:
                     InteractModeUpdated?.Invoke(this, (InteractModeEventArgs)args);

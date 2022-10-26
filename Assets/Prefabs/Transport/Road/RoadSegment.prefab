@@ -131,6 +131,8 @@ MonoBehaviour:
     type: 3}
   m_flatPrefab: {fileID: 1511746843250783929, guid: 72333f986f634a340867d701f657cd3b,
     type: 3}
+  m_roadStartHealth: 100
+  m_disrepairThreshold: 0.25
 --- !u!1001 &9070668497886528914
 PrefabInstance:
   m_ObjectHideFlags: 0

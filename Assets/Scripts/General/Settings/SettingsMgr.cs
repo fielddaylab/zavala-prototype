@@ -260,7 +260,7 @@ namespace Zavala.Settings
             m_skimmerPrefab.GetComponent<Skimmer>().SetRelevantVars(ref m_defaultVars);
 
             // Road
-            m_roadPrefab.GetComponent<Road>().SetRelevantVars(ref m_defaultVars);
+            m_roadPrefab.GetComponent<RoadSegment>().SetRelevantVars(ref m_defaultVars);
 
             // TileGenerator
             m_tileGeneratorObj.GetComponent<TileGenerator>().SetRelevantVars(ref m_defaultVars);

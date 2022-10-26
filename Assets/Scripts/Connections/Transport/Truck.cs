@@ -21,7 +21,7 @@ namespace Zavala
 
         private Resources.Type m_resourceType;
         private Requests m_recipient;
-        private Road m_roadToFollow;
+        private List<RoadSegment> m_pathToFollow;
 
         // Road Traversal
         private int m_startRoadSegmentIndex;
@@ -52,7 +52,7 @@ namespace Zavala
 
         private EngineState m_engineState;
 
-        public void Init(Resources.Type resourceType, StoresProduct supplier, Requests recipient, Road road) {
+        public void Init(Resources.Type resourceType, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
             m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
             m_resourceIcon.SetNativeSize();
 
@@ -61,11 +61,11 @@ namespace Zavala
             m_delivered = false;
 
             m_resourceType = resourceType;
+            m_pathToFollow = path;
             m_recipient = recipient;
-            m_roadToFollow = road;
-            m_startRoadSegmentIndex = m_currRoadSegmentIndex = m_roadToFollow.GetStartIndex(supplier);
-            m_destRoadSegmentIndex = m_roadToFollow.GetEndIndex(recipient);
-            m_immediateNextDest = m_roadToFollow.GetTileAtIndex(m_startRoadSegmentIndex);
+            m_startRoadSegmentIndex = m_currRoadSegmentIndex = 0;
+            m_destRoadSegmentIndex = m_pathToFollow.Count - 1;
+            m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[0].transform.position);
             this.transform.position = m_immediateNextDest.transform.position + new Vector3(0, m_yBuffer, 0);
 
             m_audioSource = this.GetComponent<AudioSource>();
@@ -102,7 +102,7 @@ namespace Zavala
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     if (!m_delivered) {
                         Deliver();
-                        m_damagesComponent.DamageRoad(m_roadToFollow, m_resourceType);
+                        m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType);
                         Debug.Log("[Truck] Delivered to final destination");
                     }
                 }
@@ -113,7 +113,9 @@ namespace Zavala
                     else {
                         m_currRoadSegmentIndex--;
                     }
-                    m_immediateNextDest = m_roadToFollow.GetTileAtIndex(m_currRoadSegmentIndex);
+                    m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position);
+
+                    // TODO: if truck would enter a broken/nonexistent tile, reconstruct path
 
                     // leak phosphorus (TODO: leak according to time, or per tile?)
                     // if per time, reference cycles component

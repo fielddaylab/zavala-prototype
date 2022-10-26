@@ -4740,7 +4740,7 @@ MonoBehaviour:
     type: 3}
   m_skimmerPrefab: {fileID: 4922970122782123424, guid: 10998c605ee53d34ba42bb4fc19213de,
     type: 3}
-  m_roadPrefab: {fileID: 6291261227990647790, guid: 7b28fbc3b251d384ead1797c5789d64c,
+  m_roadPrefab: {fileID: 4046841805640003533, guid: bea6effe12031b14da68eb41976bf598,
     type: 3}
   m_tileGeneratorObj: {fileID: 1381697483685296750}
 --- !u!1 &6202928358180477051

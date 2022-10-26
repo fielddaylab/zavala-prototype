@@ -4,15 +4,30 @@ using TMPro;
 using UnityEngine;
 using static UnityEditor.ObjectChangeEventStream;
 using Zavala.Roads;
+using Mono.Cecil;
+using System.IO;
+using Zavala.Functionalities;
+using System.Linq;
+using UnityEditor.PackageManager.Requests;
+using Zavala.Settings;
+using Zavala.Events;
 
 namespace Zavala
 {
     [RequireComponent(typeof(Inspectable))]
-    public class RoadSegment : MonoBehaviour
+    public class RoadSegment : MonoBehaviour, IAllVars
     {
         private Inspectable m_inspectComponent;
 
         [SerializeField] private GameObject m_rampPrefab, m_flatPrefab;
+
+        [SerializeField] private float m_roadStartHealth;
+        private float m_baseHealth; // road health
+        private float m_currHealth; // road health
+        private bool m_isUsable;
+        private bool m_inDisrepair;
+
+        [SerializeField] private float m_disrepairThreshold;
 
         private EdgeSegment[] m_edges;
 
@@ -22,6 +37,14 @@ namespace Zavala
             m_inspectComponent = this.GetComponent<Inspectable>();
 
             m_edges = new EdgeSegment[NUM_HEX_EDGES];
+
+            EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
+
+            ProcessUpdatedVars(SettingsMgr.Instance.GetCurrAllVars());
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.AllVarsUpdated -= HandleAllVarsUpdated;
         }
 
         private void Start() {
@@ -33,7 +56,7 @@ namespace Zavala
         /// </summary>
         /// <param name="dir"></param>
         /// <param name="elevationDelta">how much higher the connected tile is than this center segments</param>
-        public void ActivateEdge(RoadBuildDir dir, float elevationDelta) {
+        public void ActivateEdge(RoadBuildDir dir, float elevationDelta, GameObject connectsTo) {
             int sideIndex = 0;
             switch (dir) {
                 case RoadBuildDir.Up:
@@ -62,11 +85,9 @@ namespace Zavala
                 // remove old prefab
                 Destroy(m_edges[sideIndex].gameObject);
             }
-            else {
-
-            }
             // Instantiate new prefab
             EdgeSegment newEdge = Instantiate(newEdgeObj, this.transform).GetComponent<EdgeSegment>();
+            newEdge.Connection = connectsTo;
             m_edges[sideIndex] = newEdge;
             newEdge.RotateEdge(dir);
             if (elevationDelta > 0) {
@@ -102,9 +123,89 @@ namespace Zavala
                 // remove old prefab
                 Destroy(m_edges[sideIndex].gameObject);
             }
-            else {
-                // No action necessary -- nothing at that edge
+        }
+
+        #region External
+
+        public bool ResourceInEdges(Resources.Type resourceType, GameObject requester, out StoresProduct supplier, out Resources.Type foundResourceType) {
+            for (int e = 0; e < m_edges.Length; e++) {
+                if (m_edges[e] == null) { continue; }
+
+                StoresProduct storeComponent = m_edges[e].Connection.GetComponent<StoresProduct>();
+                supplier = storeComponent;
+                if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
+                    Debug.Log("[RoadSegment] Resource (" + resourceType + ") in edges in the form of (" + foundResourceType + "). Requester: " + requester + " || Supplier: " + storeComponent.gameObject);
+                    return true;
+                }
+            }
+
+            supplier = null;
+            foundResourceType = Resources.Type.None;
+            return false;
+        }
+
+        public List<RoadSegment> GetConnectedRoads() {
+            List<RoadSegment> connectedRoads = new List<RoadSegment>();
+
+            for (int e = 0; e < m_edges.Length; e++) {
+                if (m_edges[e] == null) { continue; }
+
+                RoadSegment roadComponent = m_edges[e].Connection.GetComponent<RoadSegment>();
+                if (roadComponent != null) {
+                    connectedRoads.Add(roadComponent);
+                }
+            }
+
+            return connectedRoads;
+        }
+
+        public void ApplyDamage(float dmg) {
+            m_currHealth -= dmg;
+
+            Debug.Log("[Road] Curr health: " + m_currHealth);
+            if (!m_inDisrepair && (m_currHealth <= m_disrepairThreshold * m_baseHealth)) {
+
+                Disrepair();
+            }
+            if (m_currHealth <= 0) {
+                m_currHealth = 0;
+
+                Destroy(this.gameObject);
+
+                m_isUsable = false;
             }
         }
+
+        public void Disrepair() {
+            Debug.Log("[RoadSegment] road entering disrepair!");
+
+            m_inDisrepair = true;
+
+            // TODO: trigger repair needed
+        }
+
+        #endregion // External
+
+        #region All Vars Settings
+
+        public void SetRelevantVars(ref AllVars defaultVars) {
+            defaultVars.RoadStartHealth = m_roadStartHealth;
+            defaultVars.RoadDisrepairThreshold = m_disrepairThreshold;
+        }
+
+        public void HandleAllVarsUpdated(object sender, AllVarsEventArgs args) {
+            ProcessUpdatedVars(args.UpdatedVars);
+        }
+
+        #endregion // All Vars Settings
+
+        #region AllVars Helpers
+
+        private void ProcessUpdatedVars(AllVars updatedVars) {
+            m_roadStartHealth = m_baseHealth = m_currHealth = updatedVars.RoadStartHealth;
+            m_disrepairThreshold = updatedVars.RoadDisrepairThreshold;
+        }
+
+        #endregion // AllVars Helpers
     }
 }

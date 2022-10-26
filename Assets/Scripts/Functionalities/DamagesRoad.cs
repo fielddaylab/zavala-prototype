@@ -25,7 +25,7 @@ namespace Zavala.Functionalities
         #endregion // Inspector
 
 
-        public void DamageRoad(Road toDamage, Resources.Type carriedResourceType) {
+        public void DamageRoad(RoadSegment toDamage, Resources.Type carriedResourceType) {
             Debug.Log("[DamagesRoad] Damaging road...");
 
             float dmgAmt = 0;

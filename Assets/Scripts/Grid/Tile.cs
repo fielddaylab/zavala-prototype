@@ -260,6 +260,21 @@ namespace Zavala.Tiles
             return m_addOns.Any(a => a.GetComponent<ConnectionNode>() != null);
         }
 
+        public List<ConnectionNode> GetAllConnectionNodes() {
+            List<ConnectionNode> connectingNodes = new List<ConnectionNode>();
+
+            ConnectionNode thisComp = this.GetComponent<ConnectionNode>();
+            if (thisComp != null) {
+                connectingNodes.Add(thisComp);
+            }
+            List<AddOn> additional = m_addOns.FindAll(a => a.GetComponent<ConnectionNode>() != null);
+            for (int a = 0; a < additional.Count; a++) {
+                connectingNodes.Add(additional[a].GetComponent<ConnectionNode>());
+            }
+
+            return connectingNodes;
+        }
+
         #endregion // Getters and Setters
     }
 }

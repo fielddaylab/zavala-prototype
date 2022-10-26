@@ -2,61 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 
 namespace Zavala
 {
     public class ConnectionNode : MonoBehaviour
     {
-        private List<Road> m_connectedRoads;
-
-        public event EventHandler NodeEconomyUpdated;
+        private List<RoadSegment> m_connectedRoads;
 
         private void Awake() {
-            m_connectedRoads = new List<Road>();
+            m_connectedRoads = new List<RoadSegment>();
         }
 
-        private void OnDisable() {
-            foreach(Road road in m_connectedRoads) {
-                if (road != null) {
-                    road.EconomyUpdated -= HandleEconomyUpdated;
-                }
-            }
-        }
-
-        public void AddRoad(Road road) {
+        public void AddRoad(RoadSegment road) {
             m_connectedRoads.Add(road);
-            road.EconomyUpdated += HandleEconomyUpdated;
         }
 
-        public void RemoveRoad(Road road) {
+        public void RemoveRoad(RoadSegment road) {
             m_connectedRoads.Remove(road);
-            road.EconomyUpdated -= HandleEconomyUpdated;
         }
 
-        public List<Road> GetConnectedRoads() {
+        public List<RoadSegment> GetConnectedRoads() {
             return m_connectedRoads;
         }
 
         // From node to roads
         public void UpdateNodeEconomy() {
-            for(int i = 0; i < m_connectedRoads.Count; i++) {
-                m_connectedRoads[i].UpdateEconomy();
-            }
+            EventMgr.Instance.TriggerEvent(Events.ID.EconomyUpdated, EventArgs.Empty);
         }
-
-        public void RemoveFromRoad() {
-            foreach(Road road in m_connectedRoads) {
-                road.RemoveConnection(this);
-            }
-        }
-
-        #region Handlers
-
-        // from road to nodes
-        private void HandleEconomyUpdated(object sender, EventArgs args) {
-            NodeEconomyUpdated?.Invoke(sender, args);
-        }
-
-        #endregion //Handlers
     }
 }
