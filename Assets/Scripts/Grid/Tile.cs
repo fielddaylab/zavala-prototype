@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Interact;
@@ -253,6 +254,10 @@ namespace Zavala.Tiles
 
         public List<AddOn> GetAddOns() {
             return m_addOns;
+        }
+
+        public bool ConnectionInAddOns() {
+            return m_addOns.Any(a => a.GetComponent<ConnectionNode>() != null);
         }
 
         #endregion // Getters and Setters

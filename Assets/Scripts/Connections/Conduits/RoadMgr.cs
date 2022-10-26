@@ -15,7 +15,8 @@ namespace Zavala.Roads
         Roundabout
     }
 
-    public enum RoadBuildDir {
+    public enum RoadBuildDir
+    {
         Up, // 0
         Up_Right, // 1
         Down_Right, // 2
@@ -40,14 +41,12 @@ namespace Zavala.Roads
         private Tile m_lastKnownTile;
 
         private List<RoadSegment> m_stagedSegments;
-        private Road m_roadInProgress;
 
         public void Init() {
             Instance = this;
 
             m_startedRoad = false;
             m_tracedTiles = new List<Tile>();
-            m_roadInProgress = null;
             m_stagedSegments = new List<RoadSegment>();
         }
 
@@ -64,18 +63,23 @@ namespace Zavala.Roads
 
         public void StartDrawingRoad() {
             if (!RoadMgr.Instance.StartedRoad) {
-                // check if valid place for road (not empty, doesn't block build, and not road)
+                // check if valid place for road start (not empty, and has either connection node or road)
                 Tile startTile = GridMgr.OverTile(Input.mousePosition);
-                if (startTile == null || startTile.GetComponent<BlocksBuild>() != null || GridMgr.RoadAtPos(startTile.transform.position) != null) {
+                if (startTile == null ||
+                    (startTile.GetComponent<ConnectionNode>() == null
+                    && !startTile.ConnectionInAddOns()
+                    && GridMgr.RoadAtPos(startTile.transform.position) == null)) {
                     return;
                 }
 
+                bool validStart = true;
+
                 // check if next to at least one connection node
-                Tile centerTile = GridMgr.OverTile(Input.mousePosition);
-                List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
+                //Tile centerTile = GridMgr.OverTile(Input.mousePosition);
+                //List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
+                // validStart = adjNodes.Count > 0
 
-                if (adjNodes.Count > 0) {
-
+                if (validStart) {
                     // if so, save tile as starting node and start tracking
                     m_startedRoad = true;
                     Debug.Log("[Instantiate] Instantiating road prefab");
@@ -84,7 +88,7 @@ namespace Zavala.Roads
                     m_lastKnownTile = currTile;
 
                     // place an initial road segment prefab
-                    StageRoadSegment(currTile.gameObject);
+                    // StageRoadSegment(currTile.gameObject);
 
                     Debug.Log("Started building road");
                 }
@@ -104,9 +108,16 @@ namespace Zavala.Roads
                         // seen before -- don't add and rewind back to that tile
 
                         int rewindIndex = m_tracedTiles.IndexOf(currTile);
+                        int numToUnstage = m_tracedTiles.Count - 1 - rewindIndex;
+                        Debug.Log("[RoadMgr] num to unstage: " + numToUnstage);
                         for (int i = m_tracedTiles.Count - 1; i > rewindIndex; i--) {
+                            // first trace is not a new road tile
                             m_tracedTiles[i].UndoDebugHighlight();
                             m_tracedTiles.RemoveAt(i);
+                        }
+
+                        int lowerBound = m_stagedSegments.Count - 1 - numToUnstage;
+                        for (int i = m_stagedSegments.Count - 1; i > lowerBound; i--) {
                             UnstageSegment(i);
                         }
 
@@ -115,14 +126,20 @@ namespace Zavala.Roads
                     else {
                         // not seen before -- add if able
 
-                        // cannot add road to blocking tile -- cancel road build
-                        if (currTile == null || currTile.GetComponent<BlocksBuild>() != null || GridMgr.RoadAtPos(currTile.transform.position) != null) {
-                            Debug.Log("Cannot build road on blocking, empty, or road tile");
+                        // cannot add road to empty tile -- cancel road build
+                        if (currTile == null) {
+                            Debug.Log("Cannot build road on empty tile");
                             CancelRoad();
                             return;
                         }
 
-                        Tile prevTile = m_tracedTiles[m_tracedTiles.Count - 1];
+                        // reach a potential termination point
+                        if (currTile.GetComponent<ConnectionNode>() != null || currTile.ConnectionInAddOns() || GridMgr.RoadAtPos(currTile.transform.position) != null) {
+                            m_tracedTiles.Add(currTile);
+                            EndDrawingRoad();
+                            return;
+                        }
+
                         m_tracedTiles.Add(currTile);
                         StageRoadSegment(currTile.gameObject);
                         Debug.Log("[InteractMgr] added new tile to road path");
@@ -157,45 +174,42 @@ namespace Zavala.Roads
         private bool TryCompleteRoad() {
             Debug.Log("[RoadMgr] try complete road");
 
-            bool validEnd = false;
-
-            // check if next to at least one connection node
-            Tile centerTile = GridMgr.OverTile(Input.mousePosition);
-            List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
-            if (adjNodes.Count > 0) {
-                validEnd = true;
+            Tile endTile = GridMgr.OverTile(Input.mousePosition);
+            ConnectionNode endConnection = endTile.GetComponent<ConnectionNode>();
+            RoadSegment endRoad = GridMgr.RoadAtPos(endTile.transform.position);
+            if (endConnection == null
+                && !endTile.ConnectionInAddOns()
+                && (endRoad == null || m_stagedSegments.Contains(endRoad))) {
+                // road must end on a connection or an existing road
+                return false;
+            }
+            RoadSegment startRoad = GridMgr.RoadAtPos(m_tracedTiles[0].transform.position);
+            if (startRoad == null && endRoad == null && m_stagedSegments.Count == 0) {
+                // there must be a road segment in at least one of the start, middle, and end
+                return false;
             }
 
-            List<RoadSegment> adjSegments = GridMgr.AdjRoadSegments(m_lastKnownTile, m_stagedSegments);
-            if (adjSegments.Count > 0) {
-                validEnd = true;
+            // TODO: refresh connecting edges
+
+            Debug.Log("[RoadMgr] try purchase road");
+
+            // try to purchase road
+            if (ShopMgr.Instance.TryPurchaseRoad(m_tracedTiles.Count)) {
+                Debug.Log("[RoadMgr] Finalizing road");
+                // save road in mgr and connected nodes
+                FinalizeRoad();
+
+                return true;
             }
-
-            if (validEnd) {
-                // TODO: refresh connecting edges
-
-                Debug.Log("[RoadMgr] try purchase road");
-
-                // try to purchase road
-                if (ShopMgr.Instance.TryPurchaseRoad(m_tracedTiles.Count)) {
-                    Debug.Log("[RoadMgr] Finalizing road");
-                    // save road in mgr and connected nodes
-                    FinalizeRoad();
-
-                    return true;
-                }
-                else {
-                    // clear road
-                    Debug.Log("[InteractMgr] shop failure");
-                    return false;
-                }
+            else {
+                // clear road
+                Debug.Log("[InteractMgr] shop failure");
+                return false;
             }
-
-            return false;
         }
 
         private void CancelRoad() {
-            for (int i = m_tracedTiles.Count - 1; i > -1; i--) {
+            for (int i = m_stagedSegments.Count - 1; i > -1; i--) {
                 Destroy(m_stagedSegments[i].gameObject);
             }
 
@@ -214,38 +228,73 @@ namespace Zavala.Roads
         }
 
         private void FinalizeRoad() {
+            // check if start is a road
+            Vector3 firstPos = m_tracedTiles[0].transform.position;
+            RoadSegment firstRoad = GridMgr.RoadAtPos(firstPos);
+            if (firstRoad != null) {
+                // road -- generate edge in direction of first segment
+                Vector3 secondPos = m_stagedSegments.Count > 0 ? m_stagedSegments[0].transform.position : m_tracedTiles[m_tracedTiles.Count - 1].transform.position;
+                RoadBuildDir dir = CalcBuildDirByPos(secondPos, firstPos);
+                float elevationDelta = CalcElevationDeltaByPos(secondPos, firstPos);
+                firstRoad.ActivateEdge(dir, elevationDelta);
+            }
+
+            // create edges for intermediate nodes
+            Vector3 prevPos;
+            Vector3 currPos = firstPos;
             for (int segIndex = 0; segIndex < m_stagedSegments.Count; segIndex++) {
-                // check if near a road or connection node
                 RoadSegment currSegment = m_stagedSegments[segIndex];
-                Tile centerTile = GridMgr.TileAtPos(currSegment.transform.position);
-                List<RoadSegment> adjSegments = GridMgr.AdjRoadSegments(centerTile);
+                prevPos = currPos;
+                currPos = currSegment.transform.position;
 
-                // if road
-                if (adjSegments.Count > 0) {
-                    // generate an edge and scale
-                    for (int adjIndex = 0; adjIndex < adjSegments.Count; adjIndex++) {
-                        RoadSegment adjSegment = adjSegments[adjIndex];
-                        RoadBuildDir edgeDir = CalcBuildDirByPos(currSegment.transform.position, adjSegment.transform.position);
-                        float elevationDelta = CalcElevationDeltaByPos(currSegment.transform.position, adjSegment.transform.position);
-                        currSegment.ActivateEdge(edgeDir, elevationDelta);
+                // add an edge from this road back to previous position
+                RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
+                float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
+                currSegment.ActivateEdge(edgeDir, elevationDelta);
 
-                        // add an edge to the other road
-                        RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
-                        adjSegment.ActivateEdge(reverseDir, -elevationDelta);
-                    }
+                if (segIndex != 0) {
+                    // add an edge from previous road forward to this road
+                    RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
+
+                    RoadSegment prevSegment = m_stagedSegments[segIndex - 1];
+                    prevSegment.ActivateEdge(reverseDir, -elevationDelta);
                 }
+            }
 
-                // if connection node
-                List<ConnectionNode> adjNodes = GridMgr.ConnectingNodesAdjToTile(centerTile);
-                if (adjNodes.Count > 0) {
-                    // generate an edge and scale
-                    for (int adjIndex = 0; adjIndex < adjNodes.Count; adjIndex++) {
-                        RoadBuildDir edgeDir = CalcBuildDirByPos(currSegment.transform.position, adjNodes[adjIndex].transform.position);
-                        float elevationDelta = CalcElevationDeltaByPos(currSegment.transform.position, adjNodes[adjIndex].transform.position);
-                        currSegment.ActivateEdge(edgeDir, elevationDelta);
-                    }
-                    // add this road to the connection node's list of road outlets
+            // check end
+            Vector3 endPos = m_tracedTiles[m_tracedTiles.Count - 1].transform.position;
+            RoadSegment endSegment = GridMgr.RoadAtPos(endPos);
+            prevPos = currPos;
+            currPos = endPos;
+            // if road
+            if (endSegment != null) {
+                Debug.Log("[RoadMgr] Final is road");
+                // add an edge from this road back to previous road
+                RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
+                float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
+                endSegment.ActivateEdge(edgeDir, elevationDelta);
+
+                if (m_stagedSegments.Count > 0) {
+                    // add an edge from previous road forward to this road
+                    RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
+
+                    RoadSegment prevSegment = m_stagedSegments[m_stagedSegments.Count - 1];
+                    prevSegment.ActivateEdge(reverseDir, -elevationDelta);
                 }
+            }
+            // if connection node
+            if (m_tracedTiles[m_tracedTiles.Count - 1].GetComponent<ConnectionNode>() != null 
+                || m_tracedTiles[m_tracedTiles.Count - 1].ConnectionInAddOns()) {
+                Debug.Log("[RoadMgr] Final is connection node");
+
+                RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
+                float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
+
+                // add an edge from previous road forward to this road
+                RoadBuildDir reverseDir = (RoadBuildDir)(((int)edgeDir + 3) % 6);
+
+                RoadSegment prevSegment = m_stagedSegments.Count > 0 ? m_stagedSegments[m_stagedSegments.Count - 1] : GridMgr.RoadAtPos(m_tracedTiles[0].transform.position);
+                prevSegment.ActivateEdge(reverseDir, -elevationDelta);
             }
 
             Debug.Log("[InteractMgr] Road saved!");
@@ -263,13 +312,15 @@ namespace Zavala.Roads
         }
 
         private void UnstageSegment(int i) {
+            Debug.Log("[RoadMgr] Unstaging at index " + i);
             RoadSegment toUnstage = m_stagedSegments[i];
             Destroy(toUnstage.gameObject);
             m_stagedSegments.RemoveAt(i);
         }
 
+        // Direction is from perspective of the currSegment
         private RoadBuildDir CalcBuildDirByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
-            Vector3 dirVector = (currSegmentPos - prevSegmentPos).normalized;
+            Vector3 dirVector = (prevSegmentPos - currSegmentPos).normalized;
 
             return CalcBuildDirFromVector(dirVector);
         }
@@ -308,7 +359,7 @@ namespace Zavala.Roads
         }
 
         private float CalcElevationDeltaByPos(Vector3 prevSegmentPos, Vector3 currSegmentPos) {
-            return currSegmentPos.y - prevSegmentPos.y;
+            return prevSegmentPos.y - currSegmentPos.y;
         }
 
         #endregion // Helpers
