@@ -168,6 +168,10 @@ namespace Zavala.Roads
 
         private bool TryCompleteRoad() {
             Debug.Log("[RoadMgr] try complete road");
+            if (m_tracedTiles.Count == 1) {
+                // cannot connect a single tile
+                return false;
+            }
 
             Tile endTile = GridMgr.OverTile(Input.mousePosition);
             ConnectionNode endConnection = endTile.GetComponent<ConnectionNode>();
