@@ -233,7 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc20023337a46e47b078dca53d26d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProduceTypes: 0400000003000000
+  ProduceTypes: 040000000300000004000000
   m_producesMoney: 0
   m_amt: 0
 --- !u!114 &710402627242334528
@@ -278,6 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CycleTime: 12
+  m_isVisible: 1
 --- !u!114 &6458409256630919425
 MonoBehaviour:
   m_ObjectHideFlags: 0

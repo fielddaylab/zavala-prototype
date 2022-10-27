@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Utils;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Tiles;
 
@@ -333,6 +335,9 @@ namespace Zavala.Roads
             }
 
             Debug.Log("[InteractMgr] Road saved!");
+
+            // Update economy
+            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, EventArgs.Empty);
         }
 
         private void StageRoadSegment(GameObject tileUnderRoadObj) {

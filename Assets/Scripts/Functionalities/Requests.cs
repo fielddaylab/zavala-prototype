@@ -32,7 +32,7 @@ namespace Zavala.Functionalities
 
         private ConnectionNode m_connectionNodeComponent;
 
-        private void Awake() {
+        private void OnEnable() {
             m_activeRequests = new List<UIRequest>();
 
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
@@ -50,6 +50,8 @@ namespace Zavala.Functionalities
         }
 
         public void QueueRequest() {
+            Debug.Log("[Requests] Queueing new reqeust");
+
             if (m_initialQueuePos == Vector3.zero) {
                 m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
             }

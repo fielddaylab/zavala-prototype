@@ -35,7 +35,7 @@ namespace Zavala
 
         private static float BLOCK_EXTENTS = 0.06f * 4;
 
-        private void Awake() {
+        private void OnEnable() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
             m_producesComponent = this.GetComponent<Produces>();
@@ -161,6 +161,10 @@ namespace Zavala
 
             // Cities request 1 milk / population
             for (int i = 0; i < m_population; i++) {
+                // TEMP HACK -- don't let requests above 4 for UI reasons (TODO: consolidate requests)
+                if (m_requestsComponent.GetNumActiveRequests() >= 4) {
+                    break;
+                }
                 m_requestsComponent.QueueRequest();
             }
 

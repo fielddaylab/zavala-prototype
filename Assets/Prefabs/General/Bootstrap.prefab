@@ -5743,8 +5743,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0b0cf0e2027a9804db1a0e642ae2a0f9, type: 3}
   m_sliderGroup: {fileID: 7390228693727302496}
   m_timescaleSlider: {fileID: 7619324283895369907}
-  m_slowestSpeed: 0.25
-  m_fastestSpeed: 4
+  m_slowestSpeed: 0.1
+  m_fastestSpeed: 2
   m_speedText: {fileID: 5521441449110004571}
   m_restartButton: {fileID: 4041625110984334999}
   m_adjustActivateButton: {fileID: 2402109563104986690}

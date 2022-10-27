@@ -34,7 +34,7 @@ namespace Zavala.Functionalities
 
         private Vector3 m_initialQueuePos;
 
-        private void Awake() {
+        private void OnEnable() {
             m_storageList = new List<StoredProduct>();
         }
 

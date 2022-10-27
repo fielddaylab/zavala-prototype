@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
+using Zavala.Resources;
 
 namespace Zavala
 {
@@ -28,8 +29,8 @@ namespace Zavala
             m_requestsComponent = this.GetComponent<Requests>();
             m_inspectComponent = this.GetComponent<Inspectable>();
 
-
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
+            m_storesComponent.RemovedStorage += HandleRemovedStorage;
         }
 
         private void Start() {
@@ -68,6 +69,15 @@ namespace Zavala
 
             // add new request if storage not full
             if (m_requestsComponent.GetNumActiveRequests() == 0 && !m_storesComponent.IsStorageFull()) {
+                m_requestsComponent.QueueRequest();
+            }
+        }
+
+        private void HandleRemovedStorage(object sender, ResourceEventArgs e) {
+            Debug.Log("[Digester] Resource removed");
+
+            // add request
+            if (m_requestsComponent.GetNumActiveRequests() == 0) {
                 m_requestsComponent.QueueRequest();
             }
         }

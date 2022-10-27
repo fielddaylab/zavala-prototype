@@ -16,7 +16,7 @@ namespace Zavala.Functionalities
 
         public event EventHandler BloomEffect;
 
-        private void Awake() {
+        private void OnEnable() {
             m_cyclesComponent = this.GetComponent<Cycles>();
 
             m_cyclesComponent.PreCycleCompleted += HandlePreCycleCompleted;

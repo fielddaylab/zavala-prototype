@@ -34,7 +34,7 @@ namespace Zavala
 
         [SerializeField] private int m_importCost;
 
-        private void Awake() {
+        private void OnEnable() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
             m_producesComponent = this.GetComponent<Produces>();

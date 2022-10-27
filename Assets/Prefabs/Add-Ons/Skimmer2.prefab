@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CycleTime: 7
+  m_isVisible: 1
 --- !u!114 &5917211300057780943
 MonoBehaviour:
   m_ObjectHideFlags: 0

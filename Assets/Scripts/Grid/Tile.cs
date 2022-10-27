@@ -120,6 +120,10 @@ namespace Zavala.Tiles
                 return true;
             }
 
+            if (GridMgr.RoadAtPos(this.transform.position) != null) {
+                return true;
+            }
+
             for (int i = 0; i < m_addOns.Count; i++) {
                 if (m_addOns[i].gameObject.GetComponent<BlocksBuild>() != null) {
                     return true;
