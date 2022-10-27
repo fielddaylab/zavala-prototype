@@ -33,7 +33,10 @@ namespace Zavala.Events
         AllVarsUpdated,
 
         // Restart
-        LevelRestarted
+        LevelRestarted,
+
+        // Regions
+        RegionToggled
     }
 
     #endregion // Enums
@@ -94,6 +97,14 @@ namespace Zavala.Events
         }
     }
 
+    public class RegionToggleEventArgs : EventArgs {
+        public int RegionNum;
+
+        public RegionToggleEventArgs(int regionNum) {
+            RegionNum = regionNum;
+        }
+    }
+
     #endregion // EventArgs
 
     public class EventMgr : MonoBehaviour
@@ -141,6 +152,12 @@ namespace Zavala.Events
         public event EventHandler LevelRestarted;
 
         #endregion // Restart
+
+        #region Region
+
+        public event EventHandler<RegionToggleEventArgs> RegionToggled;
+
+        #endregion // Region
 
         #region Lenses
 
@@ -192,6 +209,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.LevelRestarted:
                     LevelRestarted?.Invoke(this, args);
+                    break;
+                case Events.ID.RegionToggled:
+                    RegionToggled?.Invoke(this, (RegionToggleEventArgs)args);
                     break;
                 default:
                     break;

@@ -25,6 +25,7 @@ namespace Zavala
         [SerializeField] private SettingsMgr m_settingsMgr;
         [SerializeField] private NarrativeMgr m_narrativeMgr;
         [SerializeField] private TileGenerator m_tileGenerator;
+        [SerializeField] private LevelMgr m_levelMgr;
 
         private void Awake() {
             if (Instance == null) {
@@ -48,6 +49,7 @@ namespace Zavala
             m_settingsMgr.Init();
             m_narrativeMgr.Init();
             m_tileGenerator.Init();
+            m_levelMgr.Init();
         }
 
         private void Update() {

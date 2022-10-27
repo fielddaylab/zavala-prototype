@@ -27,10 +27,16 @@ namespace Zavala
         }
 
         private void OnDisable() {
+            if (m_inspectUI == null) {
+                return;
+            }
+
             m_inspectUI.Removed -= HandleRemoval;
         }
 
         public void Inspect() {
+            if (m_inspectUI == null) { return; }
+
             bool wasOpen = m_inspectUI.gameObject.activeSelf;
 
             // close all other inspectables
