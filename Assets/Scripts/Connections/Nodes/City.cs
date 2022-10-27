@@ -103,6 +103,11 @@ namespace Zavala
         }
 
         private void IncrementPopulation() {
+            // TEMP HACK -- don't let population above 4 for UI reasons (TODO: consolidate requests)
+            if (m_population == 4) {
+                return;
+            }
+
             Debug.Log("[City] Incrementing population...");
             m_population++;
 

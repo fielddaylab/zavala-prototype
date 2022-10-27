@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Interact;
 
@@ -70,6 +71,8 @@ namespace Zavala.Tiles
             GridMgr.TrackTile(this);
 
             RecalculateNeighbors();
+
+            EventMgr.Instance.RegionToggled += HandleRegionToggled;
         }
 
         private void OnMouseEnter() {
@@ -276,5 +279,13 @@ namespace Zavala.Tiles
         }
 
         #endregion // Getters and Setters
+
+        #region Handlers
+
+        private void HandleRegionToggled(object sender, RegionToggleEventArgs args) {
+            RecalculateNeighbors();
+        }
+
+        #endregion // Handlers
     }
 }
