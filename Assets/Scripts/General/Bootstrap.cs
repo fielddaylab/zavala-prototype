@@ -41,7 +41,7 @@ namespace Zavala
             m_eventMgr.Init();
             m_gameDB.Init();
             m_shopMgr.Init();
-            m_playerMgr.Init();
+            // m_playerMgr.Init();
             m_interactMgr.Init();
             m_roadMgr.Init();
             m_regionMgr.Init();

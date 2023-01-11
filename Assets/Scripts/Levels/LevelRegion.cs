@@ -9,7 +9,8 @@ namespace Zavala
     public class LevelRegion : MonoBehaviour
     {
         [Serializable] // TODO: could change this to a polygon collider if we need more granularity
-        private struct RegionBounds {
+        private struct RegionBounds
+        {
             public float Left;
             public float Top;
             public float Right;
@@ -29,11 +30,21 @@ namespace Zavala
         [SerializeField] private RegionBounds m_bounds;
         public GridMgr GridMgr;
 
+        [SerializeField] private int m_startingMoney = 1000;
+        private int m_moneyUnits;
+
         private void Awake() {
             EventMgr.Instance.RegionToggled += HandleRegionToggled;
             GridMgr.Init();
 
             RegionMgr.Instance.TrackRegion(this);
+
+            ResetMoney();
+
+            EventMgr.Instance.ProduceMoney += HandleProduceMoney;
+            EventMgr.Instance.PurchaseSuccessful += HandlePurchaseSuccessful;
+            EventMgr.Instance.LevelRestarted += HandleLevelRestarted;
+
             if (!m_startsActive) {
                 DeactivateRegion();
             }
@@ -73,6 +84,30 @@ namespace Zavala
             RegionMgr.Instance.UntrackRegion(this);
         }
 
+        private void ResetMoney() {
+            m_moneyUnits = 0;
+            AddMoney(m_startingMoney);
+        }
+
+        private void AddMoney(int units) {
+            m_moneyUnits += units;
+            Debug.Log("[LevelRegion] Added money!");
+
+            EventMgr.Instance.TriggerEvent(Events.ID.RegionUpdatedMoney, new RegionUpdatedMoneyEventArgs(this));
+        }
+
+        private void SpendMoney(int units) {
+            m_moneyUnits -= units;
+
+            EventMgr.Instance.TriggerEvent(Events.ID.RegionUpdatedMoney, new RegionUpdatedMoneyEventArgs(this));
+        }
+
+
+        // i.e. return money
+        public int GetMoney() {
+            return m_moneyUnits;
+        }
+
         #endregion // Helpers
 
         #region Handlers
@@ -86,6 +121,20 @@ namespace Zavala
                     ActivateRegion();
                 }
             }
+        }
+
+        private void HandleProduceMoney(object sender, ProduceMoneyEventArgs args) {
+            if (args.Region != this) { return; }
+            AddMoney(args.Amt);
+        }
+
+        private void HandlePurchaseSuccessful(object sender, PurchaseSuccessfulEventArgs args) {
+            if (args.Region != this) { return; }
+            SpendMoney(args.Amt);
+        }
+
+        private void HandleLevelRestarted(object sender, EventArgs args) {
+            ResetMoney();
         }
 
         #endregion // Handlers

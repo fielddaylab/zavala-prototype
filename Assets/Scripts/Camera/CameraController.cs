@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 
 namespace Zavala
 {
@@ -111,8 +113,8 @@ namespace Zavala
 
             if (moveVector != Vector3.zero) {
                 // camera moved; update current region to match center of camera view
-                // TODO: broadcast event for camera moved
-                RegionMgr.Instance.UpdateCurrRegion(new Vector2(Screen.width/2, Screen.height/2));
+
+                EventMgr.Instance.TriggerEvent(ID.CameraMoved, EventArgs.Empty);
             }
         }
     }

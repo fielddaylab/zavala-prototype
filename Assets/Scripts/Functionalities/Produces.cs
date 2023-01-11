@@ -42,7 +42,7 @@ namespace Zavala.Functionalities
         public List<Resources.Type> Produce() {
             if (m_producesMoney) {
                 // add money to funds
-                EventMgr.Instance.TriggerEvent(Events.ID.ProduceMoney, new Events.ProduceMoneyEventArgs(m_amt));
+                EventMgr.Instance.TriggerEvent(Events.ID.ProduceMoney, new Events.ProduceMoneyEventArgs(m_amt, RegionMgr.Instance.GetRegionByPos(this.transform.position)));
             }
 
             // todo: produce type based on input type

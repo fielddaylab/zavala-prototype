@@ -10,7 +10,7 @@ namespace Zavala.Events
     {
         // Money
         ProduceMoney,
-        PlayerUpdatedMoney,
+        RegionUpdatedMoney,
         AttemptPurchase,
         PurchaseSuccessful,
         PurchaseFailure,
@@ -36,7 +36,9 @@ namespace Zavala.Events
         LevelRestarted,
 
         // Regions
-        RegionToggled
+        RegionToggled,
+        RegionSwitched,
+        CameraMoved
     }
 
     #endregion // Enums
@@ -46,18 +48,31 @@ namespace Zavala.Events
     public class ProduceMoneyEventArgs : EventArgs
     {
         public int Amt { get; set; }
+        public LevelRegion Region;
 
-        public ProduceMoneyEventArgs(int amt) {
+        public ProduceMoneyEventArgs(int amt, LevelRegion region) {
             Amt = amt;
+            Region = region;
+        }
+    }
+
+    public class RegionUpdatedMoneyEventArgs : EventArgs
+    {
+        public LevelRegion Region;
+
+        public RegionUpdatedMoneyEventArgs(LevelRegion region) {
+            Region = region;
         }
     }
 
     public class PurchaseSuccessfulEventArgs : EventArgs
     {
         public int Amt { get; set; }
+        public LevelRegion Region;
 
-        public PurchaseSuccessfulEventArgs(int amt) {
+        public PurchaseSuccessfulEventArgs(int amt, LevelRegion region) {
             Amt = amt;
+            Region = region;
         }
     }
 
@@ -105,6 +120,16 @@ namespace Zavala.Events
         }
     }
 
+    public class RegionSwitchedEventArgs : EventArgs
+    {
+        public LevelRegion NewRegion;
+
+        public RegionSwitchedEventArgs(LevelRegion newRegion) {
+            NewRegion = newRegion;
+        }
+    }
+
+
     #endregion // EventArgs
 
     public class EventMgr : MonoBehaviour
@@ -114,7 +139,7 @@ namespace Zavala.Events
         #region Money
 
         public event EventHandler<ProduceMoneyEventArgs> ProduceMoney;
-        public event EventHandler PlayerUpdatedMoney;
+        public event EventHandler<RegionUpdatedMoneyEventArgs> RegionUpdatedMoney;
         public event EventHandler AttemptPurchase;
         public event EventHandler<PurchaseSuccessfulEventArgs> PurchaseSuccessful;
         public event EventHandler PurchaseFailure;
@@ -156,6 +181,8 @@ namespace Zavala.Events
         #region Region
 
         public event EventHandler<RegionToggleEventArgs> RegionToggled;
+        public event EventHandler<RegionSwitchedEventArgs> RegionSwitched;
+        public event EventHandler<EventArgs> CameraMoved;
 
         #endregion // Region
 
@@ -174,8 +201,8 @@ namespace Zavala.Events
                 case Events.ID.ProduceMoney:
                     ProduceMoney?.Invoke(this, (ProduceMoneyEventArgs)args);
                     break;
-                case Events.ID.PlayerUpdatedMoney:
-                    PlayerUpdatedMoney?.Invoke(this, args);
+                case Events.ID.RegionUpdatedMoney:
+                    RegionUpdatedMoney?.Invoke(this, (RegionUpdatedMoneyEventArgs)args);
                     break;
                 case Events.ID.AttemptPurchase:
                     AttemptPurchase?.Invoke(this, args);
@@ -212,6 +239,12 @@ namespace Zavala.Events
                     break;
                 case Events.ID.RegionToggled:
                     RegionToggled?.Invoke(this, (RegionToggleEventArgs)args);
+                    break;
+                case Events.ID.RegionSwitched:
+                    RegionSwitched?.Invoke(this, (RegionSwitchedEventArgs)args);
+                    break;
+                case Events.ID.CameraMoved:
+                    CameraMoved?.Invoke(this, args);
                     break;
                 default:
                     break;

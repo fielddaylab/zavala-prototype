@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Tiles;
 
 namespace Zavala
@@ -20,6 +22,8 @@ namespace Zavala
                 Destroy(this.gameObject);
                 return;
             }
+
+            EventMgr.Instance.CameraMoved += HandleCameraMoved;
         }
 
         public void TrackRegion(LevelRegion region) {
@@ -102,6 +106,8 @@ namespace Zavala
                     CurrRegion = GetRegionByPos(hit.collider.gameObject.transform.position);
                     // TODO: event for curr region updated
                     Debug.Log("[RegionMgr] New current region: " + CurrRegion.gameObject.name);
+
+                    EventMgr.Instance.TriggerEvent(ID.RegionSwitched, new RegionSwitchedEventArgs(CurrRegion));
                 }
             }
             else {
@@ -109,5 +115,13 @@ namespace Zavala
             }
         }
 
+
+        #region Handlers
+
+        private void HandleCameraMoved(object sender, EventArgs args) {
+            UpdateCurrRegion(new Vector2(Screen.width / 2, Screen.height / 2));
+        }
+
+        #endregion // Handlers
     }
 }

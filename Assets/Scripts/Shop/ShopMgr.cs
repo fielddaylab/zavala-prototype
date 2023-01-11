@@ -30,8 +30,9 @@ namespace Zavala
         public void Init() {
             Instance = this;
 
-            EventMgr.Instance.PlayerUpdatedMoney += HandlePlayerUpdatedMoney;
+            EventMgr.Instance.RegionUpdatedMoney += HandleRegionUpdatedMoney;
             EventMgr.Instance.InteractModeUpdated += HandleInteractModeUpdated;
+            EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
             if (m_itemUIs.Length != ShopItems.Length) {
                 Debug.Log("[ShopMgr] Unequal number of data defs and ui slots!");
@@ -70,9 +71,9 @@ namespace Zavala
 
         private bool TryPurchaseHelper(int purchaseCost) {
             Debug.Log("[ShopMgr] TryPuchaseHelper begin");
-            if (purchaseCost <= PlayerMgr.Instance.GetMoney()) {
+            if (purchaseCost <= RegionMgr.Instance.CurrRegion.GetMoney()) {
                 // player has enough money
-                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(purchaseCost));
+                EventMgr.Instance.TriggerEvent(Events.ID.PurchaseSuccessful, new PurchaseSuccessfulEventArgs(purchaseCost, RegionMgr.Instance.CurrRegion));
                 UpdateText();
                 return true;
             }
@@ -84,7 +85,7 @@ namespace Zavala
 
 
         private void UpdateText() {
-            m_moneyText.text = "" + PlayerMgr.Instance.GetMoney();
+            m_moneyText.text = "" + RegionMgr.Instance.CurrRegion.GetMoney();
         }
 
         public static ShopItemData GetShopItemData(Shop.Items.Type itemType) {
@@ -120,7 +121,8 @@ namespace Zavala
 
         #region Handlers
 
-        private void HandlePlayerUpdatedMoney(object sender, EventArgs args) {
+        private void HandleRegionUpdatedMoney(object sender, RegionUpdatedMoneyEventArgs args) {
+            if (args.Region != RegionMgr.Instance.CurrRegion) { return; }
             UpdateText();
         }
 
@@ -129,6 +131,10 @@ namespace Zavala
                 Debug.Log("[DebugNulls] Selected item set to null when interact mode switched to Select");
                 m_selectedItem = null;
             }
+        }
+
+        private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
+            UpdateText();
         }
 
         #endregion // Handlers
