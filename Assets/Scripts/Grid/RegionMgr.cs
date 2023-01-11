@@ -89,5 +89,25 @@ namespace Zavala
 
             return null;
         }
+
+        public void UpdateCurrRegion(Vector2 pos) {
+            Ray ray;
+            RaycastHit hit;
+
+            ray = Camera.main.ScreenPointToRay(pos);
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
+                LevelRegion overRegion = GetRegionByPos(hit.collider.gameObject.transform.position);
+                if (overRegion != CurrRegion) {
+                    CurrRegion = GetRegionByPos(hit.collider.gameObject.transform.position);
+                    // TODO: event for curr region updated
+                    Debug.Log("[RegionMgr] New current region: " + CurrRegion.gameObject.name);
+                }
+            }
+            else {
+                Debug.Log("[RegionMgr] No current region! Keeping default.");
+            }
+        }
+
     }
 }

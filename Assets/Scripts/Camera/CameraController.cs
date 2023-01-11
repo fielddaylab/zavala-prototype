@@ -24,7 +24,7 @@ namespace Zavala
         }
 
         private void Update() {
-            Vector3 moveVector;
+            Vector3 moveVector = Vector3.zero;
 
             float timeDelta;
             if (Time.timeScale == 0) {
@@ -109,7 +109,11 @@ namespace Zavala
                     );
             }
 
-
+            if (moveVector != Vector3.zero) {
+                // camera moved; update current region to match center of camera view
+                // TODO: broadcast event for camera moved
+                RegionMgr.Instance.UpdateCurrRegion(new Vector2(Screen.width/2, Screen.height/2));
+            }
         }
     }
 }
