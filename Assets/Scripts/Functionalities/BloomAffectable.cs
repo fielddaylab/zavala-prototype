@@ -27,8 +27,8 @@ namespace Zavala.Functionalities
         }
 
         private bool BloomAdjacent() {
-            Tile tileUnderneath = GridMgr.TileAtPos(this.transform.position);
-            List<Tile> neighborTiles = GridMgr.GetAdjTiles(tileUnderneath);
+            Tile tileUnderneath = RegionMgr.Instance.GetRegionByPos(this.transform.position).GridMgr.TileAtPos(this.transform.position);
+            List<Tile> neighborTiles = RegionMgr.Instance.GetRegionByPos(tileUnderneath.transform.position).GridMgr.GetAdjTiles(tileUnderneath);
 
             for (int n = 0; n < neighborTiles.Count; n++) {
                 Water waterComp = neighborTiles[n].GetComponent<Water>();

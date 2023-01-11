@@ -66,7 +66,7 @@ namespace Zavala
             m_recipient = recipient;
             m_startRoadSegmentIndex = m_currRoadSegmentIndex = 0;
             m_destRoadSegmentIndex = m_pathToFollow.Count - 1;
-            m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[0].transform.position);
+            m_immediateNextDest = RegionMgr.Instance.GetRegionByPos(m_pathToFollow[0].transform.position).GridMgr.TileAtPos(m_pathToFollow[0].transform.position);
             this.transform.position = m_immediateNextDest.transform.position + new Vector3(0, m_yBuffer, 0);
 
             m_audioSource = this.GetComponent<AudioSource>();
@@ -122,7 +122,8 @@ namespace Zavala
                     }
 
                     // if truck would enter a broken/nonexistent tile, reconstruct path
-                    if (GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position) == null || !GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position).IsUsable()) {
+                    if (RegionMgr.Instance.GetRegionByPos(m_pathToFollow[stageMoveIndex].transform.position).GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position) == null
+                        || !RegionMgr.Instance.GetRegionByPos(m_pathToFollow[stageMoveIndex].transform.position).GridMgr.RoadAtPos(m_pathToFollow[stageMoveIndex].transform.position).IsUsable()) {
                         // TODO: reconstruct path (real-time)
                         // RoadMgr.Instance.QueryRoadForResource();
 
@@ -134,7 +135,7 @@ namespace Zavala
                         m_currRoadSegmentIndex = stageMoveIndex;
                     }
 
-                    m_immediateNextDest = GridMgr.TileAtPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position);
+                    m_immediateNextDest = RegionMgr.Instance.GetRegionByPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position).GridMgr.TileAtPos(m_pathToFollow[m_currRoadSegmentIndex].transform.position);
 
                     // leak phosphorus (TODO: leak according to time, or per tile?)
                     // if per time, reference cycles component

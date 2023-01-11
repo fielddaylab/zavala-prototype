@@ -20,6 +20,7 @@ namespace Zavala
         [SerializeField] private ShopMgr m_shopMgr;
         [SerializeField] private InteractMgr m_interactMgr;
         [SerializeField] private RoadMgr m_roadMgr;
+        [SerializeField] private RegionMgr m_regionMgr;
         [SerializeField] private PhosphMgr m_phosphMgr;
         [SerializeField] private LensMgr m_lensMgr;
         [SerializeField] private SettingsMgr m_settingsMgr;
@@ -43,7 +44,8 @@ namespace Zavala
             m_playerMgr.Init();
             m_interactMgr.Init();
             m_roadMgr.Init();
-            GridMgr.Init();
+            m_regionMgr.Init();
+            //GridMgr.Init();
             m_phosphMgr.Init();
             m_lensMgr.Init();
             m_settingsMgr.Init();

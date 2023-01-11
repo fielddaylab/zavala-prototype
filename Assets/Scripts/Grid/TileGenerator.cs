@@ -37,6 +37,7 @@ namespace Zavala
         #region Helpers
 
         private void GenerateReplaceTile() {
+            /*
             Debug.Log("[TileGenerator] Generating replacement tile...");
             Tile toReplace = GridMgr.GetRandomTile(true);
             if (toReplace == null) {
@@ -47,9 +48,11 @@ namespace Zavala
             Tile newTile = Instantiate(newPrefab).GetComponent<Tile>();
             GridMgr.ReplaceTile(toReplace, newTile);
             Debug.Log("[TileGenerator] Finished generating replacement tile");
+            */
         }
 
         private void GenerateBoundaryTile() {
+            /*
             Debug.Log("[TileGenerator] Generating boundary tile");
 
             Tile toAppend = GridMgr.GetRandomBoundaryTile();
@@ -60,6 +63,7 @@ namespace Zavala
             GameObject newPrefab = SelectNextPrefab();
             Tile newTile = Instantiate(newPrefab).GetComponent<Tile>();
             GridMgr.AppendToTile(toAppend, newTile);
+            */
         }
 
         private GameObject SelectNextPrefab() {

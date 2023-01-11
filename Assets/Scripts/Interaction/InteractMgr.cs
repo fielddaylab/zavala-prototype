@@ -68,7 +68,7 @@ namespace Zavala.Interact
         private void CheckForInspectClick() {
             // detect for clicks
             if (Input.GetMouseButtonUp(0)) {
-                Inspectable hoverInspectable = GridMgr.OverInspectable(Input.mousePosition);
+                Inspectable hoverInspectable = RegionMgr.OverInspectable(Input.mousePosition);
 
                 if (hoverInspectable != null) {
                     hoverInspectable.Inspect();
@@ -79,7 +79,7 @@ namespace Zavala.Interact
         private void CheckForPlacementClick() {
             // detect for clicks
             if (Input.GetMouseButtonUp(0)) {
-                Tile hoverTile = GridMgr.OverTile(Input.mousePosition);
+                Tile hoverTile = RegionMgr.Instance.CurrRegion.GridMgr.OverTile(Input.mousePosition);
 
                 if (hoverTile != null) {
                     hoverTile.ClickTilePlace();

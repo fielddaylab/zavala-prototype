@@ -61,8 +61,8 @@ namespace Zavala
         private bool TrySkimLakes() {
             bool skimmedAny = false;
 
-            Tile tileUnderneath = GridMgr.TileAtPos(this.transform.position);
-            List<Tile> neighborTiles = GridMgr.GetAdjTiles(tileUnderneath);
+            Tile tileUnderneath = RegionMgr.Instance.CurrRegion.GridMgr.TileAtPos(this.transform.position);
+            List<Tile> neighborTiles = RegionMgr.Instance.CurrRegion.GridMgr.GetAdjTiles(tileUnderneath);
 
             for (int n = 0; n < neighborTiles.Count; n++) {
                 Water waterComp = neighborTiles[n].GetComponent<Water>();
@@ -80,7 +80,7 @@ namespace Zavala
         }
 
         private void LeakBack(Resources.Type resourceType) {
-            Tile tileUnderneath = GridMgr.TileAtPos(this.transform.position);
+            Tile tileUnderneath = RegionMgr.Instance.CurrRegion.GridMgr.TileAtPos(this.transform.position);
             m_generatesComponent.GeneratePipBatch(tileUnderneath, resourceType);
         }
 

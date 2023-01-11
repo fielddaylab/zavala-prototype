@@ -26,7 +26,7 @@ namespace Zavala
         public void SimulateRunoff() {
             if (m_tickTimer == 0) {
                 Debug.Log("[PhosphMgr] Start Runoff Tick");
-                List<Tile> allTiles = GridMgr.GetAllTiles();
+                List<Tile> allTiles = RegionMgr.Instance.GetAllRegionsAllTiles();
 
                 if (m_waterIteration) {
                     Debug.Log("[PhosphMgr] Tick type is Water");

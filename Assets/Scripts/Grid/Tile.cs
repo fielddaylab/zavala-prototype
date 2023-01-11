@@ -68,7 +68,7 @@ namespace Zavala.Tiles
 
             m_elevation = this.transform.localPosition.y;
 
-            GridMgr.TrackTile(this);
+            RegionMgr.Instance.GetRegionByPos(this.transform.position).GridMgr.TrackTile(this);
 
             RecalculateNeighbors();
 
@@ -93,7 +93,7 @@ namespace Zavala.Tiles
         }
 
         private void OnDestroy() {
-            GridMgr.UntrackTile(this);
+           RegionMgr.Instance.GetRegionByPos(this.transform.position)?.GridMgr.UntrackTile(this);
         }
 
         #endregion // Callbacks
@@ -102,7 +102,7 @@ namespace Zavala.Tiles
 
         private void RecalculateNeighbors() {
             // Generate a list of neighbor tiles
-            m_neighborTiles = GridMgr.GetAdjTiles(this);
+            m_neighborTiles = RegionMgr.Instance.GetRegionByPos(this.transform.position).GridMgr.GetAdjTiles(this);
         }
 
         private void HoverPlaceFilter() {
@@ -120,7 +120,7 @@ namespace Zavala.Tiles
                 return true;
             }
 
-            if (GridMgr.RoadAtPos(this.transform.position) != null) {
+            if (RegionMgr.Instance.GetRegionByPos(this.transform.position).GridMgr.RoadAtPos(this.transform.position) != null) {
                 return true;
             }
 

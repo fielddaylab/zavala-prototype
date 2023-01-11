@@ -9,25 +9,25 @@ namespace Zavala
 {
     public class GridMgr : MonoBehaviour
     {
-        private static List<Tile> AllTiles;
+        private List<Tile> AllTiles;
 
-        public static void Init() {
+        public void Init() {
             AllTiles = new List<Tile>();
         }
 
-        public static void TrackTile(Tile toTrack) {
+        public void TrackTile(Tile toTrack) {
             AllTiles.Add(toTrack);
         }
 
-        public static void UntrackTile(Tile toUntrack) {
+        public void UntrackTile(Tile toUntrack) {
             AllTiles.Remove(toUntrack);
         }
 
-        public static List<Tile> GetAllTiles() {
+        public List<Tile> GetAllTiles() {
             return AllTiles;
         }
 
-        public static Zavala.Tiles.Tile OverTile(Vector2 pos) {
+        public Zavala.Tiles.Tile OverTile(Vector2 pos) {
             Ray ray;
             RaycastHit hit;
 
@@ -40,33 +40,7 @@ namespace Zavala
             }
         }
 
-        public static Inspectable OverInspectable(Vector2 pos) {
-            // Look for inspectable
-            Ray ray;
-            RaycastHit[] hits;
-
-            ray = Camera.main.ScreenPointToRay(pos);
-            hits = Physics.RaycastAll(ray, Mathf.Infinity, 1 << LayerMask.NameToLayer("Inspect"));
-            foreach (RaycastHit inspectHit in hits) {
-                if (inspectHit.collider.gameObject.GetComponent<Inspectable>() != null) {
-                    return inspectHit.collider.gameObject.GetComponent<Inspectable>();
-                }
-            }
-
-            // look on tiles
-            RaycastHit hit;
-
-            ray = Camera.main.ScreenPointToRay(pos);
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
-                if (hit.collider.gameObject.GetComponent<Inspectable>() != null) {
-                    return hit.collider.gameObject.GetComponent<Inspectable>();
-                }
-            }
-
-            return null;
-        }
-
-        public static Zavala.Tiles.Tile TileAtPos(Vector3 pos) {
+        public Zavala.Tiles.Tile TileAtPos(Vector3 pos) {
             // raise ray and point downward
             RaycastHit hit;
             Vector3 origin = pos + Vector3.up * 50; // arbitrary height above all tiles
@@ -78,7 +52,7 @@ namespace Zavala
             return null;
         }
 
-        public static RoadSegment RoadAtPos(Vector3 pos) {
+        public RoadSegment RoadAtPos(Vector3 pos) {
             // raise ray and point downward
             RaycastHit hit;
             Vector3 origin = pos + Vector3.up * 50; // arbitrary height above all tiles
@@ -90,7 +64,7 @@ namespace Zavala
             return null;
         }
 
-        public static List<Tile> GetAdjTiles(Tile centerTile) {
+        public List<Tile> GetAdjTiles(Tile centerTile) {
             List<Tile> adjTiles = new List<Tile>();
 
             if (centerTile == null) {
@@ -142,7 +116,7 @@ namespace Zavala
             return adjTiles;
         }
 
-        public static int GetEmptyDir(Tile centerTile) {
+        public int GetEmptyDir(Tile centerTile) {
             List<int> emptyDirs = new List<int>();
 
             // raycast in 6 directions
@@ -191,8 +165,8 @@ namespace Zavala
             return emptyDirs[Random.Range(0, emptyDirs.Count)];
         }
 
-        public static List<ConnectionNode> ConnectingNodesAdjToTile(Tile queryTile) {
-            List<Tile> adjTiles = GridMgr.GetAdjTiles(queryTile);
+        public List<ConnectionNode> ConnectingNodesAdjToTile(Tile queryTile) {
+            List<Tile> adjTiles = RegionMgr.Instance.GetRegionByPos(queryTile.transform.position).GridMgr.GetAdjTiles(queryTile); // TODO: may need to add region/wide GetAdjTiles
             List<ConnectionNode> adjNodes = new List<ConnectionNode>();
 
             for (int i = 0; i < adjTiles.Count; i++) {
@@ -210,8 +184,8 @@ namespace Zavala
             return adjNodes;
         }
 
-        public static List<ConnectionNode> ConnectingNodesAdjToPos(Tile queryTile) {
-            List<Tile> adjTiles = GridMgr.GetAdjTiles(queryTile);
+        public List<ConnectionNode> ConnectingNodesAdjToPos(Tile queryTile) {
+            List<Tile> adjTiles = RegionMgr.Instance.GetRegionByPos(queryTile.transform.position).GridMgr.GetAdjTiles(queryTile);
             List<ConnectionNode> adjNodes = new List<ConnectionNode>();
 
             for (int i = 0; i < adjTiles.Count; i++) {
@@ -229,7 +203,7 @@ namespace Zavala
             return adjNodes;
         }
 
-        public static List<RoadSegment> AdjRoadSegments(Tile queryTile, List<RoadSegment> ignoreList = null) {
+        public List<RoadSegment> AdjRoadSegments(Tile queryTile, List<RoadSegment> ignoreList = null) {
             List<RoadSegment> adjSegments = new List<RoadSegment>();
 
             // raycast in 6 directions
@@ -280,7 +254,7 @@ namespace Zavala
             return adjSegments;
         }
 
-        public static Tile GetRandomTile(bool mustBeBuildable) {
+        public Tile GetRandomTile(bool mustBeBuildable) {
             List<Tile> candidates = new List<Tile>();
             for (int i = 0; i < AllTiles.Count; i++) {
                 if (mustBeBuildable) {
@@ -306,7 +280,7 @@ namespace Zavala
             return candidates[randIndex];
         }
 
-        public static Tile GetRandomBoundaryTile() {
+        public Tile GetRandomBoundaryTile() {
             List<Tile> candidates = new List<Tile>();
             for (int i = 0; i < AllTiles.Count; i++) {
                 if (GetAdjTiles(AllTiles[i]).Count < 6) {
@@ -324,14 +298,14 @@ namespace Zavala
             return candidates[randIndex];
         }
 
-        public static void ReplaceTile(Tile toReplace, Tile newTile) {
+        public void ReplaceTile(Tile toReplace, Tile newTile) {
             AllTiles.Remove(toReplace);
             newTile.transform.position = toReplace.transform.position;
             AllTiles.Add(newTile);
             Destroy(toReplace.gameObject);
         }
 
-        public static void AppendToTile(Tile toAppend, Tile newTile) {
+        public void AppendToTile(Tile toAppend, Tile newTile) {
             // find adj position
             int emptyDir = GetEmptyDir(toAppend);
             Vector3 adjPos = Vector3.zero;
