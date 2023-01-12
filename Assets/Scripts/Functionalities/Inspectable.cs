@@ -70,9 +70,8 @@ namespace Zavala
                 }
             }
 
-            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, EventArgs.Empty);
+            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, new EconomyUpdatedEventArgs(RegionMgr.Instance.GetRegionByPos(this.transform.position)));
 
-            Debug.Log("Removal");
             m_inspectUI.Remove();
 
             // TODO: Sell?

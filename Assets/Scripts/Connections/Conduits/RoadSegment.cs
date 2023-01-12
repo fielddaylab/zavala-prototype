@@ -157,6 +157,32 @@ namespace Zavala
             return false;
         }
 
+        public bool ConnectionNodeInEdges(ConnectionNode endpoint) {
+            for (int e = 0; e < m_edges.Length; e++) {
+                if (!m_isUsable) { continue; }
+                if (m_edges[e] == null) { continue; }
+
+                ConnectionNode potentialConnection = m_edges[e].Connection.GetComponent<ConnectionNode>();
+                if (potentialConnection == endpoint) {
+                    return true;
+                }
+
+                // check add-ons
+                if (m_edges[e].Connection.GetComponent<Tile>() != null) {
+                    List<AddOn> addOns = m_edges[e].Connection.GetComponent<Tile>().GetAddOns();
+                    for (int a = 0; a < addOns.Count; a++) {
+                        potentialConnection = addOns[a].GetComponent<ConnectionNode>();
+
+                        if (potentialConnection == endpoint) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public List<RoadSegment> GetConnectedRoads() {
             List<RoadSegment> connectedRoads = new List<RoadSegment>();
 

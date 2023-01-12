@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Events;
+using Zavala.Functionalities;
 
 namespace Zavala
 {
+    [RequireComponent(typeof(GridMgr))]
+    [RequireComponent(typeof(ClearingHouse))]
     public class LevelRegion : MonoBehaviour
     {
         [Serializable] // TODO: could change this to a polygon collider if we need more granularity
@@ -24,14 +27,63 @@ namespace Zavala
             }
         }
 
+        [Serializable]
+        public struct SimulationKnobs {
+            // Percentages
+            public SaleTax SaleTaxes;
+            public float SittingManureTax;
+
+            // Flat Values
+            public int CAFOMinSellThreshold;
+            public int GrainFarmMaxPayForImport;
+            public int CityMaxPayForMilk;
+
+            public BidBuyPrice BidBuyPrices;
+            public BidSellPrice BidSellPrices;
+        }
+
+        [Serializable]
+        public struct SaleTax
+        {
+            public float InternalMilk;
+            public float InternalManure;
+            public float InternalFertilizer;
+            public float ExternalManure;
+            public float ExternalFertilizer;
+        }
+
+        [Serializable]
+        public struct BidBuyPrice {
+            public int GrainFarmManure;
+            public int GrainFarmFertilizer;
+            public int CAFOGrain;
+            public int DigesterManure;
+            public int ExportDepotFertilizer;
+        }
+
+        [Serializable]
+        public struct BidSellPrice
+        {
+            public int GrainFarmGrain;
+            public int CAFOManure;
+            public int CAFOMilk;
+            public int DigesterFertilizer;
+        }
+
         [SerializeField] private GameObject m_regionContainer;
         [SerializeField] private int m_regionNum;
         [SerializeField] private bool m_startsActive;
         [SerializeField] private RegionBounds m_bounds;
         public GridMgr GridMgr;
+        [SerializeField] private ClearingHouse m_clearingHouse;
 
         [SerializeField] private int m_startingMoney = 1000;
         private int m_moneyUnits;
+
+        [Space(10)]
+
+        [Header("Simulation Knobs")]
+        public SimulationKnobs SimKnobs;
 
         private void Awake() {
             EventMgr.Instance.RegionToggled += HandleRegionToggled;
@@ -70,6 +122,14 @@ namespace Zavala
             }
             */
             return false;
+        }
+
+        public void RegisterWithClearingHouse(StoresProduct storesProduct) {
+            m_clearingHouse.RegisterStoresProduct(storesProduct);
+        }
+
+        public void RegisterWithClearingHouse(Requests requests) {
+            m_clearingHouse.RegisterRequestsProduct(requests);
         }
 
         #region Helpers

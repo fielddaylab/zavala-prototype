@@ -76,6 +76,15 @@ namespace Zavala.Events
         }
     }
 
+    public class EconomyUpdatedEventArgs : EventArgs
+    {
+        public LevelRegion Region;
+
+        public EconomyUpdatedEventArgs(LevelRegion region) {
+            Region = region;
+        }
+    }
+
     public class InteractModeEventArgs : EventArgs
     {
         public Interact.Mode Mode { get; set; }
@@ -148,7 +157,7 @@ namespace Zavala.Events
 
         #region Economy
 
-        public event EventHandler EconomyUpdated;
+        public event EventHandler<EconomyUpdatedEventArgs> EconomyUpdated;
 
         #endregion // Economy
 
@@ -214,7 +223,7 @@ namespace Zavala.Events
                     PurchaseFailure?.Invoke(this, args);
                     break;
                 case Events.ID.EconomyUpdated:
-                    EconomyUpdated?.Invoke(this, args);
+                    EconomyUpdated?.Invoke(this, (EconomyUpdatedEventArgs)args);
                     break;
                 case Events.ID.InteractModeUpdated:
                     InteractModeUpdated?.Invoke(this, (InteractModeEventArgs)args);

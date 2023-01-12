@@ -337,7 +337,7 @@ namespace Zavala.Roads
             Debug.Log("[InteractMgr] Road saved!");
 
             // Update economy
-            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, EventArgs.Empty);
+            EventMgr.Instance.TriggerEvent(ID.EconomyUpdated, new EconomyUpdatedEventArgs(RegionMgr.Instance.GetRegionByPos(endPos)));
         }
 
         private void StageRoadSegment(GameObject tileUnderRoadObj) {
@@ -417,6 +417,13 @@ namespace Zavala.Roads
         public bool QueryRoadForResource(GameObject requester, RoadSegment road, Resources.Type resourceType, out List<RoadSegment> path, out StoresProduct supplier, out Resources.Type foundResourceType) {
             // look for a node with the requested resource
             path = AStarPathToResource(requester, road, resourceType, out supplier, out foundResourceType);
+
+            return path.Count != 0;
+        }
+
+        public bool QueryRoadForConnection(ConnectionNode origin, ConnectionNode endpoint, RoadSegment road, out List<RoadSegment> path) {
+            // look for the endpoint
+            path = AStarPathToConnection(origin, endpoint, road);
 
             return path.Count != 0;
         }
@@ -507,6 +514,72 @@ namespace Zavala.Roads
 
             foundResourceType = Resources.Type.None;
             supplier = null;
+            return finalPath;
+        }
+
+        private List<RoadSegment> AStarPathToConnection(ConnectionNode origin, ConnectionNode endpoint, RoadSegment start) {
+
+            List<RoadSegment> finalPath = new List<RoadSegment>();
+
+            // The set of discovered nodes that may need to be (re-)expanded.
+            // Initially, only the start node is known.
+            // This is usually implemented as a min-heap or priority queue rather than a hash-set.
+            PriorityQueue<RoadSegment, float> openSet = new PriorityQueue<RoadSegment, float>();
+            List<RoadSegment> openSetKeys = new List<RoadSegment>();
+            if (start.IsUsable()) {
+                openSet.Enqueue(start, 0);
+                openSetKeys.Add(start);
+            }
+
+            // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
+            // to n currently known.
+            Dictionary<RoadSegment, RoadSegment> cameFrom = new Dictionary<RoadSegment, RoadSegment>();
+
+            // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
+            Dictionary<RoadSegment, float> gScore = new Dictionary<RoadSegment, float>();
+            gScore[start] = 0;
+
+            // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
+            // how cheap a path could be from start to finish if it goes through n.
+            Dictionary<RoadSegment, float> fScore = new Dictionary<RoadSegment, float>();
+            fScore[start] = Heuristic(start.transform.position, start.transform.position);
+
+            while (openSet.Count > 0) {
+                RoadSegment current = openSet.Dequeue();
+                openSetKeys.Remove(current);
+                if (current.ConnectionNodeInEdges(endpoint)) {
+                    finalPath = ReconstructPath(cameFrom, current);
+                    return finalPath;
+                }
+
+                List<RoadSegment> connectedRoads = current.GetConnectedRoads();
+                for (int r = 0; r < connectedRoads.Count; r++) {
+                    RoadSegment neighbor = connectedRoads[r];
+                    if (!gScore.ContainsKey(neighbor)) {
+                        gScore.Add(neighbor, int.MaxValue);
+                    }
+                    if (!fScore.ContainsKey(neighbor)) {
+                        fScore.Add(neighbor, int.MaxValue);
+                    }
+                    // d(current,neighbor) is the weight of the edge from current to neighbor
+                    // tentative_gScore is the distance from start to the neighbor through current
+                    float tentativeGScore = gScore[current] + Vector3.Distance(current.transform.position, neighbor.transform.position);
+                    if (tentativeGScore < gScore[neighbor]) {
+                        // This path to neighbor is better than any previous one. Record it!
+                        cameFrom[neighbor] = current;
+                        gScore[neighbor] = tentativeGScore;
+                        float hNeighbor = Heuristic(start.transform.position, neighbor.transform.position);
+                        fScore[neighbor] = tentativeGScore + hNeighbor;
+                        if (!openSetKeys.Contains(neighbor)) {
+                            if (neighbor.IsUsable()) {
+                                openSet.Enqueue(neighbor, hNeighbor);
+                                openSetKeys.Add(neighbor);
+                            }
+                        }
+                    }
+                }
+            }
+
             return finalPath;
         }
 

@@ -47,6 +47,8 @@ namespace Zavala.Functionalities
 
         private void Start() {
             m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
+
+            RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
         }
 
         public void QueueRequest() {
@@ -111,7 +113,7 @@ namespace Zavala.Functionalities
 
                 // find first available
                 for (int roadIndex = 0; roadIndex < connectedRoads.Count; roadIndex++) {
-                    // TODO: get paths from each and pick shortest
+                    // TODO: get paths from each and pick shortest (see ClearingHouse implementation)
 
                     // query the road
                     List<RoadSegment> path;

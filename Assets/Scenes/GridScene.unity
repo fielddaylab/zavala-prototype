@@ -1122,6 +1122,7 @@ GameObject:
   - component: {fileID: 117014373}
   - component: {fileID: 117014372}
   - component: {fileID: 117014374}
+  - component: {fileID: 117014375}
   m_Layer: 0
   m_Name: Grid (Region 2)
   m_TagString: Untagged
@@ -1150,6 +1151,18 @@ MonoBehaviour:
     Right: 3.4
     Bottom: -1.1
   GridMgr: {fileID: 117014374}
+  m_clearingHouse: {fileID: 117014375}
+  m_startingMoney: 1000
+  SimKnobs:
+    InternalManureSaleTax: 0
+    InternalFertilizerSaleTax: 0
+    ExternalManureSaleTax: 0
+    ExternalFertilizerSaleTax: 0
+    InternalMilkSaleTax: 0
+    SittingManureTax: 0
+    CAFOMinSellThreshold: 0
+    GrainFarmMaxPayForImport: 0
+    CityMaxPayForMilk: 0
 --- !u!4 &117014373
 Transform:
   m_ObjectHideFlags: 0
@@ -1176,6 +1189,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ace79e813f7e78a4c93dc56c1fc69417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &117014375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117014371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cf46ade74aae74fb96533e0a73246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &141860556
@@ -3188,6 +3213,7 @@ GameObject:
   - component: {fileID: 423226653}
   - component: {fileID: 423226652}
   - component: {fileID: 423226654}
+  - component: {fileID: 423226655}
   m_Layer: 0
   m_Name: Grid (Region 5)
   m_TagString: Untagged
@@ -3216,6 +3242,18 @@ MonoBehaviour:
     Right: -0.5
     Bottom: -12.5
   GridMgr: {fileID: 423226654}
+  m_clearingHouse: {fileID: 423226655}
+  m_startingMoney: 1000
+  SimKnobs:
+    InternalManureSaleTax: 0
+    InternalFertilizerSaleTax: 0
+    ExternalManureSaleTax: 0
+    ExternalFertilizerSaleTax: 0
+    InternalMilkSaleTax: 0
+    SittingManureTax: 0
+    CAFOMinSellThreshold: 0
+    GrainFarmMaxPayForImport: 0
+    CityMaxPayForMilk: 0
 --- !u!4 &423226653
 Transform:
   m_ObjectHideFlags: 0
@@ -3244,6 +3282,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ace79e813f7e78a4c93dc56c1fc69417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &423226655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423226651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cf46ade74aae74fb96533e0a73246d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &434259473
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,6 +3305,7 @@ GameObject:
   - component: {fileID: 434259475}
   - component: {fileID: 434259474}
   - component: {fileID: 434259476}
+  - component: {fileID: 434259477}
   m_Layer: 0
   m_Name: Grid (Region 3)
   m_TagString: Untagged
@@ -3283,6 +3334,18 @@ MonoBehaviour:
     Right: 2.5
     Bottom: -7.1
   GridMgr: {fileID: 434259476}
+  m_clearingHouse: {fileID: 434259477}
+  m_startingMoney: 1000
+  SimKnobs:
+    InternalManureSaleTax: 0
+    InternalFertilizerSaleTax: 0
+    ExternalManureSaleTax: 0
+    ExternalFertilizerSaleTax: 0
+    InternalMilkSaleTax: 0
+    SittingManureTax: 0
+    CAFOMinSellThreshold: 0
+    GrainFarmMaxPayForImport: 0
+    CityMaxPayForMilk: 0
 --- !u!4 &434259475
 Transform:
   m_ObjectHideFlags: 0
@@ -3309,6 +3372,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ace79e813f7e78a4c93dc56c1fc69417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &434259477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434259473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cf46ade74aae74fb96533e0a73246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &439421339
@@ -6808,6 +6883,7 @@ GameObject:
   - component: {fileID: 892215101}
   - component: {fileID: 892215102}
   - component: {fileID: 892215103}
+  - component: {fileID: 892215104}
   m_Layer: 0
   m_Name: Grid (Region 1)
   m_TagString: Untagged
@@ -6852,6 +6928,18 @@ MonoBehaviour:
     Right: -6.5
     Bottom: -1.1
   GridMgr: {fileID: 892215103}
+  m_clearingHouse: {fileID: 892215104}
+  m_startingMoney: 1000
+  SimKnobs:
+    InternalManureSaleTax: 0
+    InternalFertilizerSaleTax: 0
+    ExternalManureSaleTax: 0
+    ExternalFertilizerSaleTax: 0
+    InternalMilkSaleTax: 0
+    SittingManureTax: 0
+    CAFOMinSellThreshold: 0
+    GrainFarmMaxPayForImport: 0
+    CityMaxPayForMilk: 0
 --- !u!114 &892215103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6862,6 +6950,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ace79e813f7e78a4c93dc56c1fc69417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &892215104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892215100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cf46ade74aae74fb96533e0a73246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &894891267
@@ -8548,6 +8648,7 @@ GameObject:
   - component: {fileID: 1068244059}
   - component: {fileID: 1068244058}
   - component: {fileID: 1068244060}
+  - component: {fileID: 1068244061}
   m_Layer: 0
   m_Name: Grid (Region 4)
   m_TagString: Untagged
@@ -8576,6 +8677,18 @@ MonoBehaviour:
     Right: -7.2
     Bottom: -8
   GridMgr: {fileID: 1068244060}
+  m_clearingHouse: {fileID: 1068244061}
+  m_startingMoney: 1000
+  SimKnobs:
+    InternalManureSaleTax: 0
+    InternalFertilizerSaleTax: 0
+    ExternalManureSaleTax: 0
+    ExternalFertilizerSaleTax: 0
+    InternalMilkSaleTax: 0
+    SittingManureTax: 0
+    CAFOMinSellThreshold: 0
+    GrainFarmMaxPayForImport: 0
+    CityMaxPayForMilk: 0
 --- !u!4 &1068244059
 Transform:
   m_ObjectHideFlags: 0
@@ -8602,6 +8715,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ace79e813f7e78a4c93dc56c1fc69417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1068244061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068244057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cf46ade74aae74fb96533e0a73246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1069662523

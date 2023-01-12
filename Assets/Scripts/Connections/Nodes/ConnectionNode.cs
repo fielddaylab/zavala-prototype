@@ -28,7 +28,7 @@ namespace Zavala
 
         // From node to roads
         public void UpdateNodeEconomy() {
-            EventMgr.Instance.TriggerEvent(Events.ID.EconomyUpdated, EventArgs.Empty);
+            EventMgr.Instance.TriggerEvent(Events.ID.EconomyUpdated, new EconomyUpdatedEventArgs(RegionMgr.Instance.GetRegionByPos(this.transform.position)));
         }
     }
 }

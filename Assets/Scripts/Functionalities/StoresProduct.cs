@@ -40,6 +40,8 @@ namespace Zavala.Functionalities
 
         private void Start() {
             m_initialQueuePos = GameDB.Instance.UIStoredProductPrefab.transform.localPosition;
+
+            RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
         }
 
         public bool StorageContains(Resources.Type resourceType, out Resources.Type foundResourceType) {
@@ -62,8 +64,24 @@ namespace Zavala.Functionalities
             return false;
         }
 
+        public List<Resources.Type> GetStoredResourceTypes() {
+            List<Resources.Type> types = new List<Resources.Type>();
+
+            for (int i = 0; i < m_storageList.Count; i++) {
+                if (!types.Contains(m_storageList[i].Type)) {
+                    types.Add(m_storageList[i].Type);
+                }
+            }
+
+            return types;
+        }
+
         public bool IsStorageFull() {
             return m_storageList.Count == MaxProducts;
+        }
+
+        public int StorageCount() {
+            return m_storageList.Count;
         }
 
         public bool TryAddToStorage(Resources.Type productType) {
