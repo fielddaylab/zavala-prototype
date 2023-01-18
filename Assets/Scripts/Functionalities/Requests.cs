@@ -107,6 +107,7 @@ namespace Zavala.Functionalities
                 }
 
                 Resources.Type resourceType = m_activeRequests[requestIndex].GetResourceType();
+                int desiredUnits = m_activeRequests[requestIndex].GetUnits();
 
                 List<RoadSegment> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
                 Debug.Log("[Requests] Querying road... (" + connectedRoads.Count + " roads connected)");
@@ -119,11 +120,12 @@ namespace Zavala.Functionalities
                     List<RoadSegment> path;
                     StoresProduct supplier;
                     Resources.Type foundResourceType;
-                    if (RoadMgr.Instance.QueryRoadForResource(this.gameObject, connectedRoads[roadIndex], resourceType, out path, out supplier, out foundResourceType)) {
+                    int foundUnits;
+                    if (RoadMgr.Instance.QueryRoadForResource(this.gameObject, connectedRoads[roadIndex], resourceType, desiredUnits, out path, out supplier, out foundResourceType, out foundUnits)) {
                         // found resource -- try summon truck
 
                         Debug.Log("[Requests] Query was successful. length of path: " + path.Count);
-                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, path, supplier, this)) {
+                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, desiredUnits, path, supplier, this)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
@@ -160,7 +162,7 @@ namespace Zavala.Functionalities
             Destroy(toClose.gameObject);
             if (fulfilled) {
                 // trigger request fulfilled event
-                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType));
+                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetUnits()));
                 Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
             }
         }
@@ -169,12 +171,24 @@ namespace Zavala.Functionalities
             return m_activeRequests.Count;
         }
 
+        public int GetNumActiveRequests(Resources.Type queryType) {
+            int count = 0;
+
+            for (int i = 0; i < m_activeRequests.Count; i++) {
+                if (m_activeRequests[i].GetResourceType() == queryType) {
+                    count += m_activeRequests[i].GetUnits();
+                }
+            }
+
+            return count;
+        }
+
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
             UIRequest expiredRequest = (UIRequest)sender;
             Debug.Log("[Requests] request expired");
-            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType()));
+            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetUnits()));
 
             m_activeRequests.Remove(expiredRequest);
             Destroy(expiredRequest.gameObject);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Resources;
+using static Zavala.Functionalities.Produces;
 
 namespace Zavala
 {
@@ -45,13 +46,13 @@ namespace Zavala
         }
 
         private void StraightToStorage() {
-            List<Resources.Type> newProducts = m_producesComponent.Produce();
+            List<ProductBundle> newProducts = m_producesComponent.Produce();
             if (newProducts == null) {
                 return;
             }
 
             for (int i = 0; i < newProducts.Count; i++) {
-                if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                if (!m_storesComponent.TryAddToStorage(newProducts[i].Type, newProducts[i].Units)) {
                     Debug.Log("[Digester] storage full! Not creating new product");
                 }
                 else {

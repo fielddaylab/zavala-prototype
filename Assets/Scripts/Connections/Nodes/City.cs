@@ -5,6 +5,7 @@ using UnityEngine;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Settings;
+using static Zavala.Functionalities.Produces;
 
 namespace Zavala
 {
@@ -86,13 +87,13 @@ namespace Zavala
         private void StraightToStorage() {
             // produce money per population
             for (int p = 0; p < m_population; p++) {
-                List<Resources.Type> newProducts = m_producesComponent.Produce();
+                List<ProductBundle> newProducts = m_producesComponent.Produce();
                 if (newProducts == null) {
                     return;
                 }
 
                 for (int i = 0; i < newProducts.Count; i++) {
-                    if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                    if (!m_storesComponent.TryAddToStorage(newProducts[i].Type, newProducts[i].Units)) {
                         Debug.Log("[City] Request fulfilled, but storage full!");
                     }
                     else {

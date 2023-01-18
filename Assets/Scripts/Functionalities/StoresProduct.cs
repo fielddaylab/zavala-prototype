@@ -13,10 +13,12 @@ namespace Zavala.Functionalities
         public struct StoredProduct {
             public Resources.Type Type;
             public UIStoredProduct UI;
+            public int Units;
 
-            public StoredProduct(Resources.Type type, UIStoredProduct ui) {
+            public StoredProduct(Resources.Type type, UIStoredProduct ui, int units) {
                 Type = type;
                 UI = ui;
+                Units = units;
             }
         }
 
@@ -44,23 +46,32 @@ namespace Zavala.Functionalities
             RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
         }
 
-        public bool StorageContains(Resources.Type resourceType, out Resources.Type foundResourceType) {
+        public bool StorageContains(Resources.Type resourceType, int desiredUnits, out Resources.Type foundResourceType, out int foundUnits) {
             Debug.Log("[StoresProduct] Checking if storage contains " + resourceType);
             for (int i = 0; i < m_storageList.Count; i++) {
                 Debug.Log("[StoresProduct] store component type: " + m_storageList[i].Type);
                 if (m_storageList[i].Type == resourceType) {
-                    foundResourceType = resourceType;
-                    return true;
+                    if (m_storageList[i].Units >= desiredUnits) {
+                        foundResourceType = resourceType;
+                        foundUnits = m_storageList[i].Units;
+                        Debug.Log("[StoresProduct] " + foundUnits + " units found");
+                        return true;
+                    }
+                    else {
+                        Debug.Log("[StoresProduct] resource found, but not enough units (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
+                    }
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (resourceType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
                         foundResourceType = m_storageList[i].Type;
+                        foundUnits = 0;
                         return true;
                     }
                 }
             }
             foundResourceType = Resources.Type.None;
+            foundUnits = 0;
             return false;
         }
 
@@ -84,7 +95,19 @@ namespace Zavala.Functionalities
             return m_storageList.Count;
         }
 
-        public bool TryAddToStorage(Resources.Type productType) {
+        public int StorageCount(Resources.Type queryType) {
+            int count = 0;
+
+            for (int i = 0; i < m_storageList.Count; i++) {
+                if (m_storageList[i].Type == queryType) {
+                    count += m_storageList[i].Units;
+                }
+            }
+
+            return count;
+        }
+
+        public bool TryAddToStorage(Resources.Type productType, int units) {
             if (m_storageList.Count >= MaxProducts) {
                 Debug.Log("[StoresProduct] Storage is full! Not adding to list.");
                 StorageExceeded?.Invoke(this, EventArgs.Empty);
@@ -100,7 +123,7 @@ namespace Zavala.Functionalities
                 else {
                     newProductUI.Init(productType);
                 }
-                StoredProduct newProduct = new StoredProduct(productType, newProductUI);
+                StoredProduct newProduct = new StoredProduct(productType, newProductUI, units);
                 m_storageList.Add(newProduct);
                 newProductUI.TimerExpired += HandleTimerExpired;
 
@@ -109,7 +132,7 @@ namespace Zavala.Functionalities
             }
         }
 
-        public bool TryRemoveFromStorage(Resources.Type productType) {
+        public bool TryRemoveFromStorage(Resources.Type productType, int units) {
             if (m_storageList.Count <= 0) {
                 Debug.Log("[StoresProduct] Storage is empty! Not removing from list.");
                 // StorageEmpty.Invoke(this, EventArgs.Empty);
@@ -119,7 +142,7 @@ namespace Zavala.Functionalities
                 RemoveFromStorageList(productType);
 
                 RedistributeQueue();
-                RemovedStorage?.Invoke(this, new ResourceEventArgs(productType));
+                RemovedStorage?.Invoke(this, new ResourceEventArgs(productType, units));
                 return true;
             }
         }
@@ -167,9 +190,9 @@ namespace Zavala.Functionalities
         private void HandleTimerExpired(object sender, EventArgs e) {
             UIStoredProduct expiredProduct = (UIStoredProduct)sender;
             Debug.Log("[StoresProduct] storage expired");
-            StorageExpired?.Invoke(this, new ResourceEventArgs(expiredProduct.GetResourceType()));
+            StorageExpired?.Invoke(this, new ResourceEventArgs(expiredProduct.GetResourceType(), expiredProduct.GetUnits()));
 
-            if (TryRemoveFromStorage(expiredProduct.GetResourceType())) {
+            if (TryRemoveFromStorage(expiredProduct.GetResourceType(), expiredProduct.GetUnits())) {
                 RedistributeQueue();
             }
             else {

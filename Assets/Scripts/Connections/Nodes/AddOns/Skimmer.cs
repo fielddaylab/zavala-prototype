@@ -7,6 +7,7 @@ using Zavala.Functionalities;
 using Zavala.Resources;
 using Zavala.Settings;
 using Zavala.Tiles;
+using static Zavala.Functionalities.Produces;
 
 namespace Zavala
 {
@@ -85,13 +86,13 @@ namespace Zavala
         }
 
         private void StraightToStorage() {
-            List<Resources.Type> newProducts = m_producesComponent.Produce();
+            List<ProductBundle> newProducts = m_producesComponent.Produce();
             if (newProducts == null) {
                 return;
             }
 
             for (int i = 0; i < newProducts.Count; i++) {
-                if (!m_storesComponent.TryAddToStorage(newProducts[i])) {
+                if (!m_storesComponent.TryAddToStorage(newProducts[i].Type, newProducts[i].Units)) {
                     Debug.Log("[Skimmer] storage full! Not creating more fertilizer");
                 }
                 else {

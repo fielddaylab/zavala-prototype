@@ -6,6 +6,7 @@ using Zavala.Functionalities;
 using Zavala.Settings;
 using Zavala.Events;
 using Zavala.Tiles;
+using UnityEditor;
 
 namespace Zavala
 {
@@ -125,15 +126,16 @@ namespace Zavala
 
         #region External
 
-        public bool ResourceInEdges(Resources.Type resourceType, GameObject requester, out StoresProduct supplier, out Resources.Type foundResourceType) {
+        public bool ResourceInEdges(Resources.Type resourceType, GameObject requester, int desiredUnits, out StoresProduct supplier, out Resources.Type foundResourceType, out int foundUnits) {
             for (int e = 0; e < m_edges.Length; e++) {
                 if (!m_isUsable) { continue; }
                 if (m_edges[e] == null) { continue; }
 
                 StoresProduct storeComponent = m_edges[e].Connection.GetComponent<StoresProduct>();
                 supplier = storeComponent;
-                if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
+                if (storeComponent != null && storeComponent.StorageContains(resourceType, desiredUnits, out foundResourceType, out foundUnits) && storeComponent.gameObject != requester) {
                     Debug.Log("[RoadSegment] Resource (" + resourceType + ") in edges in the form of (" + foundResourceType + "). Requester: " + requester + " || Supplier: " + storeComponent.gameObject);
+
                     return true;
                 }
 
@@ -143,7 +145,7 @@ namespace Zavala
                     for (int a = 0; a < addOns.Count; a++) {
                         storeComponent = addOns[a].GetComponent<StoresProduct>();
                         
-                        if (storeComponent != null && storeComponent.StorageContains(resourceType, out foundResourceType) && storeComponent.gameObject != requester) {
+                        if (storeComponent != null && storeComponent.StorageContains(resourceType, desiredUnits, out foundResourceType, out foundUnits) && storeComponent.gameObject != requester) {
                             Debug.Log("[RoadSegment] Resource (" + resourceType + ") in edges in the form of (" + foundResourceType + "). Requester: " + requester + " || Supplier: " + storeComponent.gameObject);
                             supplier = storeComponent;
                             return true;
@@ -154,6 +156,7 @@ namespace Zavala
 
             supplier = null;
             foundResourceType = Resources.Type.None;
+            foundUnits = 0;
             return false;
         }
 

@@ -234,6 +234,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ProduceTypes: 02000000
+  Products:
+  - Type: 2
+    Units: 1
   m_producesMoney: 0
   m_amt: 0
 --- !u!114 &6919949129729812953
@@ -278,6 +281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CycleTime: 10
+  m_isVisible: 1
 --- !u!114 &-150613178662610011
 MonoBehaviour:
   m_ObjectHideFlags: 0

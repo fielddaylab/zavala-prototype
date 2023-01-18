@@ -182,6 +182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ProduceTypes: 01000000
+  Products:
+  - Type: 1
+    Units: 1
   m_producesMoney: 1
   m_amt: 20
 --- !u!114 &1835980031273053473

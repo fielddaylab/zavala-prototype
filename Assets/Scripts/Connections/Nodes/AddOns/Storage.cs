@@ -42,8 +42,8 @@ namespace Zavala
             }
         }
 
-        private void StraightToStorage() {
-            if (!m_storesComponent.TryAddToStorage(m_requestsComponent.RequestTypes[0])) {
+        private void StraightToStorage(Resources.Type resourceType, int units) {
+            if (!m_storesComponent.TryAddToStorage(resourceType, units)) {
                 Debug.Log("[Storage] Request fulfilled, but storage full!");
             }
             else {
@@ -52,10 +52,10 @@ namespace Zavala
         }
 
         #region Handlers
-        private void HandleRequestFulfilled(object sender, EventArgs e) {
+        private void HandleRequestFulfilled(object sender, ResourceEventArgs e) {
             Debug.Log("[Storage] Request fulfilled");
 
-            StraightToStorage();
+            StraightToStorage(e.ResourceType, e.Units);
 
             // add new request if storage not full
             if (m_requestsComponent.GetNumActiveRequests() == 0 && !m_storesComponent.IsStorageFull()) {

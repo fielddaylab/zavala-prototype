@@ -414,9 +414,9 @@ namespace Zavala.Roads
 
         #region Pathfinding
 
-        public bool QueryRoadForResource(GameObject requester, RoadSegment road, Resources.Type resourceType, out List<RoadSegment> path, out StoresProduct supplier, out Resources.Type foundResourceType) {
+        public bool QueryRoadForResource(GameObject requester, RoadSegment road, Resources.Type resourceType, int desiredUnits, out List<RoadSegment> path, out StoresProduct supplier, out Resources.Type foundResourceType, out int foundUnits) {
             // look for a node with the requested resource
-            path = AStarPathToResource(requester, road, resourceType, out supplier, out foundResourceType);
+            path = AStarPathToResource(requester, road, resourceType, desiredUnits, out supplier, out foundResourceType, out foundUnits);
 
             return path.Count != 0;
         }
@@ -449,7 +449,7 @@ namespace Zavala.Roads
             return Vector3.Distance(start, curr);
         }
 
-        private List<RoadSegment> AStarPathToResource(GameObject requester, RoadSegment start, Resources.Type resourceType, out StoresProduct supplier, out Resources.Type foundResourceType) {
+        private List<RoadSegment> AStarPathToResource(GameObject requester, RoadSegment start, Resources.Type resourceType, int desiredUnits, out StoresProduct supplier, out Resources.Type foundResourceType, out int foundUnits) {
 
             List<RoadSegment> finalPath = new List<RoadSegment>();
 
@@ -479,7 +479,7 @@ namespace Zavala.Roads
             while (openSet.Count > 0) {
                 RoadSegment current = openSet.Dequeue();
                 openSetKeys.Remove(current);
-                if (current.ResourceInEdges(resourceType, requester, out supplier, out foundResourceType)) {
+                if (current.ResourceInEdges(resourceType, requester, desiredUnits, out supplier, out foundResourceType, out foundUnits)) {
                     finalPath = ReconstructPath(cameFrom, current);
                     return finalPath;
                 }
@@ -514,6 +514,7 @@ namespace Zavala.Roads
 
             foundResourceType = Resources.Type.None;
             supplier = null;
+            foundUnits = 0;
             return finalPath;
         }
 
@@ -587,8 +588,8 @@ namespace Zavala.Roads
 
         #region Truck Summons
 
-        public bool TrySummonTruck(Resources.Type resourceType, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
-            if (supplier.TryRemoveFromStorage(resourceType)) {
+        public bool TrySummonTruck(Resources.Type resourceType, int units, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
+            if (supplier.TryRemoveFromStorage(resourceType, units)) {
                 // send to recipient
 
                 // find start tile

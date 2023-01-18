@@ -234,6 +234,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ProduceTypes: 040000000300000004000000
+  Products:
+  - Type: 4
+    Units: 1
+  - Type: 3
+    Units: 1
+  - Type: 4
+    Units: 1
   m_producesMoney: 0
   m_amt: 0
 --- !u!114 &710402627242334528
