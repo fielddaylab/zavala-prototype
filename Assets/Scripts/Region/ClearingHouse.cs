@@ -54,6 +54,9 @@ namespace Zavala
         private LevelRegion m_parentRegion;
 
         public void Init(LevelRegion parentRegion) {
+            m_registeredRequests = new List<Requests>();
+            m_registeredStoresProduct = new List<StoresProduct>();
+
             m_parentRegion = parentRegion;
             RoutingDict = new Dictionary<StoresProduct, DistributionData>();
 

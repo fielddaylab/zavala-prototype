@@ -88,6 +88,7 @@ namespace Zavala
         private void Awake() {
             EventMgr.Instance.RegionToggled += HandleRegionToggled;
             GridMgr.Init();
+            m_clearingHouse.Init(this);
 
             RegionMgr.Instance.TrackRegion(this);
 
