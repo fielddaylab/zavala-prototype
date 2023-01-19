@@ -33,19 +33,29 @@ namespace Zavala.Functionalities
         [SerializeField] private bool m_hasTimeout;
         [SerializeField] private int m_storageTimeout; // num Cycles
         [SerializeField] private float m_iconOffsetZ = 0.25f;
+        [SerializeField] private bool m_excludeFromClearingHouse;
+
+        public LetItSit SitOption = null; // only for nodes that can let something sit (i.e. dairy farm)
 
         private List<StoredProduct> m_storageList; // the products in storage
 
         private Vector3 m_initialQueuePos;
 
+
         private void OnEnable() {
             m_storageList = new List<StoredProduct>();
+
+            if (SitOption != null) {
+                SitOption.Init();
+            }
         }
 
         private void Start() {
             m_initialQueuePos = GameDB.Instance.UIStoredProductPrefab.transform.localPosition;
 
-            RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
+            if (!m_excludeFromClearingHouse) {
+                RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
+            }
         }
 
         public bool StorageContains(Resources.Type resourceType, int desiredUnits, out Resources.Type foundResourceType, out int foundUnits) {

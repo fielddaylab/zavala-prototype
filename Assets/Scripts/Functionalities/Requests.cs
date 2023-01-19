@@ -21,10 +21,12 @@ namespace Zavala.Functionalities
         {
             public Resources.Type Type;
             public int Units;
+            public bool Continuous;
 
-            public RequestBundle(Resources.Type type, int units) {
+            public RequestBundle(Resources.Type type, int units, bool continuous = false) {
                 Type = type;
                 Units = units;
+                Continuous = continuous;
             }
         }
 

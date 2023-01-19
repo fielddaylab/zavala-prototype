@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using Utils;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Roads;
@@ -22,11 +23,13 @@ namespace Zavala
     {
         private struct DistributionData
         {
-            public List<CandidateData> RequestCandidates; // TODO: should be in optimal sorted order
+            public List<CandidateData> RequestCandidates; // staging
+            public PriorityQueue<CandidateData, float> OptimalRouting;
             public int UnitsToDistribute;
 
-            public DistributionData(List<CandidateData> requestCandidates, int unitsToDistribute) {
+            public DistributionData(List<CandidateData> requestCandidates, PriorityQueue<CandidateData, float> optimalRouting, int unitsToDistribute) {
                 RequestCandidates = requestCandidates;
+                OptimalRouting = optimalRouting;
                 UnitsToDistribute = unitsToDistribute;
             }
         }
@@ -83,9 +86,9 @@ namespace Zavala
             // Solve();
         }
 
-        // Perform algorithm
+        // TODO: Perform algorithm
         private void Solve() {
-            // take each request candidates list and sort according to optimality
+            // take each request candidates list and add to priority queue using cost equation
             // m_parentRegion.SimKnobs
         }
 
@@ -134,11 +137,20 @@ namespace Zavala
                     }
                 }
 
+                // option to let it sit
+                if (sp.SitOption != null) {
+                    // check if the resource can be let to sit at this location
+                    foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
+                        if (sp.SitOption.RequestsComp.RequestBundlesContains(storedResource)) {
+                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0);
+                            requestCandidatesData.Add(candidateData);
+                            break;
+                        }
+                    }
+                }
+
                 // consolidate data
-                DistributionData distributionData = new DistributionData(requestCandidatesData, sp.StorageCount());
-
-                // TODO: add option to let it sit
-
+                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), sp.StorageCount());
 
                 // add new entry
                 RoutingDict.Add(sp, distributionData);
