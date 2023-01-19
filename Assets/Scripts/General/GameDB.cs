@@ -19,6 +19,10 @@ namespace Zavala
         public GameObject UIBlurbIconPrefab;
         public GameObject UIInspectPrefab;
 
+        public Color UIRequestDefaultColor;
+        public Color UIRequestEnRouteColor;
+        public Color UIRequestExpiringColor;
+
         [Space(5)]
 
         [Header("Resource Icons")]

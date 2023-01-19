@@ -132,7 +132,7 @@ namespace Zavala
 
                 m_inspectComponent.SetAdditionalText("Population: " + m_population);
 
-                m_requestsComponent.CancelLastRequest(m_requestsComponent.RequestTypes);
+                m_requestsComponent.CancelLastRequest(m_requestsComponent.RequestBundles);
             }
         }
 

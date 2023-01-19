@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Functionalities;
@@ -10,6 +11,8 @@ namespace Zavala
     public class UIStoredProduct : MonoBehaviour
     {
         [SerializeField] private Image m_resourceIcon;
+        [SerializeField] private TMP_Text m_unitsText;
+
         private Resources.Type m_resourceType;
         private int m_units;
 
@@ -17,20 +20,21 @@ namespace Zavala
 
         public event EventHandler TimerExpired; // when the timer completes
 
-        private void InitBasics(Resources.Type resourceType, int units = 1) {
+        private void InitBasics(Resources.Type resourceType, int units) {
             m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
             m_resourceIcon.SetNativeSize();
             m_resourceType = resourceType;
             m_units = units;
+            m_unitsText.text = "" + units;
         }
 
         // no timeout
-        public void Init(Resources.Type resourceType, int units = 1) {
+        public void Init(Resources.Type resourceType, int units) {
             InitBasics(resourceType, units);
         }
 
         // with timeout
-        public void Init(Resources.Type resourceType, int storageTimeout, Cycles cycleSync, int units = 1) {
+        public void Init(Resources.Type resourceType, int storageTimeout, Cycles cycleSync, int units) {
             InitBasics(resourceType, units);
 
             cycleSync.CycleCompleted += HandleCycleCompleted;
@@ -43,6 +47,10 @@ namespace Zavala
 
         public int GetUnits() {
             return m_units;
+        }
+
+        public void UpdateUnitsText(int newUnits) {
+            m_unitsText.text = "" + newUnits;
         }
 
         #region Handlers

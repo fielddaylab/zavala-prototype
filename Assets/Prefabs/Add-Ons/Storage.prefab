@@ -156,6 +156,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 04000000
+  RequestBundles:
+  - Type: 4
+    Units: 1
   m_hasTimeout: 0
   m_requestTimeout: 0
   m_iconOffsetZ: 0.25

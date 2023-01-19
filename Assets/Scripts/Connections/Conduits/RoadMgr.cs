@@ -596,7 +596,7 @@ namespace Zavala.Roads
                 Transform startTransform = path[0].gameObject.transform;
                 Debug.Log("[Instantiate] Instantiating truck prefab");
                 Truck newTruck = Instantiate(GameDB.Instance.TruckPrefab).GetComponent<Truck>();
-                newTruck.Init(resourceType, path, supplier, recipient);
+                newTruck.Init(resourceType, units, path, supplier, recipient);
                 return true;
             }
             else {

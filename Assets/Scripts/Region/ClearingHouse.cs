@@ -122,7 +122,7 @@ namespace Zavala
 
                         // check if resource types are relevant to each other (supplier stores resource that requester might buy)
                         foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
-                            if (candidate.RequestTypes.Contains(storedResource)) {
+                            if (candidate.RequestBundlesContains(storedResource)) {
                                 CandidateData candidateData = new CandidateData(candidate, pathLength);
                                 requestCandidatesData.Add(candidateData);
                                 break;

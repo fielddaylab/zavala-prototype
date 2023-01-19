@@ -10,13 +10,25 @@ using Zavala.Resources;
 using Zavala.Roads;
 
 namespace Zavala.Functionalities
-{ 
+{
     // requests are usually created on a cycle
     // once the request is created, individual requests have individual timers
     [RequireComponent(typeof(ConnectionNode))]
     public class Requests : MonoBehaviour
     {
-        public List<Resources.Type> RequestTypes;
+        [Serializable]
+        public struct RequestBundle
+        {
+            public Resources.Type Type;
+            public int Units;
+
+            public RequestBundle(Resources.Type type, int units) {
+                Type = type;
+                Units = units;
+            }
+        }
+
+        public List<RequestBundle> RequestBundles;
 
         [SerializeField] private bool m_hasTimeout;
         [SerializeField] private int m_requestTimeout; // num Cycles
@@ -58,17 +70,18 @@ namespace Zavala.Functionalities
                 m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
             }
 
-            for (int i = 0; i < RequestTypes.Count; i++) {
-                Resources.Type resourceType = RequestTypes[i];
+            for (int i = 0; i < RequestBundles.Count; i++) {
+                Resources.Type resourceType = RequestBundles[i].Type;
+                int units = RequestBundles[i].Units;
 
                 // init and display
                 Debug.Log("[Instantiate] Instantiating UIRequest prefab");
                 UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
                 if (m_hasTimeout) {
-                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>());
+                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units);
                 }
                 else {
-                    newRequest.Init(resourceType);
+                    newRequest.Init(resourceType, units);
                 }
 
                 // add to requests
@@ -80,8 +93,15 @@ namespace Zavala.Functionalities
             }
         }
 
-        public void CancelLastRequest(List<Resources.Type> resourceTypes) {
+        public void CancelLastRequest(List<RequestBundle> resourceBundles) {
             if (m_activeRequests.Count == 0) { return; }
+
+            List<Resources.Type> resourceTypes = new List<Resources.Type>();
+            for (int i = 0; i < resourceBundles.Count; i++) {
+                if (!resourceTypes.Contains(resourceBundles[i].Type)) {
+                    resourceTypes.Add(resourceBundles[i].Type);
+                }
+            }
 
             for (int i = 0; i < resourceTypes.Count; i++) {
                 CloseRequest(m_activeRequests.Count - 1, resourceTypes[i], false);
@@ -124,8 +144,8 @@ namespace Zavala.Functionalities
                     if (RoadMgr.Instance.QueryRoadForResource(this.gameObject, connectedRoads[roadIndex], resourceType, desiredUnits, out path, out supplier, out foundResourceType, out foundUnits)) {
                         // found resource -- try summon truck
 
-                        Debug.Log("[Requests] Query was successful. length of path: " + path.Count);
-                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, desiredUnits, path, supplier, this)) {
+                        Debug.Log("[Requests] Query was successful. length of path: " + path.Count + ". Units found: " + foundUnits);
+                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, foundUnits, path, supplier, this)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
@@ -139,17 +159,35 @@ namespace Zavala.Functionalities
             }
         }
 
-        public void ReceiveRequestedProduct(Resources.Type resourceType) {
+        public void ReceiveRequestedProduct(Resources.Type resourceType, int units) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
-                    CloseRequest(i, resourceType, true);
-                    return;
+                    // check if right number of units
+                    if (units >= m_activeRequests[i].GetUnits()) {
+                        // fully fulfilled
+                        CloseRequest(i, resourceType, true);
+                        return;
+                    }
+                    else {
+                        // partially fulfilled
+                        PartialCompleteRequest(i, resourceType, units);
+                        return;
+                    }
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher) {
                     if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
-                        CloseRequest(i, resourceType, true);
-                        return;
+                        // check if right number of units
+                        if (units >= m_activeRequests[i].GetUnits()) {
+                            // fully fulfilled
+                            CloseRequest(i, resourceType, true);
+                            return;
+                        }
+                        else {
+                            // partially fulfilled
+                            PartialCompleteRequest(i, resourceType, units);
+                            return;
+                        }
                     }
                 }
             }
@@ -162,9 +200,17 @@ namespace Zavala.Functionalities
             Destroy(toClose.gameObject);
             if (fulfilled) {
                 // trigger request fulfilled event
-                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetUnits()));
+                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetInitialUnits()));
                 Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
             }
+        }
+
+        private void PartialCompleteRequest(int requestIndex, Resources.Type resourceType, int units) {
+            UIRequest toModify = m_activeRequests[requestIndex];
+            toModify.ModifyUnits(-units);
+
+            // trigger request fulfilled event
+            Debug.Log("[Requests] Request for " + resourceType + " partially fulfilled!");
         }
 
         public int GetNumActiveRequests() {
@@ -181,6 +227,16 @@ namespace Zavala.Functionalities
             }
 
             return count;
+        }
+
+        public bool RequestBundlesContains(Resources.Type resourceType) {
+            for (int i = 0; i < RequestBundles.Count; i++) {
+                if (RequestBundles[i].Type == resourceType) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #region Handlers

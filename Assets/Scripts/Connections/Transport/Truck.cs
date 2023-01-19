@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
@@ -17,10 +18,12 @@ namespace Zavala
     {
         [SerializeField] private Canvas m_canvas;
         [SerializeField] private Image m_resourceIcon;
+        [SerializeField] private TMP_Text m_unitsText;
         [SerializeField] private float m_speed;
         [SerializeField] private float m_leakRate;
 
         private Resources.Type m_resourceType;
+        private int m_units;
         private Requests m_recipient;
         private List<RoadSegment> m_pathToFollow;
 
@@ -53,7 +56,7 @@ namespace Zavala
 
         private EngineState m_engineState;
 
-        public void Init(Resources.Type resourceType, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
+        public void Init(Resources.Type resourceType, int units, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
             m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
             m_resourceIcon.SetNativeSize();
 
@@ -62,6 +65,8 @@ namespace Zavala
             m_delivered = false;
 
             m_resourceType = resourceType;
+            m_units = units;
+            m_unitsText.text = "" + m_units;
             m_pathToFollow = path;
             m_recipient = recipient;
             m_startRoadSegmentIndex = m_currRoadSegmentIndex = 0;
@@ -96,21 +101,20 @@ namespace Zavala
 
             if (Vector3.Distance(this.transform.position, nextDestPos) > .1f) {
                 // move to immediate next dest
-                Debug.Log("[Truck] Moving towards next destination");
                 this.transform.Translate((nextDestPos - this.transform.position).normalized * m_speed * Time.deltaTime);
             }
             else {
                 // update immediate next dest
                 if (m_currRoadSegmentIndex == m_destRoadSegmentIndex) {
                     if (!m_delivered) {
-                        m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType);
+                        m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType, m_units);
 
                         Deliver();
                         Debug.Log("[Truck] Delivered to final destination");
                     }
                 }
                 else {
-                    m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType);
+                    m_damagesComponent.DamageRoad(m_pathToFollow[m_currRoadSegmentIndex], m_resourceType, m_units);
 
                     int stageMoveIndex;
 
@@ -181,7 +185,7 @@ namespace Zavala
         }
 
         private void Deliver() {
-            m_recipient.ReceiveRequestedProduct(m_resourceType);
+            m_recipient.ReceiveRequestedProduct(m_resourceType, m_units);
             m_delivered = true;
 
             m_engineState = EngineState.End;

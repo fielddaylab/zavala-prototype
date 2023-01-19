@@ -12,7 +12,7 @@ namespace Zavala.Functionalities
         [Serializable]
         private struct DamageResourcePair {
             public Resources.Type ResourceType;
-            public float Damage;
+            public float Damage; // damage per unit of resource
 
             public DamageResourcePair(Resources.Type resourceType, float damage) {
                 ResourceType = resourceType;
@@ -25,14 +25,14 @@ namespace Zavala.Functionalities
         #endregion // Inspector
 
 
-        public void DamageRoad(RoadSegment toDamage, Resources.Type carriedResourceType) {
+        public void DamageRoad(RoadSegment toDamage, Resources.Type carriedResourceType, int units) {
             Debug.Log("[DamagesRoad] Damaging road...");
 
             float dmgAmt = 0;
             bool foundAny = false;
             for (int p = 0; p < m_damageMap.Count; p++) { 
                 if (m_damageMap[p].ResourceType == carriedResourceType) {
-                    dmgAmt = m_damageMap[p].Damage;
+                    dmgAmt = m_damageMap[p].Damage * units;
                     foundAny = true;
                     break;
                 }

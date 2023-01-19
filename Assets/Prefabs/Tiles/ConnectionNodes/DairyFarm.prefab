@@ -218,6 +218,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 02000000
+  RequestBundles:
+  - Type: 2
+    Units: 1
   m_hasTimeout: 1
   m_requestTimeout: 2
   m_iconOffsetZ: 0.25
@@ -233,14 +236,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc20023337a46e47b078dca53d26d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProduceTypes: 040000000300000004000000
   Products:
-  - Type: 4
-    Units: 1
   - Type: 3
     Units: 1
   - Type: 4
-    Units: 1
+    Units: 2
   m_producesMoney: 0
   m_amt: 0
 --- !u!114 &710402627242334528

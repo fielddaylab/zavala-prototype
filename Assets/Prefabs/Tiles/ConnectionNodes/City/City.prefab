@@ -135,6 +135,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RequestTypes: 03000000
+  RequestBundles:
+  - Type: 3
+    Units: 1
   m_hasTimeout: 1
   m_requestTimeout: 2
   m_iconOffsetZ: 0.25
@@ -150,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc20023337a46e47b078dca53d26d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProduceTypes: 
+  Products: []
   m_producesMoney: 1
   m_amt: 10
 --- !u!114 &5222434333637154152
@@ -196,6 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CycleTime: 20
+  m_isVisible: 1
 --- !u!114 &-8263272586884739805
 MonoBehaviour:
   m_ObjectHideFlags: 0

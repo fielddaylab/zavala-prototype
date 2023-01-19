@@ -19,6 +19,8 @@ namespace Zavala.Functionalities
                 Type = type;
                 UI = ui;
                 Units = units;
+
+                UI.UpdateUnitsText(Units);
             }
         }
 
@@ -51,21 +53,39 @@ namespace Zavala.Functionalities
             for (int i = 0; i < m_storageList.Count; i++) {
                 Debug.Log("[StoresProduct] store component type: " + m_storageList[i].Type);
                 if (m_storageList[i].Type == resourceType) {
+                    foundResourceType = resourceType;
+                    foundUnits = m_storageList[i].Units > desiredUnits ? desiredUnits : m_storageList[i].Units;
                     if (m_storageList[i].Units >= desiredUnits) {
-                        foundResourceType = resourceType;
-                        foundUnits = m_storageList[i].Units;
                         Debug.Log("[StoresProduct] " + foundUnits + " units found");
-                        return true;
+                    }
+                    else if (m_storageList[i].Units <= 0) {
+                        // 0 units found
+                        Debug.Log("[StoresProduct] found a supplier, but " + m_storageList[i].Units + " units in stock.");
+                        return false;
                     }
                     else {
-                        Debug.Log("[StoresProduct] resource found, but not enough units (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
+                        Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
                     }
+
+                    return true;
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (resourceType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
                         foundResourceType = m_storageList[i].Type;
-                        foundUnits = 0;
+                        foundUnits = m_storageList[i].Units > desiredUnits ? desiredUnits : m_storageList[i].Units;
+                        if (m_storageList[i].Units >= desiredUnits) {
+                            Debug.Log("[StoresProduct] " + foundUnits + " units found among a total of " + m_storageList[i].Units);
+                        }
+                        else if (m_storageList[i].Units <= 0) {
+                            // 0 units found
+                            Debug.Log("[StoresProduct] found a supplier, but only " + m_storageList[i].Units + " units in stock.");
+                            return false;
+                        }
+                        else {
+                            Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
+                        }
+
                         return true;
                     }
                 }
@@ -85,6 +105,16 @@ namespace Zavala.Functionalities
             }
 
             return types;
+        }
+
+        public int GetIndexOfResource(Resources.Type resourceType) {
+            for (int i = 0; i < m_storageList.Count; i++) {
+                if (m_storageList[i].Type == resourceType) {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         public bool IsStorageFull() {
@@ -108,26 +138,39 @@ namespace Zavala.Functionalities
         }
 
         public bool TryAddToStorage(Resources.Type productType, int units) {
-            if (m_storageList.Count >= MaxProducts) {
+            if (m_storageList.Count >= MaxProducts) { // <- types of requests, not units
                 Debug.Log("[StoresProduct] Storage is full! Not adding to list.");
                 StorageExceeded?.Invoke(this, EventArgs.Empty);
                 return false;
             }
             else {
-                Debug.Log("[StoresProduct] Added to storage list");
-                Debug.Log("[Instantiate] Instantiating UIStoredProduct prefab");
-                UIStoredProduct newProductUI = Instantiate(GameDB.Instance.UIStoredProductPrefab, this.transform).GetComponent<UIStoredProduct>();
-                if (m_hasTimeout) {
-                    newProductUI.Init(productType, m_storageTimeout, this.GetComponent<Cycles>());
+                Debug.Log("[StoresProduct] Added to storage list with " + units + " units");
+
+                int resourceIndex = GetIndexOfResource(productType);
+                if (resourceIndex == -1) {
+                    // create new icon
+
+                    UIStoredProduct newProductUI = Instantiate(GameDB.Instance.UIStoredProductPrefab, this.transform).GetComponent<UIStoredProduct>();
+                    if (m_hasTimeout) {
+                        newProductUI.Init(productType, m_storageTimeout, this.GetComponent<Cycles>(), units);
+                    }
+                    else {
+                        newProductUI.Init(productType, units);
+                    }
+                    StoredProduct newProduct = new StoredProduct(productType, newProductUI, units);
+                    m_storageList.Add(newProduct);
+                    newProductUI.TimerExpired += HandleTimerExpired;
+
+                    RedistributeQueue();
                 }
                 else {
-                    newProductUI.Init(productType);
+                    Debug.Log("[StoresProduct] Modifying units of " + productType + " by " + units + " units");
+                    // add to existing icon
+                    StoredProduct oldItem = m_storageList[resourceIndex];
+                    StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units + units);
+                    m_storageList[resourceIndex] = newItem;
                 }
-                StoredProduct newProduct = new StoredProduct(productType, newProductUI, units);
-                m_storageList.Add(newProduct);
-                newProductUI.TimerExpired += HandleTimerExpired;
 
-                RedistributeQueue();
                 return true;
             }
         }
@@ -139,7 +182,7 @@ namespace Zavala.Functionalities
                 return false;
             }
             else {
-                RemoveFromStorageList(productType);
+                RemoveFromStorageList(productType, units);
 
                 RedistributeQueue();
                 RemovedStorage?.Invoke(this, new ResourceEventArgs(productType, units));
@@ -147,25 +190,43 @@ namespace Zavala.Functionalities
             }
         }
 
-        private void RemoveFromStorageList(Resources.Type productType) {
+        private void RemoveFromStorageList(Resources.Type productType, int units) {
             for (int i = 0; i < m_storageList.Count; i++) {
                 if (m_storageList[i].Type == productType) {
-                    Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
+                    if (units >= m_storageList[i].Units) {
+                        Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
 
-                    Destroy(m_storageList[i].UI.gameObject);
-                    m_storageList.RemoveAt(i);
-                    Debug.Log("[StoresProduct] Removed from list");
+                        Destroy(m_storageList[i].UI.gameObject);
+                        m_storageList.RemoveAt(i);
+                        Debug.Log("[StoresProduct] Removed from list");
+                    }
+                    else {
+                        StoredProduct oldItem = m_storageList[i];
+                        StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units - units);
+                        m_storageList[i] = newItem;
+
+                        Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].Units);
+                    }
 
                     return;
                 }
                 // handle soilEnricher case (Manure OR Fertilizer)
                 else if (productType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
-                        Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
+                        if (units >= m_storageList[i].Units) {
+                            Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
 
-                        Destroy(m_storageList[i].UI.gameObject);
-                        m_storageList.RemoveAt(i);
-                        Debug.Log("[StoresProduct] Removed from list");
+                            Destroy(m_storageList[i].UI.gameObject);
+                            m_storageList.RemoveAt(i);
+                            Debug.Log("[StoresProduct] Removed from list");
+                        }
+                        else {
+                            StoredProduct oldItem = m_storageList[i];
+                            StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units - units);
+                            m_storageList[i] = newItem;
+
+                            Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].Units);
+                        }
 
                         return;
                     }

@@ -17156,6 +17156,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: af6a78443b928434eb9e2721dacca70f, type: 2}
+    - target: {fileID: 6899830891243237553, guid: 16946c1dcd86fe34895cfd2c8bf98c12,
+        type: 3}
+      propertyPath: RequestBundles.Array.data[0].Units
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7760588402429967904, guid: 16946c1dcd86fe34895cfd2c8bf98c12,
         type: 3}
       propertyPath: CycleTime
