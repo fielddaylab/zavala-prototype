@@ -16,10 +16,14 @@ namespace Zavala
 
         public void AddRoad(RoadSegment road) {
             m_connectedRoads.Add(road);
+
+            Debug.Log("[ConnectionNode] Road added! Num roads connected: " + m_connectedRoads.Count);
         }
 
         public void RemoveRoad(RoadSegment road) {
             m_connectedRoads.Remove(road);
+         
+            Debug.Log("[ConnectionNode] Road removed! Num roads connected: " + m_connectedRoads.Count);
         }
 
         public List<RoadSegment> GetConnectedRoads() {

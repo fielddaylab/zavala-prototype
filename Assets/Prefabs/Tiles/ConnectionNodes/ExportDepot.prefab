@@ -95,13 +95,13 @@ GameObject:
   - component: {fileID: 33282116905304876}
   - component: {fileID: 23882847663073744}
   - component: {fileID: 64605270041495022}
+  - component: {fileID: 7606216468706489749}
   - component: {fileID: 8653633958515204599}
   - component: {fileID: 6899830891243237553}
   - component: {fileID: 4976729194800329817}
   - component: {fileID: 7654319240052785948}
   - component: {fileID: -150613178662610011}
   - component: {fileID: 6694986199899361739}
-  - component: {fileID: 7606216468706489749}
   m_Layer: 6
   m_Name: ExportDepot
   m_TagString: Untagged
@@ -190,6 +190,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: ec55075d188c17f409c030e2fa6d4ebf, type: 3}
+--- !u!114 &7606216468706489749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708391978254754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd292418e18ac6c41982c7d2b92c52be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RegionFertilizerOffer: 10
 --- !u!114 &8653633958515204599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,18 +289,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f6814c5e94616f419880060ca2b18a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7606216468706489749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1708391978254754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd292418e18ac6c41982c7d2b92c52be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5249573324808159469

@@ -99,7 +99,7 @@ namespace Zavala
 
         // TODO: Perform algorithm
         private void Solve() {
-            Debug.Log("[ClearingHouse] Solving.");
+            Debug.Log("[ClearingHouse] [Solve] Solving.");
             // Take each request candidates list and add to priority queue using cost equation
             foreach(StoresProduct supplier in m_registeredStoresProduct) {
                 // Obtain distribution data, i.e. all possible places they could ship product to plus additional info
@@ -141,11 +141,11 @@ namespace Zavala
                             break;
                         */
                         case SupplierType.Unknown:
-                            Debug.Log("[ClearingHouse] Unknown type of supplier. Object name: " + supplier.gameObject.name);
+                            Debug.Log("[ClearingHouse] [Solve] Unknown type of supplier. Object name: " + supplier.gameObject.name);
 
                             break;
                         default:
-                            Debug.Log("[ClearingHouse] Unknown type of supplier. Object name: " + supplier.gameObject.name);
+                            Debug.Log("[ClearingHouse] [Solve] Unknown type of supplier. Object name: " + supplier.gameObject.name);
 
                             break;
                     }
@@ -158,6 +158,7 @@ namespace Zavala
                     distData.OptimalRouting.Enqueue(candData, 1.0f/optimalityScore);
                 }
 
+                Debug.Log("[ClearingHouse] [Solve] Transferring priority queue to list. Queue size: " + distData.OptimalRouting.Count);
                 // Transfer priority queue to list
                 while (distData.OptimalRouting.Count > 0) {
                     distData.OptimalList.Add(distData.OptimalRouting.Dequeue());
@@ -169,18 +170,20 @@ namespace Zavala
         // Return optimal buyer and how many units they should/can sell.
         // May be called multiple time to distribute all inventory to multiple buyers.
         public Requests QuerySolution(StoresProduct seller, Resources.Type resourceType, out int unitsSold, out List<RoadSegment> path) {
-            Debug.Log("[ClearingHouse] Solution queried...");
+            Debug.Log("[ClearingHouse] [Solve] Solution queried...");
             
             if (RoutingDict.ContainsKey(seller)) {
+                Debug.Log("[ClearingHouse] [Solve] Seller exists in routing dict");
                 DistributionData distData = RoutingDict[seller];
                 // iterate through possible buyers, starting with most to least optimal
                 if (distData.OptimalList.Count > 0) {
+                    Debug.Log("[ClearingHouse] [Solve] Optimal list exists. Size: " + distData.OptimalList.Count);
                     int sellUnitsRemaining = seller.StorageCount(resourceType);
 
                     for (int c = 0; c < distData.OptimalList.Count; c++) {
-                        int unitsRequesting = distData.OptimalList[c].RequestCandidate.RequestSingleBundleUnits(resourceType);
+                        int unitsRequesting = distData.OptimalList[c].RequestCandidate.SingleRequestUnits(resourceType);
                         if (unitsRequesting > 0) {
-                            Debug.Log("[ClearingHouse] Found an optimal buyer");
+                            Debug.Log("[ClearingHouse] [Solve] Found an optimal buyer, buying " + unitsRequesting + " units");
                             // sell as many units as possible to this buyer
                             unitsSold = sellUnitsRemaining >= unitsRequesting ? unitsRequesting : sellUnitsRemaining;
                             path = distData.OptimalList[c].Path;
@@ -188,9 +191,12 @@ namespace Zavala
                         }
                     }
                 }
+                else {
+                    Debug.Log("[ClearingHouse] [Solve] Optimal list does not exist!");
+                }
             }
 
-            Debug.Log("[ClearingHouse] No optimal buyer.");
+            Debug.Log("[ClearingHouse] [Solve] No optimal buyer.");
             // no optimal buyer (likely not connected to roads)
             unitsSold = 0;
             path = null;
@@ -353,7 +359,7 @@ namespace Zavala
             }
             else if (candidate.GetComponent<ExportDepot>() != null) {
                 // Apply ExportDepot Fertilizer offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.ExportDepotFertilizer;
+                willingToPay = candidate.GetComponent<ExportDepot>().RegionFertilizerOffer;
             }
             else {
                 // Unknown type of offer! Do not sell!
@@ -391,6 +397,9 @@ namespace Zavala
 
                 // for each registered requester, add to list if can be reached by this StoresProduct
                 foreach (Requests candidate in m_registeredRequests) {
+                    Debug.Log("[ClearingHouse] [Compile] StoresProduct road count: " + sp.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
+                    Debug.Log("[ClearingHouse] [Compile] Requests road count: " + candidate.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
+
                     int pathLength;
                     List<RoadSegment> path;
                     bool pathExists = QueryIfConnected(sp.GetComponent<ConnectionNode>(), candidate.GetComponent<ConnectionNode>(), out pathLength, out path);
@@ -398,11 +407,28 @@ namespace Zavala
                         Debug.Log("[ClearingHouse] Path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
 
                         // check if resource types are relevant to each other (supplier stores resource that requester might buy)
+                        // What the supplier currently stores
                         foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
+                            Debug.Log("[ClearingHouse] Checking for resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
                             if (candidate.RequestBundlesContains(storedResource)) {
                                 CandidateData candidateData = new CandidateData(candidate, pathLength, path);
                                 requestCandidatesData.Add(candidateData);
+
+                                Debug.Log("[ClearingHouse] Resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
                                 break;
+                            }
+                        }
+                        // What the supplier could produce and store
+                        if (sp.GetComponent<Produces>() != null) {
+                            foreach (Resources.Type produceResource in sp.GetComponent<Produces>().GetProduceTypes()) {
+                                Debug.Log("[ClearingHouse] Checking for resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
+                                if (candidate.RequestBundlesContains(produceResource)) {
+                                    CandidateData candidateData = new CandidateData(candidate, pathLength, path);
+                                    requestCandidatesData.Add(candidateData);
+
+                                    Debug.Log("[ClearingHouse] Resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -472,9 +498,12 @@ namespace Zavala
         #region Handlers
 
         private void HandleCycleCompleted(object sender, EventArgs e) {
+            if (!m_parentRegion.IsRegionActive()) { return; }
+            
             Debug.Log("[ClearingHouse] Cycle completed");
 
             // Clearing House recompiles Dictionary, solves problem
+            RecompileRoutingDict();
             Solve();
         }
 

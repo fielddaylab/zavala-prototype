@@ -17281,7 +17281,7 @@ PrefabInstance:
     - target: {fileID: 6899830891243237553, guid: 16946c1dcd86fe34895cfd2c8bf98c12,
         type: 3}
       propertyPath: RequestBundles.Array.data[0].Units
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7760588402429967904, guid: 16946c1dcd86fe34895cfd2c8bf98c12,
         type: 3}

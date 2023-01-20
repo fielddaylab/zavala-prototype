@@ -550,6 +550,7 @@ namespace Zavala.Roads
                 openSetKeys.Remove(current);
                 if (current.ConnectionNodeInEdges(endpoint)) {
                     finalPath = ReconstructPath(cameFrom, current);
+                    finalPath.Reverse();
                     return finalPath;
                 }
 

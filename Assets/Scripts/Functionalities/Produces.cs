@@ -77,6 +77,18 @@ namespace Zavala.Functionalities
             return m_amt;
         }
 
+        public List<Resources.Type> GetProduceTypes() {
+            List<Resources.Type> types = new List<Resources.Type>();
+
+            for (int i = 0; i < Products.Count; i++) {
+                if (!types.Contains(Products[i].Type)) {
+                    types.Add(Products[i].Type);
+                }
+            }
+
+            return types;
+        }
+
         #endregion // AllVars Gets & Sets
     }
 }

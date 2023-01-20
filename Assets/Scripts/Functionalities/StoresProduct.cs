@@ -312,8 +312,8 @@ namespace Zavala.Functionalities
                     if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient)) {
                         Debug.Log("[Requests] Truck summoned successfully");
 
-                        // TODO: set request to en-route
-                        // m_activeRequests[requestIndex].SetEnRoute();
+                        // set request to en-route
+                        recipient.SetEnRoute(resourceType, unitsSold);
                     }
                     else {
                         Debug.Log("[Requests] Truck not summoned");

@@ -58,7 +58,7 @@ namespace Zavala
             public int GrainFarmFertilizer;
             public int CAFOGrain;
             public int DigesterManure;
-            public int ExportDepotFertilizer;
+            // public int ExportDepotFertilizer; // <- handled by individual depots
         }
 
         [Serializable]
@@ -80,6 +80,8 @@ namespace Zavala
         [SerializeField] private int m_startingMoney = 1000;
         private int m_moneyUnits;
 
+        private bool m_activeRegion;
+
         [Space(10)]
 
         [Header("Simulation Knobs")]
@@ -97,6 +99,8 @@ namespace Zavala
             EventMgr.Instance.ProduceMoney += HandleProduceMoney;
             EventMgr.Instance.PurchaseSuccessful += HandlePurchaseSuccessful;
             EventMgr.Instance.LevelRestarted += HandleLevelRestarted;
+
+            m_activeRegion = true;
 
             if (!m_startsActive) {
                 DeactivateRegion();
@@ -140,11 +144,13 @@ namespace Zavala
         #region Helpers
 
         private void ActivateRegion() {
+            m_activeRegion = true;
             m_regionContainer.SetActive(true);
             RegionMgr.Instance.TrackRegion(this);
         }
 
         private void DeactivateRegion() {
+            m_activeRegion = false;
             m_regionContainer.SetActive(false);
             RegionMgr.Instance.UntrackRegion(this);
         }
@@ -203,5 +209,13 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        #region Gets & Sets
+
+        public bool IsRegionActive() {
+            return m_activeRegion;
+        }
+
+        #endregion // Gets & Sets
     }
 }

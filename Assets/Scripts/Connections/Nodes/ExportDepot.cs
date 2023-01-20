@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Resources;
 using Zavala.Tiles;
@@ -20,6 +21,7 @@ namespace Zavala
         private Tile m_tileComponent;
         private Produces m_producesComponent;
 
+        public int RegionFertilizerOffer;
 
         private void OnEnable() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
@@ -33,10 +35,14 @@ namespace Zavala
 
         private void SellExport() {
             // produce money for selling export
+            /*
             List<ProductBundle> newProducts = m_producesComponent.Produce();
             if (newProducts == null) {
                 return;
             }
+            */
+
+            EventMgr.Instance.TriggerEvent(Events.ID.ProduceMoney, new Events.ProduceMoneyEventArgs(RegionFertilizerOffer, RegionMgr.Instance.GetRegionByPos(this.transform.position)));
         }
 
         #region Handlers

@@ -124,12 +124,14 @@ namespace Zavala.Functionalities
 
         private void QueryRoadForProducts() {
             for (int requestIndex = 0; requestIndex < m_activeRequests.Count; requestIndex++) {
+                /*
                 if (m_activeRequests[requestIndex].IsEnRoute()) {
                     continue;
                 }
+                */
 
                 Resources.Type resourceType = m_activeRequests[requestIndex].GetResourceType();
-                int desiredUnits = m_activeRequests[requestIndex].GetUnits();
+                int desiredUnits = m_activeRequests[requestIndex].GetFulfillableUnits();
 
                 List<RoadSegment> connectedRoads = m_connectionNodeComponent.GetConnectedRoads();
                 Debug.Log("[Requests] Querying road... (" + connectedRoads.Count + " roads connected)");
@@ -151,7 +153,7 @@ namespace Zavala.Functionalities
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
-                            m_activeRequests[requestIndex].SetEnRoute();
+                            m_activeRequests[requestIndex].SetEnRoute(foundUnits);
                         }
                         else {
                             Debug.Log("[Requests] Truck not summoned");
@@ -165,7 +167,7 @@ namespace Zavala.Functionalities
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
                     // check if right number of units
-                    if (units >= m_activeRequests[i].GetUnits()) {
+                    if (units >= m_activeRequests[i].GetFulfillableUnits()) {
                         // fully fulfilled
                         CloseRequest(i, resourceType, true);
                         return;
@@ -180,7 +182,7 @@ namespace Zavala.Functionalities
                 else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher) {
                     if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
                         // check if right number of units
-                        if (units >= m_activeRequests[i].GetUnits()) {
+                        if (units >= m_activeRequests[i].GetFulfillableUnits()) {
                             // fully fulfilled
                             CloseRequest(i, resourceType, true);
                             return;
@@ -224,7 +226,7 @@ namespace Zavala.Functionalities
 
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == queryType) {
-                    count += m_activeRequests[i].GetUnits();
+                    count += m_activeRequests[i].GetFulfillableUnits();
                 }
             }
 
@@ -236,19 +238,47 @@ namespace Zavala.Functionalities
                 if (RequestBundles[i].Type == resourceType) {
                     return true;
                 }
+                // handle SoilEnricher case (Manure OR Fertilizer)
+                else if (RequestBundles[i].Type == Resources.Type.SoilEnricher) {
+                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
+                        return true;
+                    }
+                }
             }
 
             return false;
         }
 
-        public int RequestSingleBundleUnits(Resources.Type resourceType) {
-            for (int i = 0; i < RequestBundles.Count; i++) {
-                if (RequestBundles[i].Type == resourceType && RequestBundles[i].Units > 0) {
-                    return RequestBundles[i].Units;
+        public int SingleRequestUnits(Resources.Type resourceType) {
+            for (int i = 0; i < m_activeRequests.Count; i++) {
+                if (m_activeRequests[i].GetResourceType() == resourceType && m_activeRequests[i].GetFulfillableUnits() > 0) {
+                    return m_activeRequests[i].GetFulfillableUnits();
+                }
+                // handle SoilEnricher case (Manure OR Fertilizer)
+                else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher && m_activeRequests[i].GetFulfillableUnits() > 0) {
+                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
+                        return m_activeRequests[i].GetFulfillableUnits();
+                    }
                 }
             }
 
             return 0;
+        }
+
+        public void SetEnRoute(Resources.Type resourceType, int allocatedUnits) {
+            for (int i = 0; i < m_activeRequests.Count; i++) {
+                if (m_activeRequests[i].GetResourceType() == resourceType && m_activeRequests[i].GetFulfillableUnits() > 0) {
+                    // set aside en route units
+                    m_activeRequests[i].SetEnRoute(allocatedUnits);
+                }
+                // handle SoilEnricher case (Manure OR Fertilizer)
+                else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher && m_activeRequests[i].GetFulfillableUnits() > 0) {
+                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
+                        // set aside en route units
+                        m_activeRequests[i].SetEnRoute(allocatedUnits);
+                    }
+                }
+            }
         }
 
         #region Handlers
@@ -256,7 +286,7 @@ namespace Zavala.Functionalities
         private void HandleTimerExpired(object sender, EventArgs e) {
             UIRequest expiredRequest = (UIRequest)sender;
             Debug.Log("[Requests] request expired");
-            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetUnits()));
+            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetFulfillableUnits()));
 
             m_activeRequests.Remove(expiredRequest);
             Destroy(expiredRequest.gameObject);

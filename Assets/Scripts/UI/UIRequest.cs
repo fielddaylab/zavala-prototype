@@ -18,26 +18,26 @@ namespace Zavala
 
         private int m_initialUnits; // how many units in total request
         private int m_units;// how many units left to complete request
+        private int m_enRouteUnits; // how many units are currently on their way
 
         //private UITimer m_uiTimer;
 
         private int m_remainingCycles;
 
-        private bool m_enRoute; // whether a truck has been dispatched to serve this request
-
         public event EventHandler TimerExpired; // when the timer completes
+
+        private Cycles m_cycleSync;
 
         private void InitBasics(Resources.Type resourceType, int units) {
             m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
             m_resourceIcon.SetNativeSize();
 
             m_resourceType = resourceType;
+            m_enRouteUnits = 0;
             m_units = m_initialUnits = units;
             m_unitsText.text = "" + units;
 
             m_remainingCycles = -1;
-
-            m_enRoute = false;
         }
 
         // no timeout
@@ -49,7 +49,8 @@ namespace Zavala
         public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync, int units) {
             InitBasics(resourceType, units);
 
-            cycleSync.PreCycleCompleted += HandlePreCycleCompleted;
+            m_cycleSync = cycleSync;
+            m_cycleSync.PreCycleCompleted += HandlePreCycleCompleted;
             m_remainingCycles = requestTimeout;
 
             m_bg.color = GameDB.Instance.UIRequestDefaultColor;
@@ -63,27 +64,28 @@ namespace Zavala
             return m_resourceType;
         }
 
-        public int GetUnits() {
-            return m_units;
+        public int GetFulfillableUnits() {
+            return m_units - m_enRouteUnits;
         }
 
         public int GetInitialUnits() {
             return m_initialUnits;
         }
 
-        public void SetEnRoute() {
-            m_enRoute = true;
+        public void SetEnRoute(int enRouteUnits) {
+            m_enRouteUnits += enRouteUnits;
 
             // TODO: nuance here. If a request is partially fulfilled, remaining products must continue to be tracked as not en-route
             //m_bg.color = GameDB.Instance.UIRequestEnRouteColor;
         }
 
-        public bool IsEnRoute() {
-            return m_enRoute;
-        }
-
         public void ModifyUnits(int amt) {
             m_units += amt;
+
+            if (amt < 0) {
+                // en route units have been delivered
+                m_enRouteUnits += amt;
+            }
 
             UpdateUnitsText();
         }
@@ -115,7 +117,9 @@ namespace Zavala
                     TimerExpired?.Invoke(this, EventArgs.Empty);
                 }
                 else if (m_remainingCycles == 1) {
-                    m_bg.color = GameDB.Instance.UIRequestExpiringColor;
+                    if (m_bg != null) {
+                        m_bg.color = GameDB.Instance.UIRequestExpiringColor;
+                    }
                 }
             }
         }
