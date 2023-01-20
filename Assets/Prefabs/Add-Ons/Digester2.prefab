@@ -165,10 +165,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ccc55681653cb943a4c0126c788ac4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RequestTypes: 04000000
   RequestBundles:
   - Type: 4
-    Units: 1
+    Units: 10
+    Continuous: 0
   m_hasTimeout: 0
   m_requestTimeout: 0
   m_iconOffsetZ: 0.25
@@ -205,6 +205,8 @@ MonoBehaviour:
   m_hasTimeout: 0
   m_storageTimeout: 0
   m_iconOffsetZ: 0.25
+  m_excludeFromClearingHouse: 0
+  SitOption: {fileID: 0}
 --- !u!114 &5706398826109247841
 MonoBehaviour:
   m_ObjectHideFlags: 0
