@@ -31,6 +31,8 @@ namespace Zavala
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
+
+            m_requestsComponent.QueueRequest();
         }
 
         private void SellExport() {

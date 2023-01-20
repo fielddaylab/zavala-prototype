@@ -87,6 +87,7 @@ namespace Zavala
         private void StraightToStorage() {
             // produce money per population
             for (int p = 0; p < m_population; p++) {
+                m_producesComponent.SetProduceAmt(RegionMgr.Instance.GetRegionByPos(this.transform.position).SimKnobs.CityMaxPayForMilk);
                 List<ProductBundle> newProducts = m_producesComponent.Produce();
                 if (newProducts == null) {
                     return;
