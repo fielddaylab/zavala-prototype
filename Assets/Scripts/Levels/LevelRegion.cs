@@ -133,6 +133,10 @@ namespace Zavala
             m_clearingHouse.RegisterRequestsProduct(requests);
         }
 
+        public Requests QueryClearingHouseSolution(StoresProduct seller, Resources.Type resourceType, out int unitsSold, out List<RoadSegment> path) {
+            return m_clearingHouse.QuerySolution(seller, resourceType, out unitsSold, out path);
+        }
+
         #region Helpers
 
         private void ActivateRegion() {

@@ -6,6 +6,7 @@ using Zavala.Functionalities;
 using Zavala.Resources;
 using Zavala.Tiles;
 using static Zavala.Functionalities.Produces;
+using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala
 {
@@ -50,6 +51,7 @@ namespace Zavala
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
             m_storesComponent.RemovedStorage += HandleStorageRemoved;
+            m_storesComponent.SetSupplierType(SupplierType.DairyFarm);
 
             m_firstCycle = true;
         }

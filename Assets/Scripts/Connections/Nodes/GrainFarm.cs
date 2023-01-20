@@ -8,6 +8,7 @@ using Zavala.Resources;
 using Zavala.Settings;
 using Zavala.Tiles;
 using static Zavala.Functionalities.Produces;
+using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala
 {
@@ -48,6 +49,8 @@ namespace Zavala
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
+
+            m_storesComponent.SetSupplierType(SupplierType.GrainFarm);
 
             m_firstCycle = true;
 

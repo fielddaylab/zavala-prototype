@@ -241,6 +241,16 @@ namespace Zavala.Functionalities
             return false;
         }
 
+        public int RequestSingleBundleUnits(Resources.Type resourceType) {
+            for (int i = 0; i < RequestBundles.Count; i++) {
+                if (RequestBundles[i].Type == resourceType && RequestBundles[i].Units > 0) {
+                    return RequestBundles[i].Units;
+                }
+            }
+
+            return 0;
+        }
+
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
@@ -254,7 +264,7 @@ namespace Zavala.Functionalities
         }
 
         private void HandleEconomyUpdated(object sender, EventArgs args) {
-            QueryRoadForProducts();
+            // QueryRoadForProducts();
         }
 
         #endregion // Handlers

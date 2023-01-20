@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Roads;
+using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala
 {
@@ -13,17 +15,22 @@ namespace Zavala
     /// When a product is added to the market, the choice has already been solved.
     /// The optimal match is looked up in the dictionary and routed accordingly for as many as that producer can sell to the requester.
     /// </summary>
+    [RequireComponent(typeof(Cycles))]
     public class ClearingHouse : MonoBehaviour
     {
+        private Cycles m_cyclesComponent;
+
         private struct DistributionData
         {
             public List<CandidateData> RequestCandidates; // staging
-            public PriorityQueue<CandidateData, float> OptimalRouting;
+            public PriorityQueue<CandidateData, float> OptimalRouting; // prioritizing
+            public List<CandidateData> OptimalList; // enumerating
             public int UnitsToDistribute;
 
-            public DistributionData(List<CandidateData> requestCandidates, PriorityQueue<CandidateData, float> optimalRouting, int unitsToDistribute) {
+            public DistributionData(List<CandidateData> requestCandidates, PriorityQueue<CandidateData, float> optimalRouting, List<CandidateData> optimalList, int unitsToDistribute) {
                 RequestCandidates = requestCandidates;
                 OptimalRouting = optimalRouting;
+                OptimalList = optimalList;
                 UnitsToDistribute = unitsToDistribute;
             }
         }
@@ -32,10 +39,12 @@ namespace Zavala
         {
             public Requests RequestCandidate;
             public int Distance;
+            public List<RoadSegment> Path;
 
-            public CandidateData(Requests requestCandidate, int distance) {
+            public CandidateData(Requests requestCandidate, int distance, List<RoadSegment> path) {
                 RequestCandidate = requestCandidate;
                 Distance = distance;
+                Path = path;
             }
         }
 
@@ -51,6 +60,8 @@ namespace Zavala
         private LevelRegion m_parentRegion;
 
         public void Init(LevelRegion parentRegion) {
+            m_cyclesComponent = this.GetComponent<Cycles>();
+
             m_registeredRequests = new List<Requests>();
             m_registeredStoresProduct = new List<StoresProduct>();
 
@@ -58,10 +69,14 @@ namespace Zavala
             RoutingDict = new Dictionary<StoresProduct, DistributionData>();
 
             EventMgr.Instance.EconomyUpdated += HandleEconomyUpdated;
+
+            m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
         }
 
         // Register a producer
         public void RegisterStoresProduct(StoresProduct storesProduct) {
+            Debug.Log("[ClearingHouse] Registering a StoresProduct.");
+
             m_registeredStoresProduct.Add(storesProduct);
 
             RecompileRoutingDict();
@@ -72,6 +87,8 @@ namespace Zavala
 
         // Register a requester
         public void RegisterRequestsProduct(Requests requester) {
+            Debug.Log("[ClearingHouse] Registering a Requests.");
+
             m_registeredRequests.Add(requester);
 
             RecompileRoutingDict();
@@ -82,24 +99,286 @@ namespace Zavala
 
         // TODO: Perform algorithm
         private void Solve() {
-            // take each request candidates list and add to priority queue using cost equation
-            // m_parentRegion.SimKnobs
+            Debug.Log("[ClearingHouse] Solving.");
+            // Take each request candidates list and add to priority queue using cost equation
+            foreach(StoresProduct supplier in m_registeredStoresProduct) {
+                // Obtain distribution data, i.e. all possible places they could ship product to plus additional info
+                DistributionData distData = RoutingDict[supplier];
+
+                // Iterate through candidates and assign an optimality score
+                for (int c = 0; c < distData.RequestCandidates.Count; c++) {
+                    float optimalityScore = 0.00001f;
+                    CandidateData candData = distData.RequestCandidates[c];
+
+                    switch (supplier.GetSupplierType()) {
+                        case SupplierType.GrainFarm:
+                            // Grain farm is selling
+                            // Product: Grain
+                            optimalityScore = GrainSellGrain(candData);
+                            break;
+                        case SupplierType.DairyFarm:
+                            // Diary farm is selling
+                            // Product: Manure
+                            float manureScore = DairySellManure(candData);
+                            // Product: Milk
+                            float milkScore = DairySellMilk(candData);
+
+                            optimalityScore = Math.Max(manureScore, milkScore);
+                            break;
+                        case SupplierType.Digester:
+                            // Digester is selling
+                            // Product: Fertilizer
+                            optimalityScore = DigesterSellFertilizer(candData);
+                            break;
+                        /*
+                        case SupplierType.Storage:
+                            // Storage is selling
+                            // Product: Manure
+                            break;
+                        case SupplierType.Skimmer:
+                            // Skimmer is selling
+                            // Product: Fertilizer
+                            break;
+                        */
+                        case SupplierType.Unknown:
+                            Debug.Log("[ClearingHouse] Unknown type of supplier. Object name: " + supplier.gameObject.name);
+
+                            break;
+                        default:
+                            Debug.Log("[ClearingHouse] Unknown type of supplier. Object name: " + supplier.gameObject.name);
+
+                            break;
+                    }
+
+                    // TODO: negotiate price between buy price and sell price, factor into optimality
+
+                    Debug.Log("[ClearingHouse] [Solve] Enqueueing " + candData.RequestCandidate.gameObject.name + " with final priority of " + 1.0f / optimalityScore + " for supplier " + supplier.gameObject.name);
+                    // Add candidate and score to priority queue for this supplier
+                    // higher offer means lower priority val, which means closer to front of queue (i.e. score of 1 is more optimal than score of 10)
+                    distData.OptimalRouting.Enqueue(candData, 1.0f/optimalityScore);
+                }
+
+                // Transfer priority queue to list
+                while (distData.OptimalRouting.Count > 0) {
+                    distData.OptimalList.Add(distData.OptimalRouting.Dequeue());
+                }
+            }
         }
 
         // Use results of algorithm to route products from producer to requester.
         // Return optimal buyer and how many units they should/can sell.
-        public Requests QuerySolution(StoresProduct seller, out int unitsSold) {
+        // May be called multiple time to distribute all inventory to multiple buyers.
+        public Requests QuerySolution(StoresProduct seller, Resources.Type resourceType, out int unitsSold, out List<RoadSegment> path) {
+            Debug.Log("[ClearingHouse] Solution queried...");
+            
             if (RoutingDict.ContainsKey(seller)) {
-                if (RoutingDict[seller].RequestCandidates.Count > 0) {
-                    unitsSold = 0; // TODO: store this in RequestCandidateData
-                    return RoutingDict[seller].RequestCandidates[0].RequestCandidate;
+                DistributionData distData = RoutingDict[seller];
+                // iterate through possible buyers, starting with most to least optimal
+                if (distData.OptimalList.Count > 0) {
+                    int sellUnitsRemaining = seller.StorageCount(resourceType);
+
+                    for (int c = 0; c < distData.OptimalList.Count; c++) {
+                        int unitsRequesting = distData.OptimalList[c].RequestCandidate.RequestSingleBundleUnits(resourceType);
+                        if (unitsRequesting > 0) {
+                            Debug.Log("[ClearingHouse] Found an optimal buyer");
+                            // sell as many units as possible to this buyer
+                            unitsSold = sellUnitsRemaining >= unitsRequesting ? unitsRequesting : sellUnitsRemaining;
+                            path = distData.OptimalList[c].Path;
+                            return RoutingDict[seller].OptimalList[c].RequestCandidate;
+                        }
+                    }
                 }
             }
 
-            // no optimal buyer -- should not occur
-            unitsSold = -1;
+            Debug.Log("[ClearingHouse] No optimal buyer.");
+            // no optimal buyer (likely not connected to roads)
+            unitsSold = 0;
+            path = null;
             return null;
         }
+
+        #region Solve Helpers
+
+        /// <summary>
+        /// Equation of optimality: offer - costs
+        /// offer = (willing-to-pay)
+        /// costs = (tiles traveled) * (price per tile) + (purchase tax) + (export tax)
+        /// </summary>
+
+        private float GrainSellGrain(CandidateData candData) {
+            float offer;
+            float costs;
+
+            float willingToPay;
+
+            int tilesTraveled;
+            float pricePerTile;
+            float purchaseTax = 0;
+            float exportTax = 0;
+
+            if (candData.RequestCandidate.GetComponent<DairyFarm>() != null) {
+                // Apply DairyFarm Grain offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.CAFOGrain;
+            }
+            else {
+                // Unknown type of offer! Do not sell!
+                willingToPay = Mathf.NegativeInfinity;
+            }
+
+            tilesTraveled = candData.Distance;
+            pricePerTile = RegionMgr.Instance.GlobalSimKnobs.TransportCosts.Grain;
+            // purchaseTax // no purchase tax specified for grain
+            // exportTax // no export tax specified for grain
+
+            offer = willingToPay;
+            costs = tilesTraveled * pricePerTile + purchaseTax + exportTax;
+
+            return offer - costs;
+        }
+
+        private float DairySellManure(CandidateData candData) {
+            float offer;
+            float costs;
+
+            float willingToPay;
+
+            int tilesTraveled;
+            float pricePerTile;
+            float purchaseTax = 0;
+            float exportTax = 0;
+
+            if (candData.RequestCandidate.GetComponent<GrainFarm>() != null) {
+                // Apply GrainFarm Manure offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
+            }
+            else if (candData.RequestCandidate.GetComponent<Digester>() != null) {
+                // Apply Digester Manure offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
+            }
+            /*
+            else if (candData.RequestCandidate.GetComponent<StoresProduct>().SitOption != null) {
+                // Apply Letting Manure sit offer
+                willingToPay = price of letting manure sit (for a round?)
+            }
+            */
+            else {
+                // Unknown type of offer! Do not sell!
+                willingToPay = Mathf.NegativeInfinity;
+            }
+
+            Requests candidate = candData.RequestCandidate;
+            if (candidate.GetComponent<ExportDepot>() != null) {
+                // Apply external manure tax
+                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+            }
+            /* TODO:
+            else if (requester region != supplier region) {
+                // Apply external manure tax
+                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+            }
+            */
+            else {
+                // Apply internal manure tax
+                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalManure;
+            }
+
+            tilesTraveled = candData.Distance;
+            pricePerTile = RegionMgr.Instance.GlobalSimKnobs.TransportCosts.Manure;
+
+            offer = willingToPay;
+            costs = tilesTraveled * pricePerTile + purchaseTax + exportTax;
+
+            return offer - costs;
+        }
+
+        private float DairySellMilk(CandidateData candData) {
+            float offer;
+            float costs;
+
+            float willingToPay;
+
+            int tilesTraveled;
+            float pricePerTile;
+            float purchaseTax = 0;
+            float exportTax = 0;
+
+            if (candData.RequestCandidate.GetComponent<City>() != null) {
+                // Apply City Milk offer
+                // TODO: clarify: is this a region-wide value, or does each city have it's own milk tax you can adjust?
+                willingToPay = m_parentRegion.SimKnobs.CityMaxPayForMilk; // <- region-wide value
+            }
+            else {
+                // Unknown type of offer! Do not sell!
+                willingToPay = Mathf.NegativeInfinity;
+            }
+
+            Requests candidate = candData.RequestCandidate;
+            if (candidate.GetComponent<ExportDepot>() != null) {
+                // No external tax specified for milk
+            }
+            /* TODO:
+            else if (requester region != supplier region) {
+                // No external tax specified for milk
+            }
+            */
+            else {
+                // Apply internal milk tax
+                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalMilk;
+            }
+
+            tilesTraveled = candData.Distance;
+            pricePerTile = RegionMgr.Instance.GlobalSimKnobs.TransportCosts.Milk;
+
+            offer = willingToPay;
+            costs = tilesTraveled * pricePerTile + purchaseTax + exportTax;
+
+            return offer - costs;
+        }
+
+        private float DigesterSellFertilizer(CandidateData candData) {
+            float offer;
+            float costs;
+
+            float willingToPay;
+
+            int tilesTraveled;
+            float pricePerTile;
+            float purchaseTax = 0;
+            float exportTax = 0;
+
+            Requests candidate = candData.RequestCandidate;
+            if (candidate.GetComponent<GrainFarm>() != null) {
+                // Apply GrainFarm Fertilizer offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmFertilizer;
+            }
+            else if (candidate.GetComponent<ExportDepot>() != null) {
+                // Apply ExportDepot Fertilizer offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.ExportDepotFertilizer;
+            }
+            else {
+                // Unknown type of offer! Do not sell!
+                willingToPay = Mathf.NegativeInfinity;
+            }
+
+            if (candidate.GetComponent<ExportDepot>() != null) {
+                // Apply external fertilizer tax
+                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalFertilizer;
+            }
+            else {
+                // Apply internal fertilizer tax
+                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalFertilizer;
+            }
+
+            tilesTraveled = candData.Distance;
+            pricePerTile = RegionMgr.Instance.GlobalSimKnobs.TransportCosts.Fertilizer;
+
+            offer = willingToPay;
+            costs = tilesTraveled * pricePerTile + purchaseTax + exportTax;
+
+            return offer - costs;
+        }
+
+        #endregion // Solve Helpers
 
         #region Helpers
 
@@ -113,14 +392,15 @@ namespace Zavala
                 // for each registered requester, add to list if can be reached by this StoresProduct
                 foreach (Requests candidate in m_registeredRequests) {
                     int pathLength;
-                    bool pathExists = QueryIfConnected(sp.GetComponent<ConnectionNode>(), candidate.GetComponent<ConnectionNode>(), out pathLength);
+                    List<RoadSegment> path;
+                    bool pathExists = QueryIfConnected(sp.GetComponent<ConnectionNode>(), candidate.GetComponent<ConnectionNode>(), out pathLength, out path);
                     if (pathExists) {
                         Debug.Log("[ClearingHouse] Path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
 
                         // check if resource types are relevant to each other (supplier stores resource that requester might buy)
                         foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
                             if (candidate.RequestBundlesContains(storedResource)) {
-                                CandidateData candidateData = new CandidateData(candidate, pathLength);
+                                CandidateData candidateData = new CandidateData(candidate, pathLength, path);
                                 requestCandidatesData.Add(candidateData);
                                 break;
                             }
@@ -136,7 +416,7 @@ namespace Zavala
                     // check if the resource can be let to sit at this location
                     foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
                         if (sp.SitOption.RequestsComp.RequestBundlesContains(storedResource)) {
-                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0);
+                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0, null);
                             requestCandidatesData.Add(candidateData);
                             break;
                         }
@@ -144,19 +424,19 @@ namespace Zavala
                 }
 
                 // consolidate data
-                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), sp.StorageCount());
+                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), new List<CandidateData>(), sp.StorageCount());
 
                 // add new entry
                 RoutingDict.Add(sp, distributionData);
             }
         }
 
-        private bool QueryIfConnected(ConnectionNode origin, ConnectionNode endpoint, out int outPathLength) {
+        private bool QueryIfConnected(ConnectionNode origin, ConnectionNode endpoint, out int outPathLength, out List<RoadSegment> outPath) {
             List<RoadSegment> roadsConnectedToOrigin = origin.GetComponent<ConnectionNode>().GetConnectedRoads();
             Debug.Log("[ClearingHouse] Querying road if connected... (" + roadsConnectedToOrigin.Count + " roads connected to origin)");
 
             bool anyPathFound = false;
-            //List<RoadSegment> shortestPath; // uncomment if want to know exact steps along path
+            List<RoadSegment> shortestPath = new List<RoadSegment>();
             int shortestPathLength = int.MaxValue;
             int currPathLength;
 
@@ -169,7 +449,7 @@ namespace Zavala
                     currPathLength = path.Count;
 
                     if (currPathLength < shortestPathLength) {
-                        // shortestPath = path;
+                        shortestPath = path;
                         shortestPathLength = currPathLength;
                     }
                 }
@@ -177,10 +457,12 @@ namespace Zavala
 
             if (anyPathFound) {
                 outPathLength = shortestPathLength;
+                outPath = shortestPath;
                 return true;
             }
             else {
                 outPathLength = -1;
+                outPath = null;
                 return false;
             }
         }
@@ -188,6 +470,13 @@ namespace Zavala
         #endregion // Helpers
 
         #region Handlers
+
+        private void HandleCycleCompleted(object sender, EventArgs e) {
+            Debug.Log("[ClearingHouse] Cycle completed");
+
+            // Clearing House recompiles Dictionary, solves problem
+            Solve();
+        }
 
         /// <summary>
         /// Update which producers can supply which requesters based on new road conditions

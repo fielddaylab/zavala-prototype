@@ -4,14 +4,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Events;
 using Zavala.Tiles;
+using static Zavala.LevelRegion;
 
 namespace Zavala
 {
     public class RegionMgr : MonoBehaviour
     {
+        [Serializable]
+        public struct GlobalSimulationKnobs
+        {
+            // Percentages
+
+            // Flat Values
+            public TransportCosts TransportCosts;
+        }
+
+        [Serializable]
+        public struct TransportCosts
+        {
+            public float Manure;
+            public float Fertilizer;
+            public float Grain;
+            public float Milk;
+        }
+
         public static RegionMgr Instance;
         [SerializeField] private List<LevelRegion> m_levelRegions;
         [HideInInspector] public LevelRegion CurrRegion;
+
+        [Header("Global Simulation Knobs")]
+        public GlobalSimulationKnobs GlobalSimKnobs;
 
         public void Init() {
             if (Instance == null) {

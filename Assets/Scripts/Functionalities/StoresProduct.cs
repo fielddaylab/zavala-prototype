@@ -2,15 +2,29 @@ using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Resources;
+using Zavala.Roads;
 
 namespace Zavala.Functionalities
 {
     public class StoresProduct : MonoBehaviour
     {
-        public struct StoredProduct {
+        public enum SupplierType
+        {
+            Unknown,
+            GrainFarm,
+            DairyFarm,
+            Digester
+            // Storage
+            // Skimmer
+        }
+
+        public struct StoredProduct
+        {
             public Resources.Type Type;
             public UIStoredProduct UI;
             public int Units;
@@ -41,13 +55,21 @@ namespace Zavala.Functionalities
 
         private Vector3 m_initialQueuePos;
 
+        private SupplierType m_supplierType = SupplierType.Unknown;
+
 
         private void OnEnable() {
             m_storageList = new List<StoredProduct>();
 
+            EventMgr.Instance.EconomyUpdated += HandleEconomyUpdated;
+
             if (SitOption != null) {
                 SitOption.Init();
             }
+        }
+
+        private void OnDisable() {
+            EventMgr.Instance.EconomyUpdated -= HandleEconomyUpdated;
         }
 
         private void Start() {
@@ -271,7 +293,46 @@ namespace Zavala.Functionalities
             }
         }
 
+        private void HandleEconomyUpdated(object sender, EventArgs args) {
+            // Query sell solution
+            for (int i = 0; i < m_storageList.Count; i++) {
+                Resources.Type resourceType = m_storageList[i].Type;
 
+                // for each product, find a buyer
+                int unitsSold;
+                List<RoadSegment> path;
+                Requests recipient = RegionMgr.Instance.GetRegionByPos(this.transform.position).QueryClearingHouseSolution(this, resourceType, out unitsSold, out path);
+
+                Debug.Log("[StoresProduct] " + this.gameObject.name + " trying to sell " + resourceType + ". UnitsSold: " + unitsSold);
+
+                if (recipient != null) {
+                    // found resource -- try summon truck
+
+                    Debug.Log("[StoresProduct] Query was successful. length of path: " + path.Count + ". Units sold: " + unitsSold);
+                    if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient)) {
+                        Debug.Log("[Requests] Truck summoned successfully");
+
+                        // TODO: set request to en-route
+                        // m_activeRequests[requestIndex].SetEnRoute();
+                    }
+                    else {
+                        Debug.Log("[Requests] Truck not summoned");
+                    }
+                }
+            }
+        }
         #endregion // Handlers
+
+        #region Gets and Sets
+
+        public void SetSupplierType(SupplierType type) {
+            m_supplierType = type;
+        }
+
+        public SupplierType GetSupplierType() {
+            return m_supplierType;
+        }
+
+        #endregion // Gets and Sets
     }
 }
