@@ -20,13 +20,24 @@ namespace Zavala.Functionalities
         public struct RequestBundle
         {
             public Resources.Type Type;
-            public int Units;
+            [SerializeField] private int m_units;
             public bool Continuous;
+            public bool Visible;
 
-            public RequestBundle(Resources.Type type, int units, bool continuous = false) {
+            public RequestBundle(Resources.Type type, int units, bool continuous = false, bool visible = true) {
                 Type = type;
-                Units = units;
+                m_units = units;
                 Continuous = continuous;
+                Visible = visible;
+            }
+
+            public int GetUnits() {
+                if (Continuous) {
+                    return int.MaxValue;
+                }
+                else {
+                    return m_units;
+                }
             }
         }
 
@@ -74,16 +85,16 @@ namespace Zavala.Functionalities
 
             for (int i = 0; i < RequestBundles.Count; i++) {
                 Resources.Type resourceType = RequestBundles[i].Type;
-                int units = RequestBundles[i].Units;
+                int units = RequestBundles[i].GetUnits();
 
                 // init and display
                 Debug.Log("[Instantiate] Instantiating UIRequest prefab");
                 UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
                 if (m_hasTimeout) {
-                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units);
+                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible);
                 }
                 else {
-                    newRequest.Init(resourceType, units);
+                    newRequest.Init(resourceType, units, RequestBundles[i].Visible);
                 }
 
                 // add to requests
@@ -166,6 +177,7 @@ namespace Zavala.Functionalities
         public void ReceiveRequestedProduct(Resources.Type resourceType, int units) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
+                    // TODO: PICK UP WORK HERE ----------------------------------------------------------------
                     // check if right number of units
                     if (units >= m_activeRequests[i].GetFulfillableUnits()) {
                         // fully fulfilled
@@ -201,12 +213,13 @@ namespace Zavala.Functionalities
             UIRequest toClose = m_activeRequests[requestIndex];
             toClose.TimerExpired -= HandleTimerExpired;
             m_activeRequests.RemoveAt(requestIndex);
-            Destroy(toClose.gameObject);
             if (fulfilled) {
                 // trigger request fulfilled event
                 RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetInitialUnits()));
                 Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
             }
+            Destroy(toClose.gameObject);
+
         }
 
         private void PartialCompleteRequest(int requestIndex, Resources.Type resourceType, int units) {
@@ -251,6 +264,7 @@ namespace Zavala.Functionalities
 
         public int SingleRequestUnits(Resources.Type resourceType) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
+                Debug.Log("[Requests] Iterating through active requests, index " + i + " with " + m_activeRequests[i].GetFulfillableUnits() + " fulfillable, " + m_activeRequests[i].GetInitialUnits() + " initial units");
                 if (m_activeRequests[i].GetResourceType() == resourceType && m_activeRequests[i].GetFulfillableUnits() > 0) {
                     return m_activeRequests[i].GetFulfillableUnits();
                 }
@@ -270,12 +284,14 @@ namespace Zavala.Functionalities
                 if (m_activeRequests[i].GetResourceType() == resourceType && m_activeRequests[i].GetFulfillableUnits() > 0) {
                     // set aside en route units
                     m_activeRequests[i].SetEnRoute(allocatedUnits);
+                    return;
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher && m_activeRequests[i].GetFulfillableUnits() > 0) {
                     if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
                         // set aside en route units
                         m_activeRequests[i].SetEnRoute(allocatedUnits);
+                        return;
                     }
                 }
             }

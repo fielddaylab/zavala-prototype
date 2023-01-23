@@ -220,8 +220,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RequestBundles:
   - Type: 2
-    Units: 1
+    m_units: 1
     Continuous: 0
+    Visible: 1
   m_hasTimeout: 1
   m_requestTimeout: 2
   m_iconOffsetZ: 0.25
@@ -402,8 +403,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RequestBundles:
   - Type: 4
-    Units: 0
+    m_units: 0
     Continuous: 1
+    Visible: 0
   m_hasTimeout: 0
   m_requestTimeout: 0
   m_iconOffsetZ: 0.25

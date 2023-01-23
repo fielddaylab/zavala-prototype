@@ -10341,7 +10341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_RootOrder
@@ -11076,6 +11076,10 @@ PrefabInstance:
     - target: {fileID: 1690466091820418, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_Name
       value: DairyFarm (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1690466091820418, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4936573472062638, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_RootOrder
@@ -12199,7 +12203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_RootOrder
@@ -17972,8 +17976,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: SimKnobs.SittingManureTax
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: SimKnobs.GrainFarmMaxPayForImport
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: SimKnobs.BidBuyPrices.GrainFarmManure
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939796, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}

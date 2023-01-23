@@ -27,14 +27,38 @@ namespace Zavala.Functionalities
         {
             public Resources.Type Type;
             public UIStoredProduct UI;
-            public int Units;
+            private int m_units;
+            private int m_sittingUnits; // allocated to the product so can't be sent elsewhere
 
-            public StoredProduct(Resources.Type type, UIStoredProduct ui, int units) {
+            public StoredProduct(Resources.Type type, UIStoredProduct ui, int units, int sittingUnits = 0) {
                 Type = type;
                 UI = ui;
-                Units = units;
+                m_units = units;
+                m_sittingUnits = sittingUnits;
 
-                UI.UpdateUnitsText(Units);
+                UI.UpdateUnitsText(m_units);
+            }
+
+            public int GetFreeUnits() {
+                return m_units - m_sittingUnits;
+            }
+
+            public int GetSittingUnits() {
+                return m_sittingUnits;
+            }
+
+            public void AllocateSittingUnits(int toAllocate) {
+                m_sittingUnits += toAllocate;
+            }
+
+            public bool TryReleaseSittingUnits() {
+                if (m_sittingUnits > 0) {
+                    m_sittingUnits = 0;
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
         }
 
@@ -62,10 +86,6 @@ namespace Zavala.Functionalities
             m_storageList = new List<StoredProduct>();
 
             EventMgr.Instance.EconomyUpdated += HandleEconomyUpdated;
-
-            if (SitOption != null) {
-                SitOption.Init();
-            }
         }
 
         private void OnDisable() {
@@ -78,6 +98,9 @@ namespace Zavala.Functionalities
             if (!m_excludeFromClearingHouse) {
                 RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this);
             }
+            if (SitOption != null) {
+                SitOption.Init();
+            }
         }
 
         public bool StorageContains(Resources.Type resourceType, int desiredUnits, out Resources.Type foundResourceType, out int foundUnits) {
@@ -86,17 +109,17 @@ namespace Zavala.Functionalities
                 Debug.Log("[StoresProduct] store component type: " + m_storageList[i].Type);
                 if (m_storageList[i].Type == resourceType) {
                     foundResourceType = resourceType;
-                    foundUnits = m_storageList[i].Units > desiredUnits ? desiredUnits : m_storageList[i].Units;
-                    if (m_storageList[i].Units >= desiredUnits) {
+                    foundUnits = m_storageList[i].GetFreeUnits() > desiredUnits ? desiredUnits : m_storageList[i].GetFreeUnits();
+                    if (m_storageList[i].GetFreeUnits() >= desiredUnits) {
                         Debug.Log("[StoresProduct] " + foundUnits + " units found");
                     }
-                    else if (m_storageList[i].Units <= 0) {
+                    else if (m_storageList[i].GetFreeUnits() <= 0) {
                         // 0 units found
-                        Debug.Log("[StoresProduct] found a supplier, but " + m_storageList[i].Units + " units in stock.");
+                        Debug.Log("[StoresProduct] found a supplier, but " + m_storageList[i].GetFreeUnits() + " units in stock.");
                         return false;
                     }
                     else {
-                        Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
+                        Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].GetFreeUnits() + " units found vs. " + desiredUnits + " requested");
                     }
 
                     return true;
@@ -105,17 +128,17 @@ namespace Zavala.Functionalities
                 else if (resourceType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
                         foundResourceType = m_storageList[i].Type;
-                        foundUnits = m_storageList[i].Units > desiredUnits ? desiredUnits : m_storageList[i].Units;
-                        if (m_storageList[i].Units >= desiredUnits) {
-                            Debug.Log("[StoresProduct] " + foundUnits + " units found among a total of " + m_storageList[i].Units);
+                        foundUnits = m_storageList[i].GetFreeUnits() > desiredUnits ? desiredUnits : m_storageList[i].GetFreeUnits();
+                        if (m_storageList[i].GetFreeUnits() >= desiredUnits) {
+                            Debug.Log("[StoresProduct] " + foundUnits + " units found among a total of " + m_storageList[i].GetFreeUnits());
                         }
-                        else if (m_storageList[i].Units <= 0) {
+                        else if (m_storageList[i].GetFreeUnits() <= 0) {
                             // 0 units found
-                            Debug.Log("[StoresProduct] found a supplier, but only " + m_storageList[i].Units + " units in stock.");
+                            Debug.Log("[StoresProduct] found a supplier, but only " + m_storageList[i].GetFreeUnits() + " units in stock.");
                             return false;
                         }
                         else {
-                            Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].Units + " units found vs. " + desiredUnits + " requested");
+                            Debug.Log("[StoresProduct] resource found, but not enough units to fully complete request (" + m_storageList[i].GetFreeUnits() + " units found vs. " + desiredUnits + " requested");
                         }
 
                         return true;
@@ -162,7 +185,7 @@ namespace Zavala.Functionalities
 
             for (int i = 0; i < m_storageList.Count; i++) {
                 if (m_storageList[i].Type == queryType) {
-                    count += m_storageList[i].Units;
+                    count += m_storageList[i].GetFreeUnits();
                 }
             }
 
@@ -199,7 +222,7 @@ namespace Zavala.Functionalities
                     Debug.Log("[StoresProduct] Modifying units of " + productType + " by " + units + " units");
                     // add to existing icon
                     StoredProduct oldItem = m_storageList[resourceIndex];
-                    StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units + units);
+                    StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.GetFreeUnits() + units, oldItem.GetSittingUnits());
                     m_storageList[resourceIndex] = newItem;
                 }
 
@@ -225,7 +248,7 @@ namespace Zavala.Functionalities
         private void RemoveFromStorageList(Resources.Type productType, int units) {
             for (int i = 0; i < m_storageList.Count; i++) {
                 if (m_storageList[i].Type == productType) {
-                    if (units >= m_storageList[i].Units) {
+                    if (units >= m_storageList[i].GetFreeUnits()) {
                         Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
 
                         Destroy(m_storageList[i].UI.gameObject);
@@ -234,10 +257,10 @@ namespace Zavala.Functionalities
                     }
                     else {
                         StoredProduct oldItem = m_storageList[i];
-                        StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units - units);
+                        StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.GetFreeUnits() - units, oldItem.GetSittingUnits());
                         m_storageList[i] = newItem;
 
-                        Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].Units);
+                        Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].GetFreeUnits());
                     }
 
                     return;
@@ -245,7 +268,7 @@ namespace Zavala.Functionalities
                 // handle soilEnricher case (Manure OR Fertilizer)
                 else if (productType == Resources.Type.SoilEnricher) {
                     if (m_storageList[i].Type == Resources.Type.Manure || m_storageList[i].Type == Resources.Type.Fertilizer) {
-                        if (units >= m_storageList[i].Units) {
+                        if (units >= m_storageList[i].GetFreeUnits()) {
                             Debug.Log("[StoresProduct] Destroying UI: " + m_storageList[i].UI.gameObject.name);
 
                             Destroy(m_storageList[i].UI.gameObject);
@@ -254,10 +277,10 @@ namespace Zavala.Functionalities
                         }
                         else {
                             StoredProduct oldItem = m_storageList[i];
-                            StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.Units - units);
+                            StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.GetFreeUnits() - units, oldItem.GetSittingUnits());
                             m_storageList[i] = newItem;
 
-                            Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].Units);
+                            Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].GetFreeUnits());
                         }
 
                         return;
@@ -278,6 +301,78 @@ namespace Zavala.Functionalities
             }
         }
 
+        public void LetSit(Resources.Type resourceType, int unitsToAllocate) {
+            for (int i = 0; i < m_storageList.Count; i++) {
+                StoredProduct currProduct = m_storageList[i];
+                if (currProduct.Type == resourceType) {
+                    currProduct.AllocateSittingUnits(unitsToAllocate);
+                    m_storageList[i] = currProduct;
+                    Debug.Log("[StoresProduct] Letting " + unitsToAllocate + " units of " + resourceType + " sit");
+                }
+            }
+        }
+
+        public void FreeSittingStorage() {
+            for (int i = 0; i < m_storageList.Count; i++) {
+                var storedProduct = m_storageList[i];
+                if (storedProduct.TryReleaseSittingUnits() ) {
+                    m_storageList[i] = storedProduct;
+
+                    // Generate runoff
+                    if (storedProduct.Type == Resources.Type.Manure) {
+                        if (this.GetComponent<GeneratesPhosphorus>() != null) {
+                            // TODO: this (or move to specific node like DairyFarm)
+                        }
+                    }
+                }
+            }
+        }
+
+        private void QuerySellSolution() {
+            // Query sell solution
+            for (int i = 0; i < m_storageList.Count; i++) {
+                Resources.Type resourceType = m_storageList[i].Type;
+
+                if (m_storageList[i].GetFreeUnits() <= 0) {
+                    continue;
+                }
+
+                // for each product, find a buyer
+                int unitsSold;
+                List<RoadSegment> path;
+                Requests recipient = RegionMgr.Instance.GetRegionByPos(this.transform.position).QueryClearingHouseSolution(this, resourceType, out unitsSold, out path);
+
+                Debug.Log("[StoresProduct] " + this.gameObject.name + " trying to sell " + resourceType + ". UnitsSold: " + unitsSold);
+
+                if (recipient != null) {
+                    Debug.Log("[StoresProduct] Query was successful. length of path: " + (path == null ? 0 : path.Count) + ". Units sold: " + unitsSold);
+
+                    // check if let it sit option
+                    if (recipient.GetComponent<LetItSit>() != null) {
+                        // Let it sit option only available to this StoresProduct
+
+                        Debug.Log("[StoresProduct] Decided to let sit: " + unitsSold);
+
+                        // Allocate units
+                        this.LetSit(resourceType, unitsSold);
+                    }
+                    else {
+                        // found resource -- try summon truck
+
+                        if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient)) {
+                            Debug.Log("[Requests] Truck summoned successfully");
+
+                            // set request to en-route
+                            recipient.SetEnRoute(resourceType, unitsSold);
+                        }
+                        else {
+                            Debug.Log("[Requests] Truck not summoned");
+                        }
+                    }
+                }
+            }
+        }
+
         #region Handlers
 
         private void HandleTimerExpired(object sender, EventArgs e) {
@@ -294,33 +389,9 @@ namespace Zavala.Functionalities
         }
 
         private void HandleEconomyUpdated(object sender, EventArgs args) {
-            // Query sell solution
-            for (int i = 0; i < m_storageList.Count; i++) {
-                Resources.Type resourceType = m_storageList[i].Type;
-
-                // for each product, find a buyer
-                int unitsSold;
-                List<RoadSegment> path;
-                Requests recipient = RegionMgr.Instance.GetRegionByPos(this.transform.position).QueryClearingHouseSolution(this, resourceType, out unitsSold, out path);
-
-                Debug.Log("[StoresProduct] " + this.gameObject.name + " trying to sell " + resourceType + ". UnitsSold: " + unitsSold);
-
-                if (recipient != null) {
-                    // found resource -- try summon truck
-
-                    Debug.Log("[StoresProduct] Query was successful. length of path: " + path.Count + ". Units sold: " + unitsSold);
-                    if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient)) {
-                        Debug.Log("[Requests] Truck summoned successfully");
-
-                        // set request to en-route
-                        recipient.SetEnRoute(resourceType, unitsSold);
-                    }
-                    else {
-                        Debug.Log("[Requests] Truck not summoned");
-                    }
-                }
-            }
+            QuerySellSolution();
         }
+
         #endregion // Handlers
 
         #region Gets and Sets

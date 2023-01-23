@@ -31,6 +31,10 @@ namespace Zavala.Functionalities
             RequestsComp.RequestExpired += HandleRequestExpired;
             m_cyclesComponent.CycleCompleted += HandleCycleCompleted;
             m_storesComponent.RemovedStorage += HandleStorageRemoved;
+
+            RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this.RequestsComp);
+
+            RequestsComp.QueueRequest();
         }
 
         #region Handlers

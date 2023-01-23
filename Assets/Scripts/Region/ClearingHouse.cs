@@ -5,6 +5,7 @@ using Utils;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Roads;
+using Zavala.Tiles;
 using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala
@@ -107,7 +108,7 @@ namespace Zavala
 
                 // Iterate through candidates and assign an optimality score
                 for (int c = 0; c < distData.RequestCandidates.Count; c++) {
-                    float optimalityScore = 0.00001f;
+                    float optimalityScore = Mathf.Infinity;
                     CandidateData candData = distData.RequestCandidates[c];
 
                     switch (supplier.GetSupplierType()) {
@@ -152,10 +153,10 @@ namespace Zavala
 
                     // TODO: negotiate price between buy price and sell price, factor into optimality
 
-                    Debug.Log("[ClearingHouse] [Solve] Enqueueing " + candData.RequestCandidate.gameObject.name + " with final priority of " + 1.0f / optimalityScore + " for supplier " + supplier.gameObject.name);
+                    Debug.Log("[ClearingHouse] [Solve] Enqueueing " + candData.RequestCandidate.gameObject.name + " with final priority of " + (-optimalityScore) +  " for supplier " + supplier.gameObject.name);
                     // Add candidate and score to priority queue for this supplier
                     // higher offer means lower priority val, which means closer to front of queue (i.e. score of 1 is more optimal than score of 10)
-                    distData.OptimalRouting.Enqueue(candData, 1.0f/optimalityScore);
+                    distData.OptimalRouting.Enqueue(candData, -optimalityScore);
                 }
 
                 Debug.Log("[ClearingHouse] [Solve] Transferring priority queue to list. Queue size: " + distData.OptimalRouting.Count);
@@ -182,8 +183,10 @@ namespace Zavala
 
                     for (int c = 0; c < distData.OptimalList.Count; c++) {
                         int unitsRequesting = distData.OptimalList[c].RequestCandidate.SingleRequestUnits(resourceType);
+                        Debug.Log("[ClearingHouse] found optimal buyer of " + resourceType + " in list for " + seller.gameObject.name + ", requesting " + unitsRequesting + " units: " + distData.OptimalList[c].RequestCandidate.gameObject.name);
+                        
                         if (unitsRequesting > 0) {
-                            Debug.Log("[ClearingHouse] [Solve] Found an optimal buyer, buying " + unitsRequesting + " units");
+                            Debug.Log("[ClearingHouse] [Solve] Sold to optimal buyer, buying " + unitsRequesting + " units");
                             // sell as many units as possible to this buyer
                             unitsSold = sellUnitsRemaining >= unitsRequesting ? unitsRequesting : sellUnitsRemaining;
                             path = distData.OptimalList[c].Path;
@@ -261,12 +264,11 @@ namespace Zavala
                 // Apply Digester Manure offer
                 willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
             }
-            /*
-            else if (candData.RequestCandidate.GetComponent<StoresProduct>().SitOption != null) {
-                // Apply Letting Manure sit offer
-                willingToPay = price of letting manure sit (for a round?)
+            else if (candData.RequestCandidate.GetComponent<LetItSit>() != null) {
+                Debug.Log("[ClearingHouse] Letting it sit option being considered...");
+                // Apply Letting Manure sit tax offer
+                willingToPay = -m_parentRegion.SimKnobs.SittingManureTax;
             }
-            */
             else {
                 // Unknown type of offer! Do not sell!
                 willingToPay = Mathf.NegativeInfinity;
@@ -487,6 +489,15 @@ namespace Zavala
                 return true;
             }
             else {
+                // Check if on same tile
+                GridMgr currMgr = RegionMgr.Instance.CurrRegion.GridMgr;
+                if (currMgr.TileAtPos(origin.transform.position) == currMgr.TileAtPos(endpoint.transform.position)) {
+                    outPathLength = 0;
+                    outPath = null;
+                    return true;
+                }
+
+                // nothing found
                 outPathLength = -1;
                 outPath = null;
                 return false;
@@ -520,7 +531,7 @@ namespace Zavala
         private void HandleEconomyUpdated(object sender, EconomyUpdatedEventArgs args) {
             if (m_parentRegion != args.Region) { return; }
 
-
+            Debug.Log("[ClearingHouse] Economy updated");
         }
 
         #endregion // Handlers

@@ -99,6 +99,9 @@ namespace Zavala
             // Dairy Farms request 1 grain
             m_requestsComponent.QueueRequest();
 
+            // Free up sitting storage
+            m_storesComponent.FreeSittingStorage();
+
             if (m_firstCycle) {
                 StraightToStorage();
                 m_firstCycle = false;

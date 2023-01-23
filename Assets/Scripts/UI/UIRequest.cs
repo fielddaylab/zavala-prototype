@@ -28,26 +28,34 @@ namespace Zavala
 
         private Cycles m_cycleSync;
 
-        private void InitBasics(Resources.Type resourceType, int units) {
-            m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
-            m_resourceIcon.SetNativeSize();
+        private void InitBasics(Resources.Type resourceType, int units, bool visible) {
+            if (visible) {
+                m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
+                m_resourceIcon.SetNativeSize();
+            }
+            else {
+                m_resourceIcon.gameObject.SetActive(false);
+                m_unitsText.gameObject.SetActive(false);
+                m_bg.gameObject.SetActive(false);
+            }
 
             m_resourceType = resourceType;
             m_enRouteUnits = 0;
             m_units = m_initialUnits = units;
-            m_unitsText.text = "" + units;
+
+            UpdateUnitsText();
 
             m_remainingCycles = -1;
         }
 
         // no timeout
-        public void Init(Resources.Type resourceType, int units) {
-            InitBasics(resourceType, units);
+        public void Init(Resources.Type resourceType, int units, bool visible) {
+            InitBasics(resourceType, units, visible);
         }
 
         // with timeout
-        public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync, int units) {
-            InitBasics(resourceType, units);
+        public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync, int units, bool visible) {
+            InitBasics(resourceType, units, visible);
 
             m_cycleSync = cycleSync;
             m_cycleSync.PreCycleCompleted += HandlePreCycleCompleted;
@@ -91,7 +99,13 @@ namespace Zavala
         }
 
         public void UpdateUnitsText() {
-            m_unitsText.text = "" + m_units;
+            if (m_units == int.MaxValue) {
+                // continuous
+                m_unitsText.text = "";
+            }
+            else {
+                m_unitsText.text = "" + m_units;
+            }
         }
 
         #region Handlers
