@@ -5,6 +5,7 @@ using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Resources;
 using Zavala.Tiles;
+using static UnityEngine.Rendering.DebugUI;
 using static Zavala.Functionalities.Produces;
 using static Zavala.Functionalities.StoresProduct;
 
@@ -120,12 +121,20 @@ namespace Zavala
             Debug.Log("[DairyFarm] Request expired");
             Debug.Log("[DairyFarm] Attempting to purchase import...");
 
+            Debug.Log("[DiaryFarm] Import purchased successfully");
+
+            StraightToStorage();
+
+            /* Only use if import cost comes out of agency budget
             if (ShopMgr.Instance.TryPurchaseImport(m_importCost)) {
                 Debug.Log("[DiaryFarm] Import purchased successfully");
+
+                StraightToStorage();
             }
             else {
                 Debug.Log("[DairyFarm] Couldn't purchase import!");
             }
+            */
         }
 
         private void HandleStorageRemoved(object sender, ResourceEventArgs args) {

@@ -91,10 +91,10 @@ namespace Zavala.Functionalities
                 Debug.Log("[Instantiate] Instantiating UIRequest prefab");
                 UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
                 if (m_hasTimeout) {
-                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible);
+                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
                 }
                 else {
-                    newRequest.Init(resourceType, units, RequestBundles[i].Visible);
+                    newRequest.Init(resourceType, units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
                 }
 
                 // add to requests
@@ -177,12 +177,15 @@ namespace Zavala.Functionalities
         public void ReceiveRequestedProduct(Resources.Type resourceType, int units) {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
-                    // TODO: PICK UP WORK HERE ----------------------------------------------------------------
                     // check if right number of units
                     if (units >= m_activeRequests[i].GetFulfillableUnits()) {
                         // fully fulfilled
                         CloseRequest(i, resourceType, true);
                         return;
+                    }
+                    else if (m_activeRequests[i].IsContinuous()) {
+                        // store what was given
+                        StoreContinuousRequest(resourceType, units);
                     }
                     else {
                         // partially fulfilled
@@ -220,6 +223,11 @@ namespace Zavala.Functionalities
             }
             Destroy(toClose.gameObject);
 
+        }
+
+        private void StoreContinuousRequest(Resources.Type resourceType, int units) {
+            RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, units));
+            Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
         }
 
         private void PartialCompleteRequest(int requestIndex, Resources.Type resourceType, int units) {

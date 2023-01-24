@@ -17986,6 +17986,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: SimKnobs.BidBuyPrices.StorageManure
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: SimKnobs.BidBuyPrices.GrainFarmManure
       value: 20
       objectReference: {fileID: 0}

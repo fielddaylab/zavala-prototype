@@ -18,9 +18,10 @@ namespace Zavala.Functionalities
             Unknown,
             GrainFarm,
             DairyFarm,
-            Digester
-            // Storage
+            Digester,
+            Storage
             // Skimmer
+            // Importer
         }
 
         public struct StoredProduct
@@ -222,7 +223,7 @@ namespace Zavala.Functionalities
                     Debug.Log("[StoresProduct] Modifying units of " + productType + " by " + units + " units");
                     // add to existing icon
                     StoredProduct oldItem = m_storageList[resourceIndex];
-                    StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.GetFreeUnits() + units, oldItem.GetSittingUnits());
+                    StoredProduct newItem = new StoredProduct(oldItem.Type, oldItem.UI, oldItem.GetFreeUnits() + oldItem.GetSittingUnits() + units, oldItem.GetSittingUnits());
                     m_storageList[resourceIndex] = newItem;
                 }
 

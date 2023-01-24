@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Resources;
+using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala
 {
@@ -26,6 +27,8 @@ namespace Zavala
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_storesComponent.RemovedStorage += HandleRemovedStorage;
+
+            m_storesComponent.SetSupplierType(SupplierType.Storage);
         }
 
         private void Start() {

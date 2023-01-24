@@ -35,7 +35,7 @@ namespace Zavala
 
             // Flat Values
             public int CAFOMinSellThreshold;
-            public int GrainFarmMaxPayForImport;
+            public ImportCosts ImportCosts;
             public int CityMaxPayForMilk;
 
             public BidBuyPrice BidBuyPrices;
@@ -53,11 +53,19 @@ namespace Zavala
         }
 
         [Serializable]
+        public struct ImportCosts
+        {
+            public float Grain;
+            public float Manure;
+        }
+
+        [Serializable]
         public struct BidBuyPrice {
             public int GrainFarmManure;
             public int GrainFarmFertilizer;
             public int CAFOGrain;
             public int DigesterManure;
+            public int StorageManure;
             // public int ExportDepotFertilizer; // <- handled by individual depots
         }
 

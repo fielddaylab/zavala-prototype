@@ -98,7 +98,78 @@ namespace Zavala
             // Solve();
         }
 
-        // TODO: Perform algorithm
+        private void RecompileRoutingDict() {
+            RoutingDict.Clear();
+
+            foreach (StoresProduct sp in m_registeredStoresProduct) {
+                // compile a list of all requesters this StoresProduct can reach via road
+                List<CandidateData> requestCandidatesData = new List<CandidateData>();
+
+                // for each registered requester, add to list if can be reached by this StoresProduct
+                foreach (Requests candidate in m_registeredRequests) {
+                    Debug.Log("[ClearingHouse] [Compile] StoresProduct road count: " + sp.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
+                    Debug.Log("[ClearingHouse] [Compile] Requests road count: " + candidate.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
+
+                    int pathLength;
+                    List<RoadSegment> path;
+                    bool pathExists = QueryIfConnected(sp.GetComponent<ConnectionNode>(), candidate.GetComponent<ConnectionNode>(), out pathLength, out path);
+                    if (pathExists) {
+                        Debug.Log("[ClearingHouse] Path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
+
+                        // check if resource types are relevant to each other (supplier stores resource that requester might buy)
+                        // What the supplier currently stores
+                        foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
+                            Debug.Log("[ClearingHouse] Checking for resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
+                            if (candidate.RequestBundlesContains(storedResource)) {
+                                CandidateData candidateData = new CandidateData(candidate, pathLength, path);
+                                requestCandidatesData.Add(candidateData);
+
+                                Debug.Log("[ClearingHouse] Resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
+                                break;
+                            }
+                        }
+                        // What the supplier could produce and store
+                        if (sp.GetComponent<Produces>() != null) {
+                            foreach (Resources.Type produceResource in sp.GetComponent<Produces>().GetProduceTypes()) {
+                                Debug.Log("[ClearingHouse] Checking for resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
+                                if (candidate.RequestBundlesContains(produceResource)) {
+                                    CandidateData candidateData = new CandidateData(candidate, pathLength, path);
+                                    requestCandidatesData.Add(candidateData);
+
+                                    Debug.Log("[ClearingHouse] Resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        Debug.Log("[ClearingHouse] No path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
+                    }
+                }
+
+                // option to let it sit
+                if (sp.SitOption != null) {
+                    // check if the resource can be let to sit at this location
+                    foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
+                        if (sp.SitOption.RequestsComp.RequestBundlesContains(storedResource)) {
+                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0, null);
+                            requestCandidatesData.Add(candidateData);
+                            break;
+                        }
+                    }
+                }
+
+                // TODO: option for import from outside? Currently occurs only when a request goes unmet
+
+                // consolidate data
+                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), new List<CandidateData>(), sp.StorageCount());
+
+                // add new entry
+                RoutingDict.Add(sp, distributionData);
+            }
+        }
+
+        // Perform algorithm
         private void Solve() {
             Debug.Log("[ClearingHouse] [Solve] Solving.");
             // Take each request candidates list and add to priority queue using cost equation
@@ -131,14 +202,21 @@ namespace Zavala
                             // Product: Fertilizer
                             optimalityScore = DigesterSellFertilizer(candData);
                             break;
-                        /*
                         case SupplierType.Storage:
                             // Storage is selling
                             // Product: Manure
+                            optimalityScore = StorageSellManure(candData);
                             break;
+                            /*
                         case SupplierType.Skimmer:
                             // Skimmer is selling
                             // Product: Fertilizer
+                            break;
+                        */
+                        /*
+                        case SupplierType.Importer:
+                            Debug.Log("[ClearingHouse] [Solve] Supplier is importer. Object name: " + supplier.gameObject.name);
+                            
                             break;
                         */
                         case SupplierType.Unknown:
@@ -231,7 +309,7 @@ namespace Zavala
             }
             else {
                 // Unknown type of offer! Do not sell!
-                willingToPay = Mathf.NegativeInfinity;
+                willingToPay = -Mathf.Infinity;
             }
 
             tilesTraveled = candData.Distance;
@@ -264,6 +342,10 @@ namespace Zavala
                 // Apply Digester Manure offer
                 willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
             }
+            else if (candData.RequestCandidate.GetComponent<Storage>() != null) {
+                // Offer is probably 0, just moving locations
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.StorageManure;
+            }
             else if (candData.RequestCandidate.GetComponent<LetItSit>() != null) {
                 Debug.Log("[ClearingHouse] Letting it sit option being considered...");
                 // Apply Letting Manure sit tax offer
@@ -285,6 +367,9 @@ namespace Zavala
                 exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
             }
             */
+            else if (candData.RequestCandidate.GetComponent<Storage>() != null) {
+                // no purchase tax necessary, just moving locations
+            }
             else {
                 // Apply internal manure tax
                 purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalManure;
@@ -386,78 +471,58 @@ namespace Zavala
             return offer - costs;
         }
 
+        private float StorageSellManure(CandidateData candData) {
+            float offer;
+            float costs;
+
+            float willingToPay;
+
+            int tilesTraveled;
+            float pricePerTile;
+            float purchaseTax = 0;
+            float exportTax = 0;
+
+            if (candData.RequestCandidate.GetComponent<GrainFarm>() != null) {
+                // Apply GrainFarm Manure offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
+            }
+            else if (candData.RequestCandidate.GetComponent<Digester>() != null) {
+                // Apply Digester Manure offer
+                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
+            }
+            else {
+                // Unknown type of offer! Do not sell!
+                willingToPay = -Mathf.Infinity;
+            }
+
+            Requests candidate = candData.RequestCandidate;
+            if (candidate.GetComponent<ExportDepot>() != null) {
+                // Apply external manure tax
+                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+            }
+            /* TODO:
+            else if (requester region != supplier region) {
+                // Apply external manure tax
+                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+            }
+            */
+            else {
+                // Apply internal manure tax
+                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalManure;
+            }
+
+            tilesTraveled = candData.Distance;
+            pricePerTile = RegionMgr.Instance.GlobalSimKnobs.TransportCosts.Manure;
+
+            offer = willingToPay;
+            costs = tilesTraveled * pricePerTile + purchaseTax + exportTax;
+
+            return offer - costs;
+        }
+
         #endregion // Solve Helpers
 
         #region Helpers
-
-        public void RecompileRoutingDict() {
-            RoutingDict.Clear();
-
-            foreach (StoresProduct sp in m_registeredStoresProduct) {
-                // compile a list of all requesters this StoresProduct can reach via road
-                List<CandidateData> requestCandidatesData = new List<CandidateData>();
-
-                // for each registered requester, add to list if can be reached by this StoresProduct
-                foreach (Requests candidate in m_registeredRequests) {
-                    Debug.Log("[ClearingHouse] [Compile] StoresProduct road count: " + sp.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
-                    Debug.Log("[ClearingHouse] [Compile] Requests road count: " + candidate.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
-
-                    int pathLength;
-                    List<RoadSegment> path;
-                    bool pathExists = QueryIfConnected(sp.GetComponent<ConnectionNode>(), candidate.GetComponent<ConnectionNode>(), out pathLength, out path);
-                    if (pathExists) {
-                        Debug.Log("[ClearingHouse] Path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
-
-                        // check if resource types are relevant to each other (supplier stores resource that requester might buy)
-                        // What the supplier currently stores
-                        foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
-                            Debug.Log("[ClearingHouse] Checking for resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
-                            if (candidate.RequestBundlesContains(storedResource)) {
-                                CandidateData candidateData = new CandidateData(candidate, pathLength, path);
-                                requestCandidatesData.Add(candidateData);
-
-                                Debug.Log("[ClearingHouse] Resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
-                                break;
-                            }
-                        }
-                        // What the supplier could produce and store
-                        if (sp.GetComponent<Produces>() != null) {
-                            foreach (Resources.Type produceResource in sp.GetComponent<Produces>().GetProduceTypes()) {
-                                Debug.Log("[ClearingHouse] Checking for resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
-                                if (candidate.RequestBundlesContains(produceResource)) {
-                                    CandidateData candidateData = new CandidateData(candidate, pathLength, path);
-                                    requestCandidatesData.Add(candidateData);
-
-                                    Debug.Log("[ClearingHouse] Resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        Debug.Log("[ClearingHouse] No path exists between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
-                    }
-                }
-
-                // option to let it sit
-                if (sp.SitOption != null) {
-                    // check if the resource can be let to sit at this location
-                    foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
-                        if (sp.SitOption.RequestsComp.RequestBundlesContains(storedResource)) {
-                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0, null);
-                            requestCandidatesData.Add(candidateData);
-                            break;
-                        }
-                    }
-                }
-
-                // consolidate data
-                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), new List<CandidateData>(), sp.StorageCount());
-
-                // add new entry
-                RoutingDict.Add(sp, distributionData);
-            }
-        }
 
         private bool QueryIfConnected(ConnectionNode origin, ConnectionNode endpoint, out int outPathLength, out List<RoadSegment> outPath) {
             List<RoadSegment> roadsConnectedToOrigin = origin.GetComponent<ConnectionNode>().GetConnectedRoads();

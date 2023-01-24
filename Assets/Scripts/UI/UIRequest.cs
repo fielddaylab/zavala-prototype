@@ -19,6 +19,7 @@ namespace Zavala
         private int m_initialUnits; // how many units in total request
         private int m_units;// how many units left to complete request
         private int m_enRouteUnits; // how many units are currently on their way
+        private bool m_continuous;
 
         //private UITimer m_uiTimer;
 
@@ -28,7 +29,7 @@ namespace Zavala
 
         private Cycles m_cycleSync;
 
-        private void InitBasics(Resources.Type resourceType, int units, bool visible) {
+        private void InitBasics(Resources.Type resourceType, int units, bool visible, bool continuous) {
             if (visible) {
                 m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
                 m_resourceIcon.SetNativeSize();
@@ -42,6 +43,7 @@ namespace Zavala
             m_resourceType = resourceType;
             m_enRouteUnits = 0;
             m_units = m_initialUnits = units;
+            m_continuous = continuous;
 
             UpdateUnitsText();
 
@@ -49,13 +51,13 @@ namespace Zavala
         }
 
         // no timeout
-        public void Init(Resources.Type resourceType, int units, bool visible) {
-            InitBasics(resourceType, units, visible);
+        public void Init(Resources.Type resourceType, int units, bool visible, bool continuous) {
+            InitBasics(resourceType, units, visible, continuous);
         }
 
         // with timeout
-        public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync, int units, bool visible) {
-            InitBasics(resourceType, units, visible);
+        public void Init(Resources.Type resourceType, int requestTimeout, Cycles cycleSync, int units, bool visible, bool continuous) {
+            InitBasics(resourceType, units, visible, continuous);
 
             m_cycleSync = cycleSync;
             m_cycleSync.PreCycleCompleted += HandlePreCycleCompleted;
@@ -80,6 +82,10 @@ namespace Zavala
             return m_initialUnits;
         }
 
+        public bool IsContinuous() {
+            return m_continuous;
+        }
+
         public void SetEnRoute(int enRouteUnits) {
             m_enRouteUnits += enRouteUnits;
 
@@ -88,20 +94,21 @@ namespace Zavala
         }
 
         public void ModifyUnits(int amt) {
-            m_units += amt;
+            if (!m_continuous) {
+                m_units += amt;
 
-            if (amt < 0) {
-                // en route units have been delivered
-                m_enRouteUnits += amt;
+                if (amt < 0) {
+                    // en route units have been delivered
+                    m_enRouteUnits += amt;
+                }
             }
 
             UpdateUnitsText();
         }
 
         public void UpdateUnitsText() {
-            if (m_units == int.MaxValue) {
-                // continuous
-                m_unitsText.text = "";
+            if (m_continuous) {
+                m_unitsText.text = "Inf";
             }
             else {
                 m_unitsText.text = "" + m_units;

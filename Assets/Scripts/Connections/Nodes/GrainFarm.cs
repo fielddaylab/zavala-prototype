@@ -121,12 +121,18 @@ namespace Zavala
             Debug.Log("[GrainFarm] Request expired");
             Debug.Log("[GrainFarm] Attempting to purchase import...");
 
+            Debug.Log("[GrainFarm] Import purchased successfully");
+            StraightToStorage();
+            
+            /* Only use if import cost comes out of agency budget
             if (ShopMgr.Instance.TryPurchaseImport(m_importCost)) {
                 Debug.Log("[GrainFarm] Import purchased successfully");
+                StraightToStorage();
             }
             else {
                 Debug.Log("[GrainFarm] Couldn't purchase import!");
             }
+            */
         }
 
         #endregion // Handlers
