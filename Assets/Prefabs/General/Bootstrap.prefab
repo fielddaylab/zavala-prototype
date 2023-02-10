@@ -3668,6 +3668,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelRegions: []
   CurrRegion: {fileID: 0}
+  GlobalSimKnobs:
+    TransportCosts:
+      Manure: 2
+      Fertilizer: 1
+      Grain: 1
+      Milk: 1
 --- !u!1 &3877376159733815295
 GameObject:
   m_ObjectHideFlags: 0

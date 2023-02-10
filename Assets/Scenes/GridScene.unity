@@ -5232,7 +5232,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1758621474890702, guid: 04f22e18f648eae478224f3302718766, type: 3}
       propertyPath: m_Name
-      value: City
+      value: City A
       objectReference: {fileID: 0}
     - target: {fileID: 4175090188749284, guid: 04f22e18f648eae478224f3302718766, type: 3}
       propertyPath: m_RootOrder
@@ -10337,7 +10337,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_Name
-      value: ExportDepot (Region 2)
+      value: ExportDepot A (Region 2)
       objectReference: {fileID: 0}
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_IsActive
@@ -10386,6 +10386,11 @@ PrefabInstance:
     - target: {fileID: 4574245034221364, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606216468706489749, guid: bfe5124dd84ad9b47bf7ac10dff2bba1,
+        type: 3}
+      propertyPath: RegionFertilizerOffer
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
@@ -11075,7 +11080,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1690466091820418, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_Name
-      value: DairyFarm (1)
+      value: DairyFarm B
       objectReference: {fileID: 0}
     - target: {fileID: 1690466091820418, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_IsActive
@@ -11130,6 +11135,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: af6a78443b928434eb9e2721dacca70f, type: 2}
+    - target: {fileID: 1078606853993532608, guid: 172ece719b73f8f4fb6fc5cd553f9b9e,
+        type: 3}
+      propertyPath: m_Name
+      value: SitOption (DairyFarm B)
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8951864677494791261, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
@@ -12199,7 +12209,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_Name
-      value: ExportDepot (Region 4)
+      value: ExportDepot B (Region 4)
       objectReference: {fileID: 0}
     - target: {fileID: 1708391978254754, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_IsActive
@@ -12248,6 +12258,11 @@ PrefabInstance:
     - target: {fileID: 4574245034221364, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606216468706489749, guid: bfe5124dd84ad9b47bf7ac10dff2bba1,
+        type: 3}
+      propertyPath: RegionFertilizerOffer
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfe5124dd84ad9b47bf7ac10dff2bba1, type: 3}
@@ -15216,7 +15231,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1690466091820418, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_Name
-      value: DairyFarm
+      value: DairyFarm A
       objectReference: {fileID: 0}
     - target: {fileID: 4936573472062638, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
       propertyPath: m_RootOrder
@@ -15267,6 +15282,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: af6a78443b928434eb9e2721dacca70f, type: 2}
+    - target: {fileID: 1078606853993532608, guid: 172ece719b73f8f4fb6fc5cd553f9b9e,
+        type: 3}
+      propertyPath: m_Name
+      value: SitOption (DairyFarm A)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
 --- !u!1001 &1843396826
@@ -16682,7 +16702,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1708391978254754, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_Name
-      value: GrainFarm
+      value: GrainFarm A
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_RootOrder
@@ -17239,7 +17259,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1708391978254754, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_Name
-      value: GrainFarm (1)
+      value: GrainFarm B
       objectReference: {fileID: 0}
     - target: {fileID: 4574245034221364, guid: 16946c1dcd86fe34895cfd2c8bf98c12, type: 3}
       propertyPath: m_RootOrder
@@ -17981,18 +18001,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: SimKnobs.ImportCosts.Grain
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: SimKnobs.ImportCosts.Manure
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: SimKnobs.BidBuyPrices.CAFOGrain
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: SimKnobs.GrainFarmMaxPayForImport
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
       propertyPath: SimKnobs.BidBuyPrices.StorageManure
-      value: 2000
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: SimKnobs.BidBuyPrices.DigesterManure
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
       propertyPath: SimKnobs.BidBuyPrices.GrainFarmManure
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: SimKnobs.BidBuyPrices.GrainFarmFertilizer
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939796, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}

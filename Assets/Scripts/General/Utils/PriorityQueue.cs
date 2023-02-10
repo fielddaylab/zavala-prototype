@@ -351,6 +351,19 @@ namespace Utils
         }
 
         /// <summary>
+        ///     Returns the minimal element's priority from the <see cref="PriorityQueue{TElement, TPriority}" /> without removing it.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The <see cref="PriorityQueue{TElement, TPriority}" /> is empty.</exception>
+        /// <returns>The minimal element of the <see cref="PriorityQueue{TElement, TPriority}" />.</returns>
+        public TPriority PeekPriority() {
+            if (_size == 0) {
+                throw new InvalidOperationException(SR.InvalidOperation_EmptyQueue);
+            }
+
+            return _nodes[0].Priority;
+        }
+
+        /// <summary>
         ///     Removes and returns the minimal element from the <see cref="PriorityQueue{TElement, TPriority}" />.
         /// </summary>
         /// <exception cref="InvalidOperationException">The queue is empty.</exception>
@@ -364,6 +377,7 @@ namespace Utils
             RemoveRootNode();
             return element;
         }
+
 
         /// <summary>
         ///     Removes the minimal element from the <see cref="PriorityQueue{TElement, TPriority}" />,

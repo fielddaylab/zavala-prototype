@@ -25,10 +25,10 @@ namespace Zavala
         {
             public List<CandidateData> RequestCandidates; // staging
             public PriorityQueue<CandidateData, float> OptimalRouting; // prioritizing
-            public List<CandidateData> OptimalList; // enumerating
+            public List<CDataPriorityPair> OptimalList; // enumerating
             public int UnitsToDistribute;
 
-            public DistributionData(List<CandidateData> requestCandidates, PriorityQueue<CandidateData, float> optimalRouting, List<CandidateData> optimalList, int unitsToDistribute) {
+            public DistributionData(List<CandidateData> requestCandidates, PriorityQueue<CandidateData, float> optimalRouting, List<CDataPriorityPair> optimalList, int unitsToDistribute) {
                 RequestCandidates = requestCandidates;
                 OptimalRouting = optimalRouting;
                 OptimalList = optimalList;
@@ -46,6 +46,16 @@ namespace Zavala
                 RequestCandidate = requestCandidate;
                 Distance = distance;
                 Path = path;
+            }
+        }
+
+        private struct CDataPriorityPair {
+            public CandidateData CData;
+            public float Priority;
+
+            public CDataPriorityPair(CandidateData cData, float priority) {
+                CData = cData;
+                Priority = priority;
             }
         }
 
@@ -107,6 +117,10 @@ namespace Zavala
 
                 // for each registered requester, add to list if can be reached by this StoresProduct
                 foreach (Requests candidate in m_registeredRequests) {
+                    if (candidate == null) {
+                        m_registeredRequests.Remove(candidate);
+                        continue;
+                    }
                     Debug.Log("[ClearingHouse] [Compile] StoresProduct road count: " + sp.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
                     Debug.Log("[ClearingHouse] [Compile] Requests road count: " + candidate.GetComponent<ConnectionNode>().GetConnectedRoads().Count);
 
@@ -162,7 +176,7 @@ namespace Zavala
                 // TODO: option for import from outside? Currently occurs only when a request goes unmet
 
                 // consolidate data
-                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), new List<CandidateData>(), sp.StorageCount());
+                DistributionData distributionData = new DistributionData(requestCandidatesData, new PriorityQueue<CandidateData, float>(), new List<CDataPriorityPair>(), sp.StorageCount());
 
                 // add new entry
                 RoutingDict.Add(sp, distributionData);
@@ -177,10 +191,19 @@ namespace Zavala
                 // Obtain distribution data, i.e. all possible places they could ship product to plus additional info
                 DistributionData distData = RoutingDict[supplier];
 
+                List<CandidateData> duplicateCandidateTracker = new List<CandidateData>();
+
                 // Iterate through candidates and assign an optimality score
                 for (int c = 0; c < distData.RequestCandidates.Count; c++) {
                     float optimalityScore = Mathf.Infinity;
                     CandidateData candData = distData.RequestCandidates[c];
+
+                    if (duplicateCandidateTracker.Contains(candData)) {
+                        continue;
+                    }
+                    else {
+                        duplicateCandidateTracker.Add(candData);
+                    }
 
                     switch (supplier.GetSupplierType()) {
                         case SupplierType.GrainFarm:
@@ -240,8 +263,11 @@ namespace Zavala
                 Debug.Log("[ClearingHouse] [Solve] Transferring priority queue to list. Queue size: " + distData.OptimalRouting.Count);
                 // Transfer priority queue to list
                 while (distData.OptimalRouting.Count > 0) {
-                    distData.OptimalList.Add(distData.OptimalRouting.Dequeue());
+                    float priority = distData.OptimalRouting.PeekPriority();
+                    distData.OptimalList.Add(new CDataPriorityPair(distData.OptimalRouting.Dequeue(), priority));
                 }
+
+                OutputSolution();
             }
         }
 
@@ -260,15 +286,15 @@ namespace Zavala
                     int sellUnitsRemaining = seller.StorageCount(resourceType);
 
                     for (int c = 0; c < distData.OptimalList.Count; c++) {
-                        int unitsRequesting = distData.OptimalList[c].RequestCandidate.SingleRequestUnits(resourceType);
-                        Debug.Log("[ClearingHouse] found optimal buyer of " + resourceType + " in list for " + seller.gameObject.name + ", requesting " + unitsRequesting + " units: " + distData.OptimalList[c].RequestCandidate.gameObject.name);
+                        int unitsRequesting = distData.OptimalList[c].CData.RequestCandidate.SingleRequestUnits(resourceType);
+                        Debug.Log("[ClearingHouse] found optimal buyer of " + resourceType + " in list for " + seller.gameObject.name + ", requesting " + unitsRequesting + " units: " + distData.OptimalList[c].CData.RequestCandidate.gameObject.name);
                         
                         if (unitsRequesting > 0) {
                             Debug.Log("[ClearingHouse] [Solve] Sold to optimal buyer, buying " + unitsRequesting + " units");
                             // sell as many units as possible to this buyer
                             unitsSold = sellUnitsRemaining >= unitsRequesting ? unitsRequesting : sellUnitsRemaining;
-                            path = distData.OptimalList[c].Path;
-                            return RoutingDict[seller].OptimalList[c].RequestCandidate;
+                            path = distData.OptimalList[c].CData.Path;
+                            return RoutingDict[seller].OptimalList[c].CData.RequestCandidate;
                         }
                     }
                 }
@@ -570,6 +596,35 @@ namespace Zavala
         }
 
         #endregion // Helpers
+
+        #region Debug
+
+        private void OutputSolution() {
+            Debug.Log("---------------- START Clearing House Solution ---------------- [ClearingHouseOutput]");
+
+            string listOutput = "[ClearingHouseOutput]";
+
+            foreach (StoresProduct supplier in RoutingDict.Keys) {
+                listOutput += "\nOptimal buyer list for seller " + supplier.gameObject.name + " :";
+                listOutput += "\n - (Name || $Net Profit)";
+
+                DistributionData data = RoutingDict[supplier];
+                
+                for(int i = 0; i < data.OptimalList.Count; i++) {
+                    string candidateOutput = "\n - " + "";
+
+                    candidateOutput += data.OptimalList[i].CData.RequestCandidate.gameObject.name + " || $" + (-data.OptimalList[i].Priority);
+
+                    listOutput += candidateOutput;
+                }   
+            }
+
+            Debug.Log(listOutput);
+
+            Debug.Log("---------------- END Clearing House Solution ---------------- [ClearingHouseOutput]");
+        }
+
+        #endregion // Debug
 
         #region Handlers
 
