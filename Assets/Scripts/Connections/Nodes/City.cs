@@ -30,8 +30,6 @@ namespace Zavala
 
         [SerializeField] private int m_population;
 
-        [SerializeField] private GameObject m_placeholderBlock;
-
         private List<GameObject> m_cityBlocks;
 
         private static float BLOCK_EXTENTS = 0.06f * 4;
@@ -55,11 +53,8 @@ namespace Zavala
             m_cityBlocks = new List<GameObject>();
             // create city blocks for initial population
             for (int p = 0; p < m_population; p++) {
-                SpawnNewCityBlock();
+                // SpawnNewCityBlock();
             }
-
-            // hide placeholder block
-            m_placeholderBlock.SetActive(false);
 
             EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
         }

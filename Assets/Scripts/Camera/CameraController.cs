@@ -12,10 +12,12 @@ namespace Zavala
         [SerializeField] private float m_horizontalBounds;
         [SerializeField] private float m_verticalBounds;
         [SerializeField] private float m_zoomLimits;
+        [SerializeField] private float m_perspZoomLimits;
         [SerializeField] private float m_panSpeed;
 
         private Vector3 m_camStartPos;
         private float m_camStartZoom;
+        private float m_camPerspStartZoom;
 
         private void Awake() {
             if (m_cam == null) {
@@ -23,6 +25,8 @@ namespace Zavala
             }
             m_camStartPos = m_cam.transform.position;
             m_camStartZoom = m_cam.orthographicSize;
+            m_camPerspStartZoom = m_cam.fieldOfView;
+
         }
 
         private void Update() {
@@ -102,12 +106,21 @@ namespace Zavala
                     m_cam.orthographicSize - 1 * m_panSpeed * timeDelta,
                     m_camStartZoom - m_zoomLimits
                     );
+                m_cam.fieldOfView = Mathf.Max(
+                    m_cam.fieldOfView - 1 * m_panSpeed * 3 * timeDelta,
+                    m_camPerspStartZoom - m_perspZoomLimits
+                    );
+
             }
             if (Input.GetKey(KeyCode.K)) {
                 // zoom out
                 m_cam.orthographicSize = Mathf.Min(
                     m_cam.orthographicSize + 1 * m_panSpeed * timeDelta,
                     m_camStartZoom + m_zoomLimits
+                    );
+                m_cam.fieldOfView = Mathf.Min(
+                    m_cam.fieldOfView + 1 * m_panSpeed * 3 * timeDelta,
+                    m_camPerspStartZoom + m_perspZoomLimits
                     );
             }
 

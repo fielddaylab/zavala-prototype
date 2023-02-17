@@ -107,7 +107,7 @@ namespace Zavala.Settings
         private AllVars m_modifyingVars; // the vars actively being modified
         private AllVars m_currVars; // the currently saved vars
 
-        public static bool VisibleCycles = true;
+        public static bool VisibleCycles = false;
 
 
         public void Init() {

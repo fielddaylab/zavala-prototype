@@ -23,6 +23,10 @@ namespace Zavala
         public Color UIRequestEnRouteColor;
         public Color UIRequestExpiringColor;
 
+        public Sprite UIRequestBGIcon;
+        public Sprite UIRequestExpiringBGIcon;
+
+
         [Space(5)]
 
         [Header("Resource Icons")]
@@ -32,6 +36,15 @@ namespace Zavala
         public Sprite MilkIcon;
         public Sprite ManureIcon;
         public Sprite SoilEnricherIcon;
+
+        public Sprite GrainStoredAltIcon;
+
+        public Sprite StoredShadowIcon;
+
+        public Color FertilizerStoredShadowColor;
+        public Color GrainStoredShadowColor;
+        public Color MilkStoredShadowColor;
+        public Color ManureStoredShadowColor;
 
         [Space(5)]
 
@@ -53,12 +66,29 @@ namespace Zavala
             Instance = this;
         }
 
-        public Sprite GetResourceIcon(Resources.Type type) {
+        public Sprite GetResourceRequestIcon(Resources.Type type) {
             switch(type) {
                 case Resources.Type.Fertilizer:
                     return FertilizerIcon;
                 case Resources.Type.Grain:
                     return GrainIcon;
+                case Resources.Type.Milk:
+                    return MilkIcon;
+                case Resources.Type.Manure:
+                    return ManureIcon;
+                case Resources.Type.SoilEnricher:
+                    return SoilEnricherIcon;
+                default:
+                    return NoneIcon;
+            }
+        }
+
+        public Sprite GetResourceStoredIcon(Resources.Type type) {
+            switch (type) {
+                case Resources.Type.Fertilizer:
+                    return FertilizerIcon;
+                case Resources.Type.Grain:
+                    return GrainStoredAltIcon;
                 case Resources.Type.Milk:
                     return MilkIcon;
                 case Resources.Type.Manure:

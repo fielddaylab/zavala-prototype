@@ -11,6 +11,7 @@ namespace Zavala
     public class UIRequest : MonoBehaviour
     {
         [SerializeField] private Image m_bg;
+        [SerializeField] private Image m_unitsBG;
         [SerializeField] private Image m_resourceIcon;
         [SerializeField] private TMP_Text m_unitsText;
 
@@ -31,13 +32,14 @@ namespace Zavala
 
         private void InitBasics(Resources.Type resourceType, int units, bool visible, bool continuous) {
             if (visible) {
-                m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
+                m_resourceIcon.sprite = GameDB.Instance.GetResourceRequestIcon(resourceType);
                 m_resourceIcon.SetNativeSize();
             }
             else {
                 m_resourceIcon.gameObject.SetActive(false);
                 m_unitsText.gameObject.SetActive(false);
                 m_bg.gameObject.SetActive(false);
+                m_unitsBG.gameObject.SetActive(false);
             }
 
             m_resourceType = resourceType;
@@ -115,6 +117,11 @@ namespace Zavala
             }
         }
 
+        private void MarkUrgent() {
+            m_bg.sprite = GameDB.Instance.UIRequestExpiringBGIcon;
+            // m_bg.color = GameDB.Instance.UIRequestExpiringColor;
+        }
+
         #region Handlers
 
         /*
@@ -139,7 +146,7 @@ namespace Zavala
                 }
                 else if (m_remainingCycles == 1) {
                     if (m_bg != null) {
-                        m_bg.color = GameDB.Instance.UIRequestExpiringColor;
+                        MarkUrgent();
                     }
                 }
             }

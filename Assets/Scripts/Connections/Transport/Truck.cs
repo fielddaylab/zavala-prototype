@@ -57,7 +57,7 @@ namespace Zavala
         private EngineState m_engineState;
 
         public void Init(Resources.Type resourceType, int units, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
-            m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
+            m_resourceIcon.sprite = GameDB.Instance.GetResourceRequestIcon(resourceType);
             m_resourceIcon.SetNativeSize();
 
             m_yBuffer = this.gameObject.transform.localPosition.y;

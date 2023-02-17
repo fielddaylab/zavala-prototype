@@ -715,6 +715,7 @@ MonoBehaviour:
   m_horizontalBounds: 10
   m_verticalBounds: 15
   m_zoomLimits: 2.5
+  m_perspZoomLimits: 13
   m_panSpeed: 5
 --- !u!1001 &78152163
 PrefabInstance:
@@ -16791,8 +16792,64 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
+      propertyPath: MilkIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 3ceddb52d2e882b41b8b994f9f2ed5e7,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: b2a53340c585b1e45908c1e5a5f48ee1,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ManureIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: a93e763fa75009c459e63992e6cceb32,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: UIRequestBGIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 30f9383b9734be74fb1015bce3faa467,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: StoredShadowIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 0b9719fcc1842e0479e1007be83f191c,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainStoredAltIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 80164e2db5b597f4595d020de3c2a546,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
       propertyPath: ShopItems.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: MilkStoredShadowColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: MilkStoredShadowColor.b
+      value: 0.77647066
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: MilkStoredShadowColor.g
+      value: 0.77647066
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: MilkStoredShadowColor.r
+      value: 0.77647066
       objectReference: {fileID: 0}
     - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
@@ -16818,6 +16875,52 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: ad7bf8a65d0e80e41b211f77dfaa0dfb,
         type: 2}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: UIRequestExpiringBGIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 6b7ca16afe7075e448a9065b7253fcc7,
+        type: 3}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainStoredShadowColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainStoredShadowColor.b
+      value: 0.054901965
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainStoredShadowColor.g
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: GrainStoredShadowColor.r
+      value: 0.19215688
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ManureStoredShadowColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ManureStoredShadowColor.b
+      value: 0.20000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ManureStoredShadowColor.g
+      value: 0.3372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955518835922564032, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: ManureStoredShadowColor.r
+      value: 0.43137258
+      objectReference: {fileID: 0}
     - target: {fileID: 7247391418410769891, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_RootOrder

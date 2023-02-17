@@ -74,6 +74,8 @@ namespace Zavala.Functionalities
         [SerializeField] private float m_iconOffsetZ = 0.25f;
         [SerializeField] private bool m_excludeFromClearingHouse;
 
+        [SerializeField] private StoragePlot[] m_storagePlots;
+
         public LetItSit SitOption = null; // only for nodes that can let something sit (i.e. dairy farm)
 
         private List<StoredProduct> m_storageList; // the products in storage
@@ -217,7 +219,16 @@ namespace Zavala.Functionalities
                     m_storageList.Add(newProduct);
                     newProductUI.TimerExpired += HandleTimerExpired;
 
-                    RedistributeQueue();
+                    for (int i = 0; i < m_storagePlots.Length; i++) {
+
+                        if (m_storagePlots[i].ResourceType == productType) {
+                            // place UI over plot of storage
+                            newProductUI.transform.position = m_storagePlots[i].transform.position;
+
+                            break;
+                        }
+                    }
+                    // RedistributeQueue();
                 }
                 else {
                     Debug.Log("[StoresProduct] Modifying units of " + productType + " by " + units + " units");

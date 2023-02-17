@@ -21,7 +21,7 @@ namespace Zavala
         public event EventHandler TimerExpired; // when the timer completes
 
         private void InitBasics(Resources.Type resourceType, int units) {
-            m_resourceIcon.sprite = GameDB.Instance.GetResourceIcon(resourceType);
+            m_resourceIcon.sprite = GameDB.Instance.GetResourceStoredIcon(resourceType);
             m_resourceIcon.SetNativeSize();
             m_resourceType = resourceType;
             m_units = units;
