@@ -8,7 +8,7 @@ using Zavala.Functionalities;
 namespace Zavala
 {
     [RequireComponent(typeof(GridMgr))]
-    [RequireComponent(typeof(ClearingHouse))]
+    // [RequireComponent(typeof(ClearingHouse))]
     public class LevelRegion : MonoBehaviour
     {
         [Serializable] // TODO: could change this to a polygon collider if we need more granularity
@@ -98,7 +98,7 @@ namespace Zavala
         private void Awake() {
             EventMgr.Instance.RegionToggled += HandleRegionToggled;
             GridMgr.Init();
-            m_clearingHouse.Init(this);
+            // m_clearingHouse.Init(this);
 
             RegionMgr.Instance.TrackRegion(this);
 

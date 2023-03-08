@@ -41,11 +41,13 @@ namespace Zavala
             public Requests RequestCandidate;
             public int Distance;
             public List<RoadSegment> Path;
+            public LevelRegion ParentRegion;
 
-            public CandidateData(Requests requestCandidate, int distance, List<RoadSegment> path) {
+            public CandidateData(Requests requestCandidate, int distance, List<RoadSegment> path, LevelRegion parentRegion) {
                 RequestCandidate = requestCandidate;
                 Distance = distance;
                 Path = path;
+                ParentRegion = parentRegion;
             }
         }
 
@@ -68,15 +70,19 @@ namespace Zavala
         // requests product: city, dairy farm, grain farm, digester, storage, export depot
         private List<Requests> m_registeredRequests;
 
-        private LevelRegion m_parentRegion;
+        // private LevelRegion m_parentRegion;
 
-        public void Init(LevelRegion parentRegion) {
+        private void Awake() {
+            Init();
+        }
+
+        public void Init() {
             m_cyclesComponent = this.GetComponent<Cycles>();
 
             m_registeredRequests = new List<Requests>();
             m_registeredStoresProduct = new List<StoresProduct>();
 
-            m_parentRegion = parentRegion;
+            // m_parentRegion = parentRegion;
             RoutingDict = new Dictionary<StoresProduct, DistributionData>();
 
             EventMgr.Instance.EconomyUpdated += HandleEconomyUpdated;
@@ -135,7 +141,7 @@ namespace Zavala
                         foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
                             Debug.Log("[ClearingHouse] Checking for resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
                             if (candidate.RequestBundlesContains(storedResource)) {
-                                CandidateData candidateData = new CandidateData(candidate, pathLength, path);
+                                CandidateData candidateData = new CandidateData(candidate, pathLength, path, RegionMgr.Instance.GetRegionByPos(candidate.transform.position));
                                 requestCandidatesData.Add(candidateData);
 
                                 Debug.Log("[ClearingHouse] Resource (" + storedResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
@@ -147,7 +153,7 @@ namespace Zavala
                             foreach (Resources.Type produceResource in sp.GetComponent<Produces>().GetProduceTypes()) {
                                 Debug.Log("[ClearingHouse] Checking for resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name + "...");
                                 if (candidate.RequestBundlesContains(produceResource)) {
-                                    CandidateData candidateData = new CandidateData(candidate, pathLength, path);
+                                    CandidateData candidateData = new CandidateData(candidate, pathLength, path, RegionMgr.Instance.GetRegionByPos(candidate.transform.position));
                                     requestCandidatesData.Add(candidateData);
 
                                     Debug.Log("[ClearingHouse] Resource (" + produceResource + ") match between supplier " + sp.gameObject.name + " and requester " + candidate.gameObject.name);
@@ -166,7 +172,7 @@ namespace Zavala
                     // check if the resource can be let to sit at this location
                     foreach (Resources.Type storedResource in sp.GetStoredResourceTypes()) {
                         if (sp.SitOption.RequestsComp.RequestBundlesContains(storedResource)) {
-                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0, null);
+                            CandidateData candidateData = new CandidateData(sp.SitOption.RequestsComp, 0, null, RegionMgr.Instance.GetRegionByPos(sp.SitOption.transform.position));
                             requestCandidatesData.Add(candidateData);
                             break;
                         }
@@ -331,7 +337,7 @@ namespace Zavala
 
             if (candData.RequestCandidate.GetComponent<DairyFarm>() != null) {
                 // Apply DairyFarm Grain offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.CAFOGrain;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.CAFOGrain;
             }
             else {
                 // Unknown type of offer! Do not sell!
@@ -362,20 +368,20 @@ namespace Zavala
 
             if (candData.RequestCandidate.GetComponent<GrainFarm>() != null) {
                 // Apply GrainFarm Manure offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
             }
-            else if (candData.RequestCandidate.GetComponent<Digester>() != null) {
+            else if (candData.ParentRegion.GetComponent<Digester>() != null) {
                 // Apply Digester Manure offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.DigesterManure;
             }
             else if (candData.RequestCandidate.GetComponent<Storage>() != null) {
                 // Offer is probably 0, just moving locations
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.StorageManure;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.StorageManure;
             }
             else if (candData.RequestCandidate.GetComponent<LetItSit>() != null) {
                 Debug.Log("[ClearingHouse] Letting it sit option being considered...");
                 // Apply Letting Manure sit tax offer
-                willingToPay = -m_parentRegion.SimKnobs.SittingManureTax;
+                willingToPay = -candData.ParentRegion.SimKnobs.SittingManureTax;
             }
             else {
                 // Unknown type of offer! Do not sell!
@@ -385,12 +391,12 @@ namespace Zavala
             Requests candidate = candData.RequestCandidate;
             if (candidate.GetComponent<ExportDepot>() != null) {
                 // Apply external manure tax
-                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+                exportTax = candData.ParentRegion.SimKnobs.SaleTaxes.ExternalManure;
             }
             /* TODO:
             else if (requester region != supplier region) {
                 // Apply external manure tax
-                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+                exportTax = candData.ParentRegion.SimKnobs.SaleTaxes.ExternalManure;
             }
             */
             else if (candData.RequestCandidate.GetComponent<Storage>() != null) {
@@ -398,7 +404,7 @@ namespace Zavala
             }
             else {
                 // Apply internal manure tax
-                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalManure;
+                purchaseTax = candData.ParentRegion.SimKnobs.SaleTaxes.InternalManure;
             }
 
             tilesTraveled = candData.Distance;
@@ -424,7 +430,7 @@ namespace Zavala
             if (candData.RequestCandidate.GetComponent<City>() != null) {
                 // Apply City Milk offer
                 // TODO: clarify: is this a region-wide value, or does each city have it's own milk tax you can adjust?
-                willingToPay = m_parentRegion.SimKnobs.CityMaxPayForMilk; // <- region-wide value
+                willingToPay = candData.ParentRegion.SimKnobs.CityMaxPayForMilk; // <- region-wide value
             }
             else {
                 // Unknown type of offer! Do not sell!
@@ -442,7 +448,7 @@ namespace Zavala
             */
             else {
                 // Apply internal milk tax
-                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalMilk;
+                purchaseTax = candData.ParentRegion.SimKnobs.SaleTaxes.InternalMilk;
             }
 
             tilesTraveled = candData.Distance;
@@ -468,7 +474,7 @@ namespace Zavala
             Requests candidate = candData.RequestCandidate;
             if (candidate.GetComponent<GrainFarm>() != null) {
                 // Apply GrainFarm Fertilizer offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmFertilizer;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.GrainFarmFertilizer;
             }
             else if (candidate.GetComponent<ExportDepot>() != null) {
                 // Apply ExportDepot Fertilizer offer
@@ -481,11 +487,11 @@ namespace Zavala
 
             if (candidate.GetComponent<ExportDepot>() != null) {
                 // Apply external fertilizer tax
-                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalFertilizer;
+                exportTax = candData.ParentRegion.SimKnobs.SaleTaxes.ExternalFertilizer;
             }
             else {
                 // Apply internal fertilizer tax
-                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalFertilizer;
+                purchaseTax = candData.ParentRegion.SimKnobs.SaleTaxes.InternalFertilizer;
             }
 
             tilesTraveled = candData.Distance;
@@ -510,11 +516,11 @@ namespace Zavala
 
             if (candData.RequestCandidate.GetComponent<GrainFarm>() != null) {
                 // Apply GrainFarm Manure offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
             }
             else if (candData.RequestCandidate.GetComponent<Digester>() != null) {
                 // Apply Digester Manure offer
-                willingToPay = m_parentRegion.SimKnobs.BidBuyPrices.DigesterManure;
+                willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.DigesterManure;
             }
             else {
                 // Unknown type of offer! Do not sell!
@@ -524,17 +530,17 @@ namespace Zavala
             Requests candidate = candData.RequestCandidate;
             if (candidate.GetComponent<ExportDepot>() != null) {
                 // Apply external manure tax
-                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+                exportTax = candData.ParentRegion.SimKnobs.SaleTaxes.ExternalManure;
             }
             /* TODO:
             else if (requester region != supplier region) {
                 // Apply external manure tax
-                exportTax = m_parentRegion.SimKnobs.SaleTaxes.ExternalManure;
+                exportTax = candData.ParentRegion.SimKnobs.SaleTaxes.ExternalManure;
             }
             */
             else {
                 // Apply internal manure tax
-                purchaseTax = m_parentRegion.SimKnobs.SaleTaxes.InternalManure;
+                purchaseTax = candData.ParentRegion.SimKnobs.SaleTaxes.InternalManure;
             }
 
             tilesTraveled = candData.Distance;
@@ -629,8 +635,6 @@ namespace Zavala
         #region Handlers
 
         private void HandleCycleCompleted(object sender, EventArgs e) {
-            if (!m_parentRegion.IsRegionActive()) { return; }
-            
             Debug.Log("[ClearingHouse] Cycle completed");
 
             // Clearing House recompiles Dictionary, solves problem
@@ -649,8 +653,6 @@ namespace Zavala
         /// Update when producers have new products to ship (refers to new products, NOT new producer/requester)
         /// </summary>
         private void HandleEconomyUpdated(object sender, EconomyUpdatedEventArgs args) {
-            if (m_parentRegion != args.Region) { return; }
-
             Debug.Log("[ClearingHouse] Economy updated");
         }
 
