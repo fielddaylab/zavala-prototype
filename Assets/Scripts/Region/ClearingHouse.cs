@@ -556,7 +556,7 @@ namespace Zavala
 
         #region Helpers
 
-        private bool QueryIfConnected(ConnectionNode origin, ConnectionNode endpoint, out int outPathLength, out List<RoadSegment> outPath) {
+        public bool QueryIfConnected(ConnectionNode origin, ConnectionNode endpoint, out int outPathLength, out List<RoadSegment> outPath) {
             List<RoadSegment> roadsConnectedToOrigin = origin.GetComponent<ConnectionNode>().GetConnectedRoads();
             Debug.Log("[ClearingHouse] Querying road if connected... (" + roadsConnectedToOrigin.Count + " roads connected to origin)");
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using UnityEngine;
@@ -47,6 +48,8 @@ namespace Zavala.Functionalities
         [SerializeField] private int m_requestTimeout; // num Cycles
 
         [SerializeField] private float m_iconOffsetZ = 0.25f;
+
+        [SerializeField] private ExternalImport m_importSource;
 
         public event EventHandler<ResourceEventArgs> RequestFulfilled;
         public event EventHandler<ResourceEventArgs> RequestExpired;
@@ -340,11 +343,28 @@ namespace Zavala.Functionalities
         private void HandleTimerExpired(object sender, EventArgs e) {
             UIRequest expiredRequest = (UIRequest)sender;
             Debug.Log("[Requests] request expired");
-            RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetFulfillableUnits()));
 
-            m_activeRequests.Remove(expiredRequest);
-            Destroy(expiredRequest.gameObject);
-            RedistributeQueue();
+            // Try Import
+            if (m_importSource != null) {
+                Debug.Log("[Requests] Import source exists.");
+                Resources.Type importType = expiredRequest.GetResourceType() == Resources.Type.SoilEnricher ? Resources.Type.Manure : expiredRequest.GetResourceType();
+                if (RoadMgr.Instance.TrySummonTruck(importType, expiredRequest.GetRemainingUnits(), m_importSource.Path, m_importSource.StoresComponent, this)) {
+                    Debug.Log("[Requests] Truck summoned successfully");
+
+                    // set request to en-route
+                    expiredRequest.SetEnRoute(expiredRequest.GetRemainingUnits());
+                }
+                else {
+                    Debug.Log("[Requests] Truck not summoned");
+                }
+            }
+            else {
+                RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetFulfillableUnits()));
+
+                m_activeRequests.Remove(expiredRequest);
+                Destroy(expiredRequest.gameObject);
+                RedistributeQueue();
+            }
         }
 
         private void HandleEconomyUpdated(object sender, EventArgs args) {

@@ -25,6 +25,19 @@ namespace Zavala.Functionalities
             // Importer
         }
 
+        [Serializable]
+        public struct PreloadProduct {
+
+            public Resources.Type Type;
+            public int Units;
+
+            public PreloadProduct(Resources.Type type, int units) {
+                Type = type;
+                Units = units;
+            }
+        }
+
+
         public struct StoredProduct
         {
             public Resources.Type Type;
@@ -81,6 +94,10 @@ namespace Zavala.Functionalities
 
         [SerializeField] private StoragePlot[] m_storagePlots;
 
+        [SerializeField] private PreloadProduct[] m_preloadedProducts;
+        [SerializeField] private bool m_continuousReplenish;
+        [SerializeField] private bool m_visibleUI = true;
+
         public LetItSit SitOption = null; // only for nodes that can let something sit (i.e. dairy farm)
 
         private List<StoredProduct> m_storageList; // the products in storage
@@ -108,6 +125,10 @@ namespace Zavala.Functionalities
             }
             if (SitOption != null) {
                 SitOption.Init();
+            }
+
+            for (int i = 0; i < m_preloadedProducts.Length; i++) {
+                TryAddToStorage(m_preloadedProducts[i].Type, m_preloadedProducts[i].Units);
             }
         }
 
@@ -220,6 +241,9 @@ namespace Zavala.Functionalities
                     else {
                         newProductUI.Init(productType, units);
                     }
+                    if (!m_visibleUI) {
+                        newProductUI.gameObject.SetActive(false);
+                    }
                     StoredProduct newProduct = new StoredProduct(productType, newProductUI, units);
                     m_storageList.Add(newProduct);
                     newProductUI.TimerExpired += HandleTimerExpired;
@@ -258,6 +282,11 @@ namespace Zavala.Functionalities
 
                 // RedistributeQueue();
                 RemovedStorage?.Invoke(this, new ResourceEventArgs(productType, units));
+
+                if (m_continuousReplenish) {
+                    TryAddToStorage(productType, units);
+                }
+
                 return true;
             }
         }

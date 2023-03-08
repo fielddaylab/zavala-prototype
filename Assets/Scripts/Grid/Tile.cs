@@ -52,19 +52,28 @@ namespace Zavala.Tiles
 
         #region Callbacks
 
-        private void Start() {
-            m_meshFilterComponent = this.GetComponent<MeshFilter>();
-            m_meshFilterComponentUnder = this.transform.GetChild(0).GetComponent<MeshFilter>();
-            m_originalMesh = m_meshFilterComponent.mesh;
-            m_originalMeshUnder = m_meshFilterComponentUnder.mesh;
-
-            m_blocksBuildComponent = this.GetComponent<BlocksBuild>(); // <- may well be null
-
+        private void Awake() {
             m_addOns = new List<AddOn>();
+            m_meshFilterComponent = this.GetComponent<MeshFilter>();
+            if (this.transform.childCount > 0) {
+                m_meshFilterComponentUnder = this.transform.GetChild(0).GetComponent<MeshFilter>();
+            }
+            else {
+                m_meshFilterComponentUnder = null;
+            }
+
+            m_blocksBuildComponent = this.GetComponent<BlocksBuild>();
 
             m_pips = new List<PhosphPip>();
             m_stagedToAdd = new List<PhosphPip>();
             m_stagedToRemove = new List<PhosphPip>();
+        }
+
+        private void Start() {
+            m_originalMesh = m_meshFilterComponent.mesh;
+            if (m_meshFilterComponentUnder != null) {
+                m_originalMeshUnder = m_meshFilterComponentUnder.mesh;
+            }
 
             m_elevation = this.transform.localPosition.y;
 
@@ -89,7 +98,9 @@ namespace Zavala.Tiles
 
         private void OnMouseExit() {
             m_meshFilterComponent.mesh = m_originalMesh;
-            m_meshFilterComponentUnder.mesh = m_originalMeshUnder;
+            if (m_meshFilterComponentUnder != null) {
+                m_meshFilterComponentUnder.mesh = m_originalMeshUnder;
+            }
         }
 
         private void OnDestroy() {

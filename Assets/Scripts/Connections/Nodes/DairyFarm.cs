@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Functionalities;
 using Zavala.Resources;
+using Zavala.Roads;
 using Zavala.Tiles;
 using static UnityEngine.Rendering.DebugUI;
 using static Zavala.Functionalities.Produces;
@@ -35,7 +36,7 @@ namespace Zavala
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
         [SerializeField] private int m_importCost;
-
+ 
         private void OnEnable() {
             m_connectionNodeComponent = this.GetComponent<ConnectionNode>();
             m_requestsComponent = this.GetComponent<Requests>();
@@ -120,8 +121,6 @@ namespace Zavala
         private void HandleRequestExpired(object sender, EventArgs args) {
             Debug.Log("[DairyFarm] Request expired");
             Debug.Log("[DairyFarm] Attempting to purchase import...");
-
-            Debug.Log("[DiaryFarm] Import purchased successfully");
 
             StraightToStorage();
 
