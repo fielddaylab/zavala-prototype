@@ -29,6 +29,9 @@ namespace Zavala
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
         [SerializeField] private int m_population;
+        [SerializeField] private int m_minPopulation;
+        [SerializeField] private int m_cyclesBetweenGrowth;
+        private int m_cyclesBeforeGrowth;
 
         private List<GameObject> m_cityBlocks;
 
@@ -51,6 +54,9 @@ namespace Zavala
             m_firstCycle = true;
 
             m_cityBlocks = new List<GameObject>();
+
+            m_cyclesBeforeGrowth = m_cyclesBetweenGrowth;
+
             // create city blocks for initial population
             for (int p = 0; p < m_population; p++) {
                 // SpawnNewCityBlock();
@@ -115,16 +121,18 @@ namespace Zavala
         private void DecrementPopulation() {
             Debug.Log("[City] Decrementing population...");
 
-            if (m_population == 0) {
-                Debug.Log("[City] City is already empty!");
+            if (m_population == m_minPopulation) {
+                Debug.Log("[City] City is already as low as it can be!");
             }
             else {
                 m_population--;
 
                 // remove most recent district
+                /*
                 GameObject toRemove = m_cityBlocks[m_cityBlocks.Count - 1];
                 m_cityBlocks.RemoveAt(m_cityBlocks.Count - 1);
                 Destroy(toRemove);
+                */
 
                 m_inspectComponent.SetAdditionalText("Population: " + m_population);
 
@@ -151,19 +159,17 @@ namespace Zavala
         private void HandleCycleCompleted(object sender, EventArgs args) {
             Debug.Log("[City] Cycle completed");
 
-            // Cities grow by 1 when no requests remain at the end of a cycle
+            m_cyclesBeforeGrowth--;
+
+            // Cities grow by 1 when no requests remain at the end of x cycles
             if (m_requestsComponent.GetNumActiveRequests() == 0) {
-                IncrementPopulation();
+                if (m_cyclesBeforeGrowth == 0) {
+                    IncrementPopulation();
+                    m_cyclesBeforeGrowth = m_cyclesBetweenGrowth;
+                }
             }
 
-            // Cities request 1 milk / population
-            for (int i = 0; i < m_population; i++) {
-                // TEMP HACK -- don't let requests above 4 for UI reasons (TODO: consolidate requests)
-                if (m_requestsComponent.GetNumActiveRequests() >= 4) {
-                    break;
-                }
-                m_requestsComponent.QueueRequest();
-            }
+            m_requestsComponent.QueueRequest(m_population);
 
             if (m_firstCycle) {
                 StraightToStorage();

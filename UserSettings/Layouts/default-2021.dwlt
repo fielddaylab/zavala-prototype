@@ -74,7 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 65
+  controlID: 55
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 64
+  controlID: 54
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 112
+  controlID: 110
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 113
+  controlID: 62
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -321,8 +321,8 @@ MonoBehaviour:
     y: 0
     width: 479.19995
     height: 431.2
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -455,7 +455,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 2afbffff
+      m_ExpandedIDs: 1a92ffff5acbffff5ccbffff60cbffffdccbffff9ad1ffffc8d1ffffced1ffffeed2ffff4cd9ffff74d9ffffa2f9ffff2afbfffff4ffffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -513,8 +513,8 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: -100, y: -25.600006}
+      snapOffset: {x: -100, y: -25.600006}
+      snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 3
       id: Tool Settings
       index: 0
@@ -535,7 +535,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: 0, y: 24.8}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: unity-scene-view-toolbar
@@ -727,9 +727,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.69701743, y: 0.6149602, z: 0.45973492}
+    m_Target: {x: -4.8242245, y: 2.0306482, z: 2.4211688}
     speed: 2
-    m_Value: {x: -0.69701743, y: 0.6149602, z: 0.45973492}
+    m_Value: {x: -4.8242245, y: 2.0306482, z: 2.4211688}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -776,13 +776,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.20737015, y: 0.74566156, z: -0.2670076, w: 0.57495606}
+    m_Target: {x: 0.20782822, y: 0.75732946, z: -0.2825604, w: 0.5516536}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0, w: 1}
+    m_Value: {x: 0.20815791, y: 0.75615996, z: -0.28212106, w: 0.55253965}
   m_Size:
-    m_Target: 4.2534757
+    m_Target: 5.9294033
     speed: 2
-    m_Value: 4.2534757
+    m_Value: 5.9294033
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1019,22 +1019,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs/UI
+    - Assets
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Prefabs/UI
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\levim\OneDrive\Documents\GameDev\Unity Projects\zavala-prototype
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 286.2}
-    m_SelectedIDs: 3c740000
-    m_LastClickedID: 29756
-    m_ExpandedIDs: 000000001e74000020740000227400002474000026740000287400002a7400002c7400002e7400003074000032740000347400003a740000
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 50740000
+    m_LastClickedID: 29776
+    m_ExpandedIDs: 000000001e74000020740000227400002474000026740000287400002a7400002c7400002e740000307400003274000034740000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1089,22 +1089,22 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 566f0000506a000034010100087000001a7000000000000066720000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: UIBlurbIcon
+      m_OriginalName: UIBlurbIcon
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 26506
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 12}
     m_CreateAssetUtility:
@@ -1154,7 +1154,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 162
+  m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:

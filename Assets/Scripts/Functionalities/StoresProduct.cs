@@ -8,6 +8,7 @@ using UnityEngine;
 using Zavala.Events;
 using Zavala.Resources;
 using Zavala.Roads;
+using Zavala.Tiles;
 
 namespace Zavala.Functionalities
 {
@@ -52,14 +53,18 @@ namespace Zavala.Functionalities
                 m_sittingUnits += toAllocate;
             }
 
-            public bool TryReleaseSittingUnits() {
+            public int TryReleaseSittingUnits() {
+                int freedUnits;
+
                 if (m_sittingUnits > 0) {
+                    freedUnits = m_sittingUnits;
                     m_sittingUnits = 0;
-                    return true;
                 }
                 else {
-                    return false;
+                    freedUnits = -1;
                 }
+
+                return freedUnits;
             }
         }
 
@@ -251,7 +256,7 @@ namespace Zavala.Functionalities
             else {
                 RemoveFromStorageList(productType, units);
 
-                RedistributeQueue();
+                // RedistributeQueue();
                 RemovedStorage?.Invoke(this, new ResourceEventArgs(productType, units));
                 return true;
             }
@@ -327,15 +332,12 @@ namespace Zavala.Functionalities
         public void FreeSittingStorage() {
             for (int i = 0; i < m_storageList.Count; i++) {
                 var storedProduct = m_storageList[i];
-                if (storedProduct.TryReleaseSittingUnits() ) {
+                int freedUnits = storedProduct.TryReleaseSittingUnits();
+                if (freedUnits != -1) {
                     m_storageList[i] = storedProduct;
 
                     // Generate runoff
-                    if (storedProduct.Type == Resources.Type.Manure) {
-                        if (this.GetComponent<GeneratesPhosphorus>() != null) {
-                            // TODO: this (or move to specific node like DairyFarm)
-                        }
-                    }
+                    SitOption.GenerateRunoff(this.GetComponent<Tile>(), storedProduct.Type, freedUnits);
                 }
             }
         }

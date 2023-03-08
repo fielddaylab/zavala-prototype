@@ -84,6 +84,10 @@ namespace Zavala
             return m_initialUnits;
         }
 
+        public int GetRemainingUnits() {
+            return m_units;
+        }
+
         public bool IsContinuous() {
             return m_continuous;
         }

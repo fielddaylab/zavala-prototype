@@ -2835,8 +2835,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -20.6875}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: 43.875, y: -20.6875}
+  m_SizeDelta: {x: 250, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7619324283895369907
 MonoBehaviour:
@@ -5807,7 +5807,7 @@ MonoBehaviour:
   m_sliderGroup: {fileID: 7390228693727302496}
   m_timescaleSlider: {fileID: 7619324283895369907}
   m_slowestSpeed: 0.1
-  m_fastestSpeed: 2
+  m_fastestSpeed: 4
   m_speedText: {fileID: 5521441449110004571}
   m_restartButton: {fileID: 4041625110984334999}
   m_adjustActivateButton: {fileID: 2402109563104986690}

@@ -364,7 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947cf445f43e6404aaab6a7905e6d5d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_firstScene: GridScene
+  m_firstScene: Progression
 --- !u!4 &1436908194
 Transform:
   m_ObjectHideFlags: 0

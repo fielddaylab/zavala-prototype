@@ -376,7 +376,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2196cc2ead0aed648ac6337a30f5b10d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resourceAmtMap: []
+  m_resourceAmtMap:
+  - Type: 4
+    Amt: 2
 --- !u!114 &1788250812678903619
 MonoBehaviour:
   m_ObjectHideFlags: 0

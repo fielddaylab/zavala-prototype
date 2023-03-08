@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zavala.Resources;
+using Zavala.Tiles;
+using static Zavala.Functionalities.StoresProduct;
 
 namespace Zavala.Functionalities
 {
@@ -35,6 +37,12 @@ namespace Zavala.Functionalities
             RegionMgr.Instance.GetRegionByPos(this.transform.position).RegisterWithClearingHouse(this.RequestsComp);
 
             RequestsComp.QueueRequest();
+        }
+
+        public void GenerateRunoff(Tile onTile, Resources.Type resourceType, int iterations) {
+            for (int i = 0; i < iterations; i++) {
+                m_generatesComponent.GeneratePipBatch(onTile, resourceType);
+            }
         }
 
         #region Handlers

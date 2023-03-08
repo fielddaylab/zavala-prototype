@@ -106,6 +106,36 @@ namespace Zavala.Functionalities
             }
         }
 
+        public void QueueRequest(int quantity) {
+            Debug.Log("[Requests] Queueing new reqeust");
+
+            if (m_initialQueuePos == Vector3.zero) {
+                m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
+            }
+
+            for (int i = 0; i < RequestBundles.Count; i++) {
+                Resources.Type resourceType = RequestBundles[i].Type;
+                int units = quantity;
+
+                // init and display
+                Debug.Log("[Instantiate] Instantiating UIRequest prefab");
+                UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
+                if (m_hasTimeout) {
+                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
+                }
+                else {
+                    newRequest.Init(resourceType, units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
+                }
+
+                // add to requests
+                m_activeRequests.Add(newRequest);
+                newRequest.TimerExpired += HandleTimerExpired;
+                RedistributeQueue();
+
+                m_connectionNodeComponent.UpdateNodeEconomy();
+            }
+        }
+
         public void CancelLastRequest(List<RequestBundle> resourceBundles) {
             if (m_activeRequests.Count == 0) { return; }
 
@@ -178,7 +208,7 @@ namespace Zavala.Functionalities
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 if (m_activeRequests[i].GetResourceType() == resourceType) {
                     // check if right number of units
-                    if (units >= m_activeRequests[i].GetFulfillableUnits()) {
+                    if (units >= m_activeRequests[i].GetRemainingUnits()) {
                         // fully fulfilled
                         CloseRequest(i, resourceType, true);
                         return;

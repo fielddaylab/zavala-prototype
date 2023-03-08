@@ -170,7 +170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_population: 2
-  m_placeholderBlock: {fileID: 0}
+  m_minPopulation: 1
+  m_cyclesBetweenGrowth: 2
 --- !u!114 &5517435915057001926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +189,7 @@ MonoBehaviour:
   m_storageTimeout: 0
   m_iconOffsetZ: 0.25
   m_excludeFromClearingHouse: 0
+  m_storagePlots: []
   SitOption: {fileID: 0}
 --- !u!114 &5607112537235612656
 MonoBehaviour:

@@ -193,15 +193,18 @@ MonoBehaviour:
       InternalFertilizer: 0
       ExternalManure: 0
       ExternalFertilizer: 0
-    SittingManureTax: 0
+    SittingManureTax: 100
     CAFOMinSellThreshold: 0
-    GrainFarmMaxPayForImport: 0
+    ImportCosts:
+      Grain: 5
+      Manure: 5
     CityMaxPayForMilk: 10
     BidBuyPrices:
-      GrainFarmManure: 0
-      GrainFarmFertilizer: 0
-      CAFOGrain: 0
-      DigesterManure: 0
+      GrainFarmManure: 20
+      GrainFarmFertilizer: 40
+      CAFOGrain: 10
+      DigesterManure: 30
+      StorageManure: 0
     BidSellPrices:
       GrainFarmGrain: 0
       CAFOManure: 0

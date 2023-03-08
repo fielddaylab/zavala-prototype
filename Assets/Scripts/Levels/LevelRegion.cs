@@ -120,20 +120,20 @@ namespace Zavala
             if (pos.z < m_bounds.Left && pos.z > m_bounds.Right && pos.x < m_bounds.Top && pos.x > m_bounds.Bottom) {
                 return true;
             }
-            /*
+            
             if (!(pos.z < m_bounds.Left)) {
-                Debug.Log("[LevelRegion] " + pos + " failed Left");
+                Debug.Log("[BoundsCheck] " + pos + " failed Left");
             }
             if (!(pos.z > m_bounds.Right)) {
-                Debug.Log("[LevelRegion] " + pos + " failed Right");
+                Debug.Log("[BoundsCheck] " + pos + " failed Right");
             }
             if (!(pos.x < m_bounds.Top)) {
-                Debug.Log("[LevelRegion] " + pos + " failed Top");
+                Debug.Log("[BoundsCheck] " + pos + " failed Top");
             }
             if (!(pos.x > m_bounds.Bottom)) {
-                Debug.Log("[LevelRegion] " + pos + " failed Bottom: pos x " + pos.x + " is less than or equal to " + m_bounds.Bottom);
+                Debug.Log("[BoundsCheck] " + pos + " failed Bottom: pos x " + pos.x + " is less than or equal to " + m_bounds.Bottom);
             }
-            */
+            
             return false;
         }
 

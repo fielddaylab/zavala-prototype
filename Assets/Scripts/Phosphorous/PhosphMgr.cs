@@ -113,6 +113,12 @@ namespace Zavala
                     lowestElevation = neighborElevation;
                     lowestNeighbor = surroundingNeighbors[n];
                 }
+                else if (neighborElevation == lowestElevation) {
+                    if (Random.Range(0, 2) == 0) {
+                        lowestElevation = neighborElevation;
+                        lowestNeighbor = surroundingNeighbors[n];
+                    }
+                }
             }
             // first half
             for (int n = 0; n < startIndex; n++) {
@@ -120,6 +126,12 @@ namespace Zavala
                 if (neighborElevation < lowestElevation) {
                     lowestElevation = neighborElevation;
                     lowestNeighbor = surroundingNeighbors[n];
+                }
+                else if (neighborElevation == lowestElevation) {
+                    if (Random.Range(0, 2) == 0) {
+                        lowestElevation = neighborElevation;
+                        lowestNeighbor = surroundingNeighbors[n];
+                    }
                 }
             }
 

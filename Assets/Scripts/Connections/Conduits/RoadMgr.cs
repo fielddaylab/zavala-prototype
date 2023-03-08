@@ -131,12 +131,14 @@ namespace Zavala.Roads
                         if (currTile.GetComponent<ConnectionNode>() != null || currTile.ConnectionInAddOns() || RegionMgr.Instance.CurrRegion.GridMgr.RoadAtPos(currTile.transform.position) != null) {
                             m_tracedTiles.Add(currTile);
                             EndDrawingRoad();
+                            m_lastKnownTile = currTile;
                             return;
                         }
 
                         m_tracedTiles.Add(currTile);
                         StageRoadSegment(currTile.gameObject);
                         Debug.Log("[InteractMgr] added new tile to road path");
+
                     }
                     m_lastKnownTile = currTile;
                 }
