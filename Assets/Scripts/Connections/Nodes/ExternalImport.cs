@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -11,24 +12,18 @@ namespace Zavala
     [RequireComponent(typeof(ConnectionNode))]
     [RequireComponent(typeof(Tile))]
     [RequireComponent(typeof(StoresProduct))]
+    [RequireComponent(typeof(PrebuiltRoad))]
     public class ExternalImport : MonoBehaviour
     {
-        [SerializeField] private  List<Tile> m_prebuildRoad;
-
-        [HideInInspector] public List<RoadSegment> Path;
+        [SerializeField] private PrebuiltRoad m_prebuiltRoadComp;
         [HideInInspector] public StoresProduct StoresComponent;
 
         private void Awake() {
             StoresComponent = this.GetComponent<StoresProduct>();
         }
 
-        private void Start() {
-            // build road
-            for (int i = 1; i < m_prebuildRoad.Count - 1; i++) {
-                Path.Add(RoadMgr.Instance.CreateRoadSegment(m_prebuildRoad[i].gameObject));
-            }
-
-            RoadMgr.Instance.FinalizeRoad(m_prebuildRoad, Path);
+        public List<RoadSegment> GetPath() {
+            return m_prebuiltRoadComp.Path;
         }
     }
 }

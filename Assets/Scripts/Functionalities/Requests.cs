@@ -348,7 +348,7 @@ namespace Zavala.Functionalities
             if (m_importSource != null) {
                 Debug.Log("[Requests] Import source exists.");
                 Resources.Type importType = expiredRequest.GetResourceType() == Resources.Type.SoilEnricher ? Resources.Type.Manure : expiredRequest.GetResourceType();
-                if (RoadMgr.Instance.TrySummonTruck(importType, expiredRequest.GetRemainingUnits(), m_importSource.Path, m_importSource.StoresComponent, this)) {
+                if (RoadMgr.Instance.TrySummonTruck(importType, expiredRequest.GetRemainingUnits(), m_importSource.GetPath(), m_importSource.StoresComponent, this)) {
                     Debug.Log("[Requests] Truck summoned successfully");
 
                     // set request to en-route

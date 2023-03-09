@@ -145,6 +145,7 @@ MonoBehaviour:
   m_hasTimeout: 1
   m_requestTimeout: 2
   m_iconOffsetZ: 0.25
+  m_importSource: {fileID: 0}
 --- !u!114 &4718787402710229058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_importCost: 15
+  m_allowImports: 1
 --- !u!114 &7945178766669802927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,6 +199,9 @@ MonoBehaviour:
   m_storagePlots:
   - {fileID: 6815549129202993502}
   - {fileID: 8067153833306967872}
+  m_preloadedProducts: []
+  m_continuousReplenish: 0
+  m_visibleUI: 1
   SitOption: {fileID: 1788250812678903619}
 --- !u!114 &6619742981199090802
 MonoBehaviour:
@@ -331,6 +336,7 @@ MonoBehaviour:
   m_hasTimeout: 0
   m_requestTimeout: 0
   m_iconOffsetZ: 0.25
+  m_importSource: {fileID: 0}
 --- !u!114 &5197014570220360833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,6 +355,9 @@ MonoBehaviour:
   m_iconOffsetZ: 0.25
   m_excludeFromClearingHouse: 1
   m_storagePlots: []
+  m_preloadedProducts: []
+  m_continuousReplenish: 0
+  m_visibleUI: 1
   SitOption: {fileID: 0}
 --- !u!114 &1348501034734464431
 MonoBehaviour:
