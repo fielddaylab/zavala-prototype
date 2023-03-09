@@ -1,3 +1,4 @@
+using BeauRoutine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,9 @@ namespace Zavala
 {
     public class UIRequest : MonoBehaviour
     {
+        [SerializeField] private Transform m_rootTransform;
+        [SerializeField] private CanvasGroup m_group;
+
         [SerializeField] private Image m_bg;
         [SerializeField] private Image m_unitsBG;
         [SerializeField] private Image m_resourceIcon;
@@ -67,9 +71,36 @@ namespace Zavala
 
             m_bg.color = GameDB.Instance.UIRequestDefaultColor;
 
+            m_rootTransform.SetScale(0);
+            Routine.Start(ShowRoutine());
+
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
             //m_uiTimer.Init(requestTimeout, false);
             //m_uiTimer.TimerCompleted += HandleTimerCompleted;
+        }
+
+        private IEnumerator ShowRoutine() {
+            yield return m_rootTransform.ScaleTo(1, 1f).Ease(Curve.CubeIn);
+        }
+
+        public IEnumerator Fulfill() {
+            yield return Routine.Start(FulfillRoutine());
+        }
+
+        private IEnumerator FulfillRoutine() {
+            yield return m_rootTransform.ScaleTo(0, 1f).Ease(Curve.CubeIn);
+        }
+
+        public IEnumerator Fade() {
+            yield return Routine.Start(FadeRoutine());
+        }
+
+        private IEnumerator FadeRoutine() {
+            yield return Routine.Combine(
+                m_rootTransform.MoveTo(this.transform.position + this.transform.up * 0.25f + this.transform.right * 0.1f, 1f, Axis.XYZ, Space.World),
+                m_rootTransform.RotateTo(-30, 1f, Axis.Z),
+                m_group.FadeTo(0, 1f).Ease(Curve.CubeIn)
+                );
         }
 
         public Resources.Type GetResourceType() {

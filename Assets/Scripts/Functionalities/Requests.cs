@@ -1,10 +1,12 @@
-﻿using Mono.Cecil;
+﻿using BeauRoutine;
+using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using Zavala.Events;
 using Zavala.Resources;
@@ -80,63 +82,50 @@ namespace Zavala.Functionalities
         }
 
         public void QueueRequest() {
-            Debug.Log("[Requests] Queueing new reqeust");
+            Debug.Log("[Requests] Queueing new request");
 
             if (m_initialQueuePos == Vector3.zero) {
                 m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
             }
 
             for (int i = 0; i < RequestBundles.Count; i++) {
-                Resources.Type resourceType = RequestBundles[i].Type;
-                int units = RequestBundles[i].GetUnits();
-
-                // init and display
-                Debug.Log("[Instantiate] Instantiating UIRequest prefab");
-                UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
-                if (m_hasTimeout) {
-                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
-                }
-                else {
-                    newRequest.Init(resourceType, units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
-                }
-
-                // add to requests
-                m_activeRequests.Add(newRequest);
-                newRequest.TimerExpired += HandleTimerExpired;
-                RedistributeQueue();
-
-                m_connectionNodeComponent.UpdateNodeEconomy();
+                QueueRequestCore(RequestBundles[i].GetUnits(), i);
             }
         }
 
         public void QueueRequest(int quantity) {
-            Debug.Log("[Requests] Queueing new reqeust");
+            Debug.Log("[Requests] Queueing new request");
 
             if (m_initialQueuePos == Vector3.zero) {
                 m_initialQueuePos = GameDB.Instance.UIRequestPrefab.transform.localPosition;
             }
 
             for (int i = 0; i < RequestBundles.Count; i++) {
-                Resources.Type resourceType = RequestBundles[i].Type;
-                int units = quantity;
-
-                // init and display
-                Debug.Log("[Instantiate] Instantiating UIRequest prefab");
-                UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
-                if (m_hasTimeout) {
-                    newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
-                }
-                else {
-                    newRequest.Init(resourceType, units, RequestBundles[i].Visible, RequestBundles[i].Continuous);
-                }
-
-                // add to requests
-                m_activeRequests.Add(newRequest);
-                newRequest.TimerExpired += HandleTimerExpired;
-                RedistributeQueue();
-
-                m_connectionNodeComponent.UpdateNodeEconomy();
+                QueueRequestCore(quantity, i);
             }
+        }
+
+        private void QueueRequestCore(int requstUnits, int bundleIndex) {
+            Resources.Type resourceType = RequestBundles[bundleIndex].Type;
+            int units = requstUnits;
+
+            // init and display
+            Debug.Log("[Instantiate] Instantiating UIRequest prefab");
+            UIRequest newRequest = Instantiate(GameDB.Instance.UIRequestPrefab, this.transform).GetComponent<UIRequest>();
+
+            if (m_hasTimeout) {
+                newRequest.Init(resourceType, m_requestTimeout, this.GetComponent<Cycles>(), units, RequestBundles[bundleIndex].Visible, RequestBundles[bundleIndex].Continuous);
+            }
+            else {
+                newRequest.Init(resourceType, units, RequestBundles[bundleIndex].Visible, RequestBundles[bundleIndex].Continuous);
+            }
+
+            // add to requests
+            m_activeRequests.Add(newRequest);
+            newRequest.TimerExpired += HandleTimerExpired;
+            RedistributeQueue();
+
+            m_connectionNodeComponent.UpdateNodeEconomy();
         }
 
         public void CancelLastRequest(List<RequestBundle> resourceBundles) {
@@ -155,15 +144,26 @@ namespace Zavala.Functionalities
         }
 
         private void RedistributeQueue() {
+            Routine.Start(RedistributeRoutine());
+        }
+
+        private IEnumerator RedistributeRoutine() {
             for (int i = 0; i < m_activeRequests.Count; i++) {
                 // order requests with newer on the left and older on the right
                 UIRequest request = m_activeRequests[i];
-                request.transform.localPosition = new Vector3(
-                    m_initialQueuePos.x,
-                    m_initialQueuePos.y,
-                    m_initialQueuePos.z - (m_activeRequests.Count - i) * m_iconOffsetZ
-                    );
+
+                yield return MoveQueueItem(request.transform, i);
             }
+        }
+
+        private IEnumerator MoveQueueItem(Transform toMove, int index) {
+            Vector3 newPos = new Vector3(
+                m_initialQueuePos.x,
+                m_initialQueuePos.y,
+                m_initialQueuePos.z - (m_activeRequests.Count - index) * m_iconOffsetZ
+                );
+
+            yield return toMove.MoveTo(newPos, .2f, Axis.XYZ, Space.Self);
         }
 
         private void QueryRoadForProducts() {
@@ -247,15 +247,21 @@ namespace Zavala.Functionalities
 
         private void CloseRequest(int requestIndex, Resources.Type resourceType, bool fulfilled) {
             UIRequest toClose = m_activeRequests[requestIndex];
+
             toClose.TimerExpired -= HandleTimerExpired;
             m_activeRequests.RemoveAt(requestIndex);
-            if (fulfilled) {
-                // trigger request fulfilled event
-                RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetInitialUnits()));
-                Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
-            }
-            Destroy(toClose.gameObject);
 
+            Routine.Start(toClose.Fulfill()).OnComplete(() =>
+                {
+                    if (fulfilled) {
+                        // trigger request fulfilled event
+                        RequestFulfilled?.Invoke(this, new ResourceEventArgs(resourceType, toClose.GetInitialUnits()));
+                        Debug.Log("[Requests] Request for " + resourceType + " fulfilled!");
+                    }
+                    
+                    Destroy(toClose.gameObject);
+                }
+            );
         }
 
         private void StoreContinuousRequest(Resources.Type resourceType, int units) {
@@ -359,11 +365,14 @@ namespace Zavala.Functionalities
                 }
             }
             else {
-                RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetFulfillableUnits()));
+                Routine.Start(expiredRequest.Fade()).OnComplete(() => {
+                    RequestExpired?.Invoke(this, new ResourceEventArgs(expiredRequest.GetResourceType(), expiredRequest.GetFulfillableUnits()));
 
-                m_activeRequests.Remove(expiredRequest);
-                Destroy(expiredRequest.gameObject);
-                RedistributeQueue();
+                    m_activeRequests.Remove(expiredRequest);
+                    Destroy(expiredRequest.gameObject);
+                    RedistributeQueue();
+                    }
+                );
             }
         }
 
