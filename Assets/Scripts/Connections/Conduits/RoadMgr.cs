@@ -46,12 +46,15 @@ namespace Zavala.Roads
 
         private List<RoadSegment> m_stagedSegments;
 
+        private TollBooth m_lastKnownToll;
+
         public void Init() {
             Instance = this;
 
             m_startedRoad = false;
             m_tracedTiles = new List<Tile>();
             m_stagedSegments = new List<RoadSegment>();
+            m_lastKnownToll = null;
         }
 
         // TODO: remove this temp debug
@@ -129,18 +132,50 @@ namespace Zavala.Roads
                             return;
                         }
 
-                        // reach a potential termination point
-                        if (currTile.GetComponent<ConnectionNode>() != null || currTile.ConnectionInAddOns() || RegionMgr.Instance.CurrRegion.GridMgr.RoadAtPos(currTile.transform.position) != null) {
-                            m_tracedTiles.Add(currTile);
-                            EndDrawingRoad();
-                            m_lastKnownTile = currTile;
-                            return;
+                        // check if tile is in valid region (crossed toll?)
+                        LevelRegion prevRegion = RegionMgr.Instance.GetRegionByPos(m_lastKnownTile.transform.position);
+                        LevelRegion currRegion = RegionMgr.Instance.GetRegionByPos(currTile.transform.position);
+                        bool sameRegion = prevRegion == currRegion;
+                        bool tollCheck = false;
+
+                        if (!sameRegion) {
+                            // check toll
+                            if (m_lastKnownToll != null) {
+                                // TODO: check if correct toll booth
+
+                                Debug.Log("[Toll] passed toll check");
+
+                                tollCheck = true;
+                            }
+                            else {
+                                Debug.Log("[Toll] did not pass toll check");
+                            }
+                        }
+                        else {
+                            // no need for toll check, auto valid
+                            tollCheck = true;
                         }
 
-                        m_tracedTiles.Add(currTile);
-                        StageRoadSegment(currTile.gameObject);
-                        Debug.Log("[InteractMgr] added new tile to road path");
 
+                        if (tollCheck) {
+                            // reach a potential termination point
+                            if (currTile.GetComponent<ConnectionNode>() != null || currTile.ConnectionInAddOns() || RegionMgr.Instance.CurrRegion.GridMgr.RoadAtPos(currTile.transform.position) != null) {
+                                m_tracedTiles.Add(currTile);
+                                EndDrawingRoad();
+                                m_lastKnownTile = currTile;
+                                return;
+                            }
+
+                            m_tracedTiles.Add(currTile);
+                            StageRoadSegment(currTile.gameObject);
+                            Debug.Log("[InteractMgr] added new tile to road path");
+                        }
+                        else {
+                            // cannot cross regions without toll
+                            Debug.Log("Cannot cross regions without toll");
+                            CancelRoad();
+                            return;
+                        }
                     }
                     m_lastKnownTile = currTile;
                 }
@@ -222,6 +257,7 @@ namespace Zavala.Roads
             }
 
             Debug.Log("Ended building road");
+            m_lastKnownToll = null;
             m_startedRoad = false;
             m_tracedTiles.Clear();
             m_stagedSegments.Clear();
@@ -416,6 +452,19 @@ namespace Zavala.Roads
 
         public GameObject GetRoadSegmentPrefab() {
             return m_roadSegmentPrefab;
+        }
+
+        public void SetLastKnownToll(TollBooth toll) {
+            m_lastKnownToll = toll;
+            Debug.Log("[Toll] new toll");
+        }
+
+        public void RemoveLastKnownToll(TollBooth toll) {
+            if (m_lastKnownToll == toll) {
+                m_lastKnownToll = null;
+
+                Debug.Log("[Toll] removed toll");
+            }
         }
 
         #endregion // External

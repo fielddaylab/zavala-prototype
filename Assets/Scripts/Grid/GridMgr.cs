@@ -40,6 +40,19 @@ namespace Zavala
             }
         }
 
+        public TollBooth OverToll(Vector2 pos) {
+            Ray ray;
+            RaycastHit hit;
+
+            ray = Camera.main.ScreenPointToRay(pos);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Toll"))) {
+                return hit.collider.gameObject.GetComponent<TollBooth>();
+            }
+            else {
+                return null;
+            }
+        }
+
         public Zavala.Tiles.Tile TileAtPos(Vector3 pos) {
             // raise ray and point downward
             RaycastHit hit;

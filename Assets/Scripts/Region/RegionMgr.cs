@@ -103,9 +103,17 @@ namespace Zavala
                 }
             }
 
-            // look on tiles
             RaycastHit hit;
 
+            // look on tolls
+            ray = Camera.main.ScreenPointToRay(pos);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Toll"))) {
+                if (hit.collider.gameObject.GetComponent<Inspectable>() != null) {
+                    return hit.collider.gameObject.GetComponent<Inspectable>();
+                }
+            }
+
+            // look on tiles
             ray = Camera.main.ScreenPointToRay(pos);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Tile"))) {
                 if (hit.collider.gameObject.GetComponent<Inspectable>() != null) {
