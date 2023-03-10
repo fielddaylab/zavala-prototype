@@ -76,6 +76,10 @@ namespace Zavala
             Init();
         }
 
+        private void Start() {
+            EventMgr.Instance.RegionActivationCompleted += HandleRegionActivationCompleted;
+        }
+
         public void Init() {
             m_cyclesComponent = this.GetComponent<Cycles>();
 
@@ -96,8 +100,6 @@ namespace Zavala
 
             m_registeredStoresProduct.Add(storesProduct);
 
-            RecompileRoutingDict();
-
             // re-run solution algorithm with new producer
             // Solve();
         }
@@ -107,8 +109,6 @@ namespace Zavala
             Debug.Log("[ClearingHouse] Registering a Requests.");
 
             m_registeredRequests.Add(requester);
-
-            RecompileRoutingDict();
 
             // re-run solution algorithm with new requester
             // Solve();
@@ -654,6 +654,10 @@ namespace Zavala
         /// </summary>
         private void HandleEconomyUpdated(object sender, EconomyUpdatedEventArgs args) {
             Debug.Log("[ClearingHouse] Economy updated");
+        }
+
+        private void HandleRegionActivationCompleted(object sender, EventArgs args) {
+            RecompileRoutingDict();
         }
 
         #endregion // Handlers

@@ -71,8 +71,10 @@ namespace Zavala
 
             m_bg.color = GameDB.Instance.UIRequestDefaultColor;
 
-            m_rootTransform.SetScale(0);
-            Routine.Start(ShowRoutine());
+            if (m_rootTransform != null) {
+                m_rootTransform.SetScale(0);
+                Routine.Start(ShowRoutine());
+            }
 
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
             //m_uiTimer.Init(requestTimeout, false);

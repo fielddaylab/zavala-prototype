@@ -1,3 +1,4 @@
+using BeauRoutine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +27,10 @@ namespace Zavala
 
             m_centerOffset = new Vector3(xOffset, RELATIVE_Y, zOffset);
 
-            TransferToTile(parentTile);
+            this.transform.position = new Vector3(
+                parentTile.transform.position.x + m_centerOffset.x,
+                parentTile.transform.position.y,
+                parentTile.transform.position.z + m_centerOffset.z);
 
             m_currTile = parentTile;
             m_currTile.AddPipDirect(this);
@@ -60,10 +64,23 @@ namespace Zavala
         #endregion // Handlers
 
         public void TransferToTile(Tile newTile) {
-            this.transform.position = new Vector3(
+            Vector3 newPos = new Vector3(
                 newTile.transform.position.x + m_centerOffset.x,
                 newTile.transform.position.y,
                 newTile.transform.position.z + m_centerOffset.z);
+
+            bool waterDest = newTile.GetComponent<Water>() != null;
+
+            Routine.Start(TransferRoutine(newPos, waterDest));
+        }
+
+        private IEnumerator TransferRoutine(Vector3 newPos, bool waterDest) {
+            float transitionTime = 7.5f;
+            if (waterDest) {
+                transitionTime = 3.75f;
+            }
+
+            yield return this.transform.MoveTo(newPos, transitionTime);
         }
     }
 }

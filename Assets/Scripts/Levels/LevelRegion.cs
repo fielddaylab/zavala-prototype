@@ -123,28 +123,6 @@ namespace Zavala
             if (m_regionBounds == null) { return false; }
 
             return m_regionBounds.bounds.Contains(pos);
-
-            /*
-            // z is left, -z is right, x is up, -x is down (I know, it's bad) 
-            if (pos.z < m_bounds.Left && pos.z > m_bounds.Right && pos.x < m_bounds.Top && pos.x > m_bounds.Bottom) {
-                return true;
-            }
-            
-            if (!(pos.z < m_bounds.Left)) {
-                Debug.Log("[BoundsCheck] " + pos + " failed Left");
-            }
-            if (!(pos.z > m_bounds.Right)) {
-                Debug.Log("[BoundsCheck] " + pos + " failed Right");
-            }
-            if (!(pos.x < m_bounds.Top)) {
-                Debug.Log("[BoundsCheck] " + pos + " failed Top");
-            }
-            if (!(pos.x > m_bounds.Bottom)) {
-                Debug.Log("[BoundsCheck] " + pos + " failed Bottom: pos x " + pos.x + " is less than or equal to " + m_bounds.Bottom);
-            }
-            
-            return false;
-            */
         }
 
         public void RegisterWithClearingHouse(StoresProduct storesProduct) {
@@ -165,6 +143,8 @@ namespace Zavala
             m_activeRegion = true;
             m_regionContainer.SetActive(true);
             RegionMgr.Instance.TrackRegion(this);
+
+            EventMgr.Instance.TriggerEvent(ID.RegionActivationCompleted, EventArgs.Empty);
         }
 
         private void DeactivateRegion() {
