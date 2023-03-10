@@ -38,7 +38,10 @@ namespace Zavala.Events
         // Regions
         RegionToggled,
         RegionSwitched,
-        CameraMoved
+        CameraMoved,
+
+        // Phosph
+        PipsGenerated
     }
 
     #endregion // Enums
@@ -138,6 +141,17 @@ namespace Zavala.Events
         }
     }
 
+    public class PipsGeneratedEventArgs : EventArgs
+    {
+        public LevelRegion Region;
+        public int Quantity;
+
+        public PipsGeneratedEventArgs(LevelRegion region, int quantity) {
+            Region = region;
+            Quantity = quantity;
+        }
+    }
+
 
     #endregion // EventArgs
 
@@ -194,6 +208,12 @@ namespace Zavala.Events
         public event EventHandler<EventArgs> CameraMoved;
 
         #endregion // Region
+
+        #region Phosph 
+
+        public event EventHandler<PipsGeneratedEventArgs> PipsGenerated;
+
+        #endregion // Phosph
 
         #region Lenses
 
@@ -254,6 +274,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.CameraMoved:
                     CameraMoved?.Invoke(this, args);
+                    break;
+                case Events.ID.PipsGenerated:
+                    PipsGenerated?.Invoke(this, (PipsGeneratedEventArgs)args);
                     break;
                 default:
                     break;

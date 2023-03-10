@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Tiles;
 
 namespace Zavala.Functionalities
@@ -34,7 +35,13 @@ namespace Zavala.Functionalities
                         Debug.Log("[Instantiate] Instantiating pip prefab");
                         PhosphPip newPip = Instantiate(GameDB.Instance.PipPrefab).GetComponent<PhosphPip>();
                         newPip.Init(destTile);
+
                     }
+
+                    EventMgr.Instance.TriggerEvent(ID.PipsGenerated, new PipsGeneratedEventArgs(
+                        RegionMgr.Instance.GetRegionByPos(destTile.transform.position),
+                        m_resourceAmtMap[p].Amt)
+                        );
                 }
             }
         }
