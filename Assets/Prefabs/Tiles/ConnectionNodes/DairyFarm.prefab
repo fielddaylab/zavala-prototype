@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5af74eb5dcb654ebec453d222ce493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CycleTime: 12
+  CycleTime: 18
   m_isVisible: 1
 --- !u!114 &6458409256630919425
 MonoBehaviour:

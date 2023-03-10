@@ -1,9 +1,11 @@
+using BeauRoutine;
 using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using UnityEditor;
 using UnityEngine;
 using Zavala.Events;
 using Zavala.Resources;
@@ -271,14 +273,15 @@ namespace Zavala.Functionalities
             }
         }
 
-        public bool TryRemoveFromStorage(Resources.Type productType, int units) {
+        public bool TryRemoveFromStorage(Resources.Type productType, int units, out bool finalSupply) {
             if (m_storageList.Count <= 0) {
                 Debug.Log("[StoresProduct] Storage is empty! Not removing from list.");
                 // StorageEmpty.Invoke(this, EventArgs.Empty);
+                finalSupply = false;
                 return false;
             }
             else {
-                RemoveFromStorageList(productType, units);
+                RemoveFromStorageList(productType, units, out finalSupply);
 
                 // RedistributeQueue();
                 RemovedStorage?.Invoke(this, new ResourceEventArgs(productType, units));
@@ -291,7 +294,7 @@ namespace Zavala.Functionalities
             }
         }
 
-        private void RemoveFromStorageList(Resources.Type productType, int units) {
+        private void RemoveFromStorageList(Resources.Type productType, int units, out bool finalSupply) {
             for (int i = 0; i < m_storageList.Count; i++) {
                 if (m_storageList[i].Type == productType) {
                     if (units >= m_storageList[i].GetFreeUnits()) {
@@ -300,6 +303,7 @@ namespace Zavala.Functionalities
                         Destroy(m_storageList[i].UI.gameObject);
                         m_storageList.RemoveAt(i);
                         Debug.Log("[StoresProduct] Removed from list");
+                        finalSupply = true;
                     }
                     else {
                         StoredProduct oldItem = m_storageList[i];
@@ -307,6 +311,7 @@ namespace Zavala.Functionalities
                         m_storageList[i] = newItem;
 
                         Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].GetFreeUnits());
+                        finalSupply = false;
                     }
 
                     return;
@@ -320,6 +325,7 @@ namespace Zavala.Functionalities
                             Destroy(m_storageList[i].UI.gameObject);
                             m_storageList.RemoveAt(i);
                             Debug.Log("[StoresProduct] Removed from list");
+                            finalSupply = true;
                         }
                         else {
                             StoredProduct oldItem = m_storageList[i];
@@ -327,12 +333,15 @@ namespace Zavala.Functionalities
                             m_storageList[i] = newItem;
 
                             Debug.Log("[StoresProduct] Removed " + units + " from " + productType + " in storage. Remaining: " + m_storageList[i].GetFreeUnits());
+                            finalSupply = false;
                         }
 
                         return;
                     }
                 }
             }
+
+            finalSupply = false;
         }
 
         private void RedistributeQueue() {
@@ -372,48 +381,67 @@ namespace Zavala.Functionalities
         }
 
         private void QuerySellSolution() {
+            Routine.Start(SellSolutionRoutine());
+        }
+
+        private IEnumerator SellSolutionRoutine() {
             // Query sell solution
             for (int i = 0; i < m_storageList.Count; i++) {
+                // for each product, find a buyer
+
                 Resources.Type resourceType = m_storageList[i].Type;
 
                 if (m_storageList[i].GetFreeUnits() <= 0) {
                     continue;
                 }
 
-                // for each product, find a buyer
                 int unitsSold;
-                List<RoadSegment> path;
-                Requests recipient = RegionMgr.Instance.GetRegionByPos(this.transform.position).QueryClearingHouseSolution(this, resourceType, out unitsSold, out path);
 
-                Debug.Log("[StoresProduct] " + this.gameObject.name + " trying to sell " + resourceType + ". UnitsSold: " + unitsSold);
+                bool finalSupply = false; // true if this resource is now empty from storage
 
-                if (recipient != null) {
-                    Debug.Log("[StoresProduct] Query was successful. length of path: " + (path == null ? 0 : path.Count) + ". Units sold: " + unitsSold);
+                do {
+                    List<RoadSegment> path;
+                    Requests recipient = RegionMgr.Instance.GetRegionByPos(this.transform.position).QueryClearingHouseSolution(this, resourceType, out unitsSold, out path);
 
-                    // check if let it sit option
-                    if (recipient.GetComponent<LetItSit>() != null) {
-                        // Let it sit option only available to this StoresProduct
+                    Debug.Log("[StoresProduct] " + this.gameObject.name + " trying to sell " + resourceType + ". UnitsSold: " + unitsSold);
 
-                        Debug.Log("[StoresProduct] Decided to let sit: " + unitsSold);
+                    if (recipient != null) {
+                        Debug.Log("[StoresProduct] Query was successful. length of path: " + (path == null ? 0 : path.Count) + ". Units sold: " + unitsSold);
 
-                        // Allocate units
-                        this.LetSit(resourceType, unitsSold);
-                    }
-                    else {
-                        // found resource -- try summon truck
+                        // check if let it sit option
+                        if (recipient.GetComponent<LetItSit>() != null) {
+                            // Let it sit option only available to this StoresProduct
 
-                        if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient)) {
-                            Debug.Log("[Requests] Truck summoned successfully");
+                            Debug.Log("[StoresProduct] Decided to let sit: " + unitsSold);
 
-                            // set request to en-route
-                            recipient.SetEnRoute(resourceType, unitsSold);
+                            // Allocate units
+                            this.LetSit(resourceType, unitsSold);
                         }
                         else {
-                            Debug.Log("[Requests] Truck not summoned");
+                            // found resource -- try summon truck
+
+                            if (RoadMgr.Instance.TrySummonTruck(resourceType, unitsSold, path, this, recipient, out finalSupply)) {
+                                Debug.Log("[Requests] Truck summoned successfully");
+
+                                // set request to en-route
+                                recipient.SetEnRoute(resourceType, unitsSold);
+                            }
+                            else {
+                                Debug.Log("[Requests] Truck not summoned");
+                            }
+
+                            if (finalSupply) {
+                                break;
+                            }
                         }
                     }
+                } while (unitsSold > 0 && m_storageList[i].GetFreeUnits() > 0);
+
+                if (finalSupply) {
+                    i--;
                 }
             }
+            yield return null;
         }
 
         #region Handlers
@@ -423,7 +451,8 @@ namespace Zavala.Functionalities
             Debug.Log("[StoresProduct] storage expired");
             StorageExpired?.Invoke(this, new ResourceEventArgs(expiredProduct.GetResourceType(), expiredProduct.GetUnits()));
 
-            if (TryRemoveFromStorage(expiredProduct.GetResourceType(), expiredProduct.GetUnits())) {
+            bool finalSupply;
+            if (TryRemoveFromStorage(expiredProduct.GetResourceType(), expiredProduct.GetUnits(), out finalSupply)) {
                 RedistributeQueue();
             }
             else {

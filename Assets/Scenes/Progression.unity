@@ -17043,11 +17043,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SitOption (DairyFarm A)
       objectReference: {fileID: 0}
-    - target: {fileID: 4718787402710229058, guid: 172ece719b73f8f4fb6fc5cd553f9b9e,
-        type: 3}
-      propertyPath: Products.Array.data[1].Units
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172ece719b73f8f4fb6fc5cd553f9b9e, type: 3}
 --- !u!114 &1839166960 stripped

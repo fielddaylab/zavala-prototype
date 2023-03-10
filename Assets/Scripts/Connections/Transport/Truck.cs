@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,8 @@ namespace Zavala
         [SerializeField] private TMP_Text m_unitsText;
         [SerializeField] private float m_speed;
         [SerializeField] private float m_leakRate;
+
+        private float m_startStagger;
 
         private Resources.Type m_resourceType;
         private int m_units;
@@ -84,6 +87,8 @@ namespace Zavala
 
             EventMgr.Instance.AllVarsUpdated += HandleAllVarsUpdated;
             ProcessUpdatedVars(SettingsMgr.Instance.GetCurrAllVars());
+
+            m_startStagger = Random.Range(0f, 0.5f);
         }
 
         private void OnDisable() {
@@ -92,6 +97,12 @@ namespace Zavala
 
         private void Update() {
             if (Time.timeScale == 0) { return; }
+
+            if (m_startStagger > 0f) {
+                m_startStagger -= Time.deltaTime;
+                return;
+            }
+
             TraverseRoad();
             UpdateAudio();
         }

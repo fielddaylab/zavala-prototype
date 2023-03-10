@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_greenifyRate: 10
   m_bloomObj: {fileID: 8504759255186440218}
-  m_bloomThreshold: 4
+  m_bloomThreshold: 6
 --- !u!1 &2154089508849942271
 GameObject:
   m_ObjectHideFlags: 0

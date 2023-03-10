@@ -646,8 +646,8 @@ namespace Zavala.Roads
 
         #region Truck Summons
 
-        public bool TrySummonTruck(Resources.Type resourceType, int units, List<RoadSegment> path, StoresProduct supplier, Requests recipient) {
-            if (supplier.TryRemoveFromStorage(resourceType, units)) {
+        public bool TrySummonTruck(Resources.Type resourceType, int units, List<RoadSegment> path, StoresProduct supplier, Requests recipient, out bool finalSupply) {
+            if (supplier.TryRemoveFromStorage(resourceType, units, out finalSupply)) {
                 // send to recipient
 
                 // find start tile

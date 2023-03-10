@@ -193,7 +193,8 @@ namespace Zavala.Functionalities
                         // found resource -- try summon truck
 
                         Debug.Log("[Requests] Query was successful. length of path: " + path.Count + ". Units found: " + foundUnits);
-                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, foundUnits, path, supplier, this)) {
+                        bool finalSupply;
+                        if (RoadMgr.Instance.TrySummonTruck(foundResourceType, foundUnits, path, supplier, this, out finalSupply)) {
                             Debug.Log("[Requests] Truck summoned successfully");
 
                             // set request to en-route
@@ -317,7 +318,7 @@ namespace Zavala.Functionalities
                 }
                 // handle SoilEnricher case (Manure OR Fertilizer)
                 else if (m_activeRequests[i].GetResourceType() == Resources.Type.SoilEnricher && m_activeRequests[i].GetFulfillableUnits() > 0) {
-                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer) {
+                    if (resourceType == Resources.Type.Manure || resourceType == Resources.Type.Fertilizer && m_activeRequests[i].GetFulfillableUnits() > 0) {
                         return m_activeRequests[i].GetFulfillableUnits();
                     }
                 }
@@ -351,10 +352,11 @@ namespace Zavala.Functionalities
             Debug.Log("[Requests] request expired");
 
             // Try Import
-            if (m_importSource != null) {
+            if (expiredRequest.GetFulfillableUnits() > 0 && m_importSource != null) {
                 Debug.Log("[Requests] Import source exists.");
                 Resources.Type importType = expiredRequest.GetResourceType() == Resources.Type.SoilEnricher ? Resources.Type.Manure : expiredRequest.GetResourceType();
-                if (RoadMgr.Instance.TrySummonTruck(importType, expiredRequest.GetRemainingUnits(), m_importSource.GetPath(), m_importSource.StoresComponent, this)) {
+                bool finalSupply;
+                if (RoadMgr.Instance.TrySummonTruck(importType, expiredRequest.GetFulfillableUnits(), m_importSource.GetPath(), m_importSource.StoresComponent, this, out finalSupply)) {
                     Debug.Log("[Requests] Truck summoned successfully");
 
                     // set request to en-route
@@ -363,6 +365,9 @@ namespace Zavala.Functionalities
                 else {
                     Debug.Log("[Requests] Truck not summoned");
                 }
+            }
+            else if (expiredRequest.GetEnRoute() > 0) {
+                // delivery on its way, hang tight!
             }
             else {
                 Routine.Start(expiredRequest.Fade()).OnComplete(() => {

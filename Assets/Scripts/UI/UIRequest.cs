@@ -130,6 +130,10 @@ namespace Zavala
             //m_bg.color = GameDB.Instance.UIRequestEnRouteColor;
         }
 
+        public int GetEnRoute() {
+            return m_enRouteUnits;
+        }
+
         public void ModifyUnits(int amt) {
             if (!m_continuous) {
                 m_units += amt;
