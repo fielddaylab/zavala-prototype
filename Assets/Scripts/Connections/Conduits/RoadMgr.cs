@@ -304,6 +304,9 @@ namespace Zavala.Roads
                 RoadBuildDir edgeDir = CalcBuildDirByPos(prevPos, currPos);
                 float elevationDelta = CalcElevationDeltaByPos(prevPos, currPos);
 
+                Debug.Log("[RoadDir] index " + segIndex + " || dir: " + edgeDir);
+
+
                 GameObject prevObj;
                 if (segIndex == 0) {
                     if (firstRoad != null) {

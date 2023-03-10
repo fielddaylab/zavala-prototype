@@ -31,7 +31,9 @@ namespace Zavala
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
+        }
 
+        private void Start() {
             m_requestsComponent.QueueRequest();
         }
 
@@ -52,7 +54,7 @@ namespace Zavala
         private void HandleRequestFulfilled(object sender, ResourceEventArgs args) {
             Debug.Log("[ExportDepot] Request fulfilled");
 
-            m_requestsComponent.QueueRequest(); // TEMP
+            // m_requestsComponent.QueueRequest();
         }
 
         private void HandleRequestExpired(object sender, EventArgs args) {

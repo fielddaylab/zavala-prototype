@@ -12,10 +12,13 @@ namespace Zavala
         private Inspectable m_inspectComponent;
 
         private void OnMouseEnter() {
+            Debug.Log("[Toll] mouse enter");
             RoadMgr.Instance.SetLastKnownToll(this);
         }
 
         private void OnMouseExit() {
+            Debug.Log("[Toll] mouse exit");
+
             RoadMgr.Instance.RemoveLastKnownToll(this);
         }
 

@@ -11,7 +11,9 @@ namespace Zavala
     // [RequireComponent(typeof(ClearingHouse))]
     public class LevelRegion : MonoBehaviour
     {
-        [Serializable] // TODO: could change this to a polygon collider if we need more granularity
+        [SerializeField] private BoxCollider m_regionBounds;
+
+        [Serializable]
         private struct RegionBounds
         {
             public float Left;
@@ -28,7 +30,8 @@ namespace Zavala
         }
 
         [Serializable]
-        public struct SimulationKnobs {
+        public struct SimulationKnobs
+        {
             // Percentages
             public SaleTax SaleTaxes;
             public float SittingManureTax;
@@ -60,7 +63,8 @@ namespace Zavala
         }
 
         [Serializable]
-        public struct BidBuyPrice {
+        public struct BidBuyPrice
+        {
             public int GrainFarmManure;
             public int GrainFarmFertilizer;
             public int CAFOGrain;
@@ -116,6 +120,11 @@ namespace Zavala
         }
 
         public bool WithinBounds(Vector3 pos) {
+            if (m_regionBounds == null) { return false; }
+
+            return m_regionBounds.bounds.Contains(pos);
+
+            /*
             // z is left, -z is right, x is up, -x is down (I know, it's bad) 
             if (pos.z < m_bounds.Left && pos.z > m_bounds.Right && pos.x < m_bounds.Top && pos.x > m_bounds.Bottom) {
                 return true;
@@ -135,6 +144,7 @@ namespace Zavala
             }
             
             return false;
+            */
         }
 
         public void RegisterWithClearingHouse(StoresProduct storesProduct) {
