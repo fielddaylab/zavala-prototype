@@ -21255,6 +21255,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
+      propertyPath: m_trackingRegions.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
       propertyPath: m_unlockThresholds.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -21281,6 +21286,31 @@ PrefabInstance:
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_regionsToTrack.Array.data[4]
+      value: 
+      objectReference: {fileID: 499282501}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_trackingRegions.Array.data[0]
+      value: 
+      objectReference: {fileID: 34968414}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_trackingRegions.Array.data[1]
+      value: 
+      objectReference: {fileID: 287066898}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_trackingRegions.Array.data[2]
+      value: 
+      objectReference: {fileID: 1690881454}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_trackingRegions.Array.data[3]
+      value: 
+      objectReference: {fileID: 1092747037}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_trackingRegions.Array.data[4]
       value: 
       objectReference: {fileID: 499282501}
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,

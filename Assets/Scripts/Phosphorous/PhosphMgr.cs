@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using Zavala.Events;
-using Zavala.Interact;
 using Zavala.Tiles;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Zavala
 {
@@ -18,7 +14,7 @@ namespace Zavala
         [SerializeField] private float m_tickTime; // time between simulation ticks
         [SerializeField] private float m_ticksPerDensityRecalculation;
 
-        [SerializeField] private List<LevelRegion> m_regionsToTrack;
+        [SerializeField] private LevelRegion[] m_trackingRegions;
         [SerializeField] private List<UnlockThreshold> m_unlockThresholds;
 
         private Dictionary<LevelRegion, NutrientDensity> m_densityMap;
@@ -56,9 +52,11 @@ namespace Zavala
             m_waterIteration = false;
 
             m_densityMap = new Dictionary<LevelRegion, NutrientDensity>();
-            
-            for (int i = 0; i < m_regionsToTrack.Count; i++) {
-                m_densityMap.Add(m_regionsToTrack[i], new NutrientDensity(-1));
+
+            Debug.Log("[Density] num regions to track: " + m_trackingRegions.Length);
+            Debug.Log("[Density] num thresholds to track: " + m_unlockThresholds.Count);
+            for (int i = 0; i < m_trackingRegions.Length; i++) {
+                m_densityMap.Add(m_trackingRegions[i], new NutrientDensity(-1));
             }
         }
 
@@ -190,9 +188,9 @@ namespace Zavala
         }
 
         private void RecalculateDensities() {
-            Debug.Log("[PhosphMgr] [Density] Recalculating densities for " + m_regionsToTrack.Count + " regions...");
+            Debug.Log("[PhosphMgr] [Density] Recalculating densities for " + m_trackingRegions.Length + " regions...");
 
-            foreach (LevelRegion region in m_regionsToTrack) {
+            foreach (LevelRegion region in m_trackingRegions) {
                 NutrientDensity entry = m_densityMap[region];
 
                 bool calcAvg = false;
