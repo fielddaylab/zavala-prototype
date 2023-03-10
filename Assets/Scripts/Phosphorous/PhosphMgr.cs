@@ -190,9 +190,9 @@ namespace Zavala
         }
 
         private void RecalculateDensities() {
-            Debug.Log("[PhosphMgr] [Density] Recalculating densities...");
+            Debug.Log("[PhosphMgr] [Density] Recalculating densities for " + m_regionsToTrack.Count + " regions...");
 
-            foreach (var region in m_regionsToTrack) {
+            foreach (LevelRegion region in m_regionsToTrack) {
                 NutrientDensity entry = m_densityMap[region];
 
                 bool calcAvg = false;
