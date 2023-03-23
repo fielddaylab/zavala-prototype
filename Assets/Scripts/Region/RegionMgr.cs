@@ -53,6 +53,9 @@ namespace Zavala
 
             if (m_levelRegions.Count == 1) {
                 CurrRegion = region;
+
+                Debug.Log("[RegionMgr] New current region: " + CurrRegion.gameObject.name);
+                EventMgr.Instance.TriggerEvent(ID.RegionSwitched, new RegionSwitchedEventArgs(CurrRegion));
             }
         }
 
@@ -134,7 +137,6 @@ namespace Zavala
                 LevelRegion overRegion = GetRegionByPos(hit.collider.gameObject.transform.position);
                 if (overRegion != CurrRegion) {
                     CurrRegion = GetRegionByPos(hit.collider.gameObject.transform.position);
-                    // TODO: event for curr region updated
                     Debug.Log("[RegionMgr] New current region: " + CurrRegion.gameObject.name);
 
                     EventMgr.Instance.TriggerEvent(ID.RegionSwitched, new RegionSwitchedEventArgs(CurrRegion));

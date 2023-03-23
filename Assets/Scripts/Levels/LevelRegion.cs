@@ -99,6 +99,10 @@ namespace Zavala
         [Header("Simulation Knobs")]
         public SimulationKnobs SimKnobs;
 
+        [Header("Advisors")]
+        public AdvisorGroup[] Advisors;
+
+
         private void Awake() {
             EventMgr.Instance.RegionToggled += HandleRegionToggled;
             GridMgr.Init();
