@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Cards;
 using Zavala.Events;
 using Zavala.Interact;
 using Zavala.Lenses;
@@ -27,6 +28,7 @@ namespace Zavala
         [SerializeField] private NarrativeMgr m_narrativeMgr;
         [SerializeField] private TileGenerator m_tileGenerator;
         [SerializeField] private LevelMgr m_levelMgr;
+        [SerializeField] private CardMgr m_cardMgr;
         [SerializeField] private AdvisorUIMgr m_advisorUIMgr;
 
         private void Awake() {
@@ -53,6 +55,7 @@ namespace Zavala
             m_narrativeMgr.Init();
             m_tileGenerator.Init();
             m_levelMgr.Init();
+            m_cardMgr.Init();
             m_advisorUIMgr.Init();
         }
 

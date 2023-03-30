@@ -8,8 +8,14 @@ using Zavala.Roads;
 using Zavala.Tiles;
 using static Zavala.Functionalities.StoresProduct;
 
-namespace Zavala
+namespace Zavala.Sim
 {
+    public enum SimLeverID
+    {
+        RunoffPenalty,
+        ExportTax
+    }
+
     /// <summary>
     /// Producers and Requesters register with the clearing house.
     /// When new producers or requesters are added to the market, the clearing house solves the equation of optimal matches.

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4575186332173189375}
   - component: {fileID: 7097640716232579406}
   - component: {fileID: 5076744025247887119}
+  - component: {fileID: 7283042880983278034}
   m_Layer: 5
   m_Name: ChoiceSlot
   m_TagString: Untagged
@@ -38,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -210, y: 81}
-  m_SizeDelta: {x: 120, y: 206}
+  m_SizeDelta: {x: 105, y: 155}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1855864630379906325
 CanvasRenderer:
@@ -68,8 +69,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: d30833ea202ca2049891f04365869009, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -90,7 +91,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60154789baf98014991da24d870b3c74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ValidChoiceIds: []
+  m_slotType: 0
+  m_button: {fileID: 5076744025247887119}
+  m_slotClickable: {fileID: 7283042880983278034}
 --- !u!114 &5076744025247887119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,3 +138,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7283042880983278034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8321773500802442964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a2ad405fb8e2a418433c80daa063ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -14,7 +14,9 @@ namespace Zavala
     public class AdvisorButton : MonoBehaviour
     {
         public Button Button;
-        public Image Image;
+        public Image IconImage;
+        public Image Base;
+        public Image Outline;
         public AudioClip Shout;
 
         public RectTransform Root;
@@ -27,7 +29,10 @@ namespace Zavala
             Button.onClick.RemoveAllListeners();
 
             Shout = data.Shout;
-            Image.sprite = data.m_AdvisorImage;
+            IconImage.sprite = data.m_AdvisorImage;
+            IconImage.SetNativeSize();
+            Base.color = data.BaseColor;
+            Outline.color = data.OutlineColor;
             Button.onClick.AddListener(delegate { data.m_UI.Show(); });
             Button.onClick.AddListener(PlayShout);
         }

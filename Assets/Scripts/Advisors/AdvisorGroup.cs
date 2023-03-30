@@ -15,6 +15,8 @@ namespace Zavala
             public Sprite m_AdvisorImage;
             public AdvisorUI m_UI;
             public AudioClip Shout; // audio that plays on select
+            public Color BaseColor;
+            public Color OutlineColor;
         }
 
         public AdvisorButtonData ButtonData;

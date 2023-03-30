@@ -1,0 +1,46 @@
+// Runoff Penalty
+
+::runoff-penalty-none
+@Header	Runoff Penalty
+@Severity	none
+@SimId	RunoffPenalty
+
+::runoff-penalty-low
+@Header	Runoff Penalty
+@Severity	low
+@SimId	RunoffPenalty
+
+::runoff-penalty-med
+@Header	Runoff Penalty
+@Severity	medium
+@SimId	RunoffPenalty
+
+::runoff-penalty-high
+@Header	Runoff Penalty
+@Severity	high
+@SimId	RunoffPenalty
+
+
+// Export Tax
+
+::export-tax-none
+@Header	Export Tax
+@Severity	none
+@SimId	ExportTax
+
+::export-tax-low
+@Header	Export Tax
+@Severity	low
+@SimId	ExportTax
+
+::export-tax-med
+@Header	Export Tax
+@Severity	medium
+@SimId	ExportTax
+
+::export-tax-high
+@Header	Export Tax
+@Severity	high
+@SimId	ExportTax
+
+-----
