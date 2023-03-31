@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using Zavala.Cards;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Roads;
@@ -13,7 +14,8 @@ namespace Zavala.Sim
     public enum SimLeverID
     {
         RunoffPenalty,
-        ExportTax
+        ExportTax,
+        GooseRace
     }
 
     /// <summary>

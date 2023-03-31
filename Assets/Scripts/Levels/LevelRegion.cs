@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Cards;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Sim;
@@ -122,6 +123,8 @@ namespace Zavala
             if (!m_startsActive) {
                 DeactivateRegion();
             }
+
+            EventMgr.Instance.ChoiceSlotUpdated += HandleChoiceSlotUpdated;
         }
 
         public bool WithinBounds(Vector3 pos) {
@@ -182,6 +185,10 @@ namespace Zavala
             return m_moneyUnits;
         }
 
+        public int GetRegionNum() {
+            return m_regionNum;
+        }
+
         #endregion // Helpers
 
         #region Handlers
@@ -210,6 +217,64 @@ namespace Zavala
         private void HandleLevelRestarted(object sender, EventArgs args) {
             ResetMoney();
         }
+
+        private void HandleChoiceSlotUpdated(object sender, ChoiceSlotEventArgs args) {
+            if (args.RegionNum != m_regionNum) {
+                return;
+            }
+
+            CardData data = args.Card.GetCardData();
+
+            // Apply regional changes to sim according to cards
+            switch (data.SimID) {
+                case SimLeverID.RunoffPenalty:
+                    switch (data.Severity) {
+                        case Severity.None:
+                            SimKnobs.SittingManureTax = 0;
+                            break;
+                        case Severity.Low:
+                            SimKnobs.SittingManureTax = 5;
+                            break;
+                        case Severity.Medium:
+                            SimKnobs.SittingManureTax = 25;
+                            break;
+                        case Severity.High:
+                            SimKnobs.SittingManureTax = 100;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+                case SimLeverID.ExportTax:
+                    switch (data.Severity) {
+                        case Severity.None:
+                            SimKnobs.SaleTaxes.ExternalManure = 0;
+                            SimKnobs.SaleTaxes.ExternalFertilizer = 0;
+                            break;
+                        case Severity.Low:
+                            SimKnobs.SaleTaxes.ExternalManure = 5;
+                            SimKnobs.SaleTaxes.ExternalFertilizer = 5;
+                            break;
+                        case Severity.Medium:
+                            SimKnobs.SaleTaxes.ExternalManure = 25;
+                            SimKnobs.SaleTaxes.ExternalFertilizer = 25;
+                            break;
+                        case Severity.High:
+                            SimKnobs.SaleTaxes.ExternalManure = 100;
+                            SimKnobs.SaleTaxes.ExternalFertilizer = 100;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            Debug.Log("[LevelRegion] updated regional sim according to newly selected card: " + data.CardID);
+        }
+
 
         #endregion // Handlers
 

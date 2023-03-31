@@ -43,4 +43,17 @@
 @Severity	high
 @SimId	ExportTax
 
+// Arbitary Policies
+
+::arbitrary-geese-none
+@Header	Goose Races!
+@Severity	none
+@SimId	GooseRace
+
+::arbitrary-geese-high
+@Header	Goose Races!
+@Severity	high
+@SimId	GooseRace
+
+
 -----

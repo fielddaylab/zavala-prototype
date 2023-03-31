@@ -110,7 +110,7 @@ namespace Zavala.Cards
 
         private void HandleClick() {
             if (!m_activated) {
-                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceSlotUpdated, new ChoiceSlotEventArgs(this));
+                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceSlotUpdated, new ChoiceSlotEventArgs(this, RegionMgr.Instance.CurrRegion.GetRegionNum()));
                 SetInSlot();
             }
             else {

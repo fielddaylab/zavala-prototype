@@ -160,9 +160,11 @@ namespace Zavala.Events
     public class ChoiceSlotEventArgs : EventArgs
     {
         public SlotCard Card;
+        public int RegionNum;
 
-        public ChoiceSlotEventArgs(SlotCard card) {
+        public ChoiceSlotEventArgs(SlotCard card, int regionNum) {
             Card = card;
+            RegionNum = regionNum;
         }
     }
 
