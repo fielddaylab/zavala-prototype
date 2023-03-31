@@ -5,6 +5,7 @@ using BeauUtil;
 using BeauRoutine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 namespace Zavala
 {
@@ -19,7 +20,7 @@ namespace Zavala
         [SerializeField] private ChoiceSlot[] m_ChoiceSlots;
         [SerializeField] private Button m_CloseButton;
         [SerializeField] private TMP_Text m_SummaryText;
-        [SerializeField] private Color m_ColorTheme;
+        public Color ColorTheme;
 
         private Routine m_TransitionRoutine;
 

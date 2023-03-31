@@ -88,7 +88,7 @@ MonoBehaviour:
   m_ChoiceSlots: []
   m_CloseButton: {fileID: 3736844321628815968}
   m_SummaryText: {fileID: 2043568088893664584}
-  m_ColorTheme: {r: 0, g: 0, b: 0, a: 0}
+  ColorTheme: {r: 0.85882354, g: 0.6901961, b: 0.43137255, a: 1}
 --- !u!1 &1133629168659754938
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,6 +836,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7283042880983278034, guid: 26513ef5f0fa07442adc7bcc9f890840,
+        type: 3}
+      propertyPath: m_advisorUI
+      value: 
+      objectReference: {fileID: 1687233502414901384}
     - target: {fileID: 8321773500802442964, guid: 26513ef5f0fa07442adc7bcc9f890840,
         type: 3}
       propertyPath: m_Name
@@ -971,6 +976,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7283042880983278034, guid: 26513ef5f0fa07442adc7bcc9f890840,
+        type: 3}
+      propertyPath: m_advisorUI
+      value: 
+      objectReference: {fileID: 1687233502414901384}
     - target: {fileID: 8321773500802442964, guid: 26513ef5f0fa07442adc7bcc9f890840,
         type: 3}
       propertyPath: m_Name
@@ -1106,6 +1116,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7283042880983278034, guid: 26513ef5f0fa07442adc7bcc9f890840,
+        type: 3}
+      propertyPath: m_advisorUI
+      value: 
+      objectReference: {fileID: 1687233502414901384}
     - target: {fileID: 8321773500802442964, guid: 26513ef5f0fa07442adc7bcc9f890840,
         type: 3}
       propertyPath: m_Name
@@ -1241,6 +1256,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7283042880983278034, guid: 26513ef5f0fa07442adc7bcc9f890840,
+        type: 3}
+      propertyPath: m_advisorUI
+      value: 
+      objectReference: {fileID: 1687233502414901384}
     - target: {fileID: 8321773500802442964, guid: 26513ef5f0fa07442adc7bcc9f890840,
         type: 3}
       propertyPath: m_Name

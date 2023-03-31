@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zavala.Cards;
 using Zavala.Settings;
 
 namespace Zavala.Events
@@ -42,7 +43,10 @@ namespace Zavala.Events
         RegionActivationCompleted,
 
         // Phosph
-        PipsGenerated
+        PipsGenerated,
+
+        // Choice Slots
+        ChoiceSlotUpdated
     }
 
     #endregion // Enums
@@ -153,6 +157,15 @@ namespace Zavala.Events
         }
     }
 
+    public class ChoiceSlotEventArgs : EventArgs
+    {
+        public SlotCard Card;
+
+        public ChoiceSlotEventArgs(SlotCard card) {
+            Card = card;
+        }
+    }
+
 
     #endregion // EventArgs
 
@@ -223,6 +236,14 @@ namespace Zavala.Events
 
         #endregion // Lenses
 
+
+        #region Choice Slots
+
+        public event EventHandler<ChoiceSlotEventArgs> ChoiceSlotUpdated;
+
+        #endregion // ChoiceSlots
+
+
         public void Init() {
             Instance = this;
         }
@@ -282,6 +303,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.PipsGenerated:
                     PipsGenerated?.Invoke(this, (PipsGeneratedEventArgs)args);
+                    break;
+                case Events.ID.ChoiceSlotUpdated:
+                    ChoiceSlotUpdated?.Invoke(this, (ChoiceSlotEventArgs)args);
                     break;
                 default:
                     break;

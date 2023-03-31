@@ -21,7 +21,7 @@ namespace Zavala.Cards
         [SerializeField] private TextAsset m_cardDefs;
 
         private Dictionary<string, CardData> m_allCards;
-        private Dictionary<string, CardData> m_unlockedCards;
+        private List<string> m_unlockedCards;
 
         private static string HEADER_TAG = "@header";
         private static string SEVERITY_TAG = "@severity";
@@ -42,13 +42,11 @@ namespace Zavala.Cards
             Instance = this;
 
             m_allCards = new Dictionary<string, CardData>();
-            m_unlockedCards = new Dictionary<string, CardData>();
+            m_unlockedCards = new List<string>();
 
             InitCardMap();
 
             PopulateCards();
-
-            m_unlockedCards = m_allCards; // temp
         }
 
         public List<CardData> GetOptions(SimLeverID slotType) {
@@ -57,8 +55,8 @@ namespace Zavala.Cards
             List<string> cardIDs = m_cardMap[slotType];
 
             foreach(string cardID in cardIDs) {
-                if (m_unlockedCards.ContainsKey(cardID)) {
-                    allOptions.Add(m_unlockedCards[cardID]);
+                if (m_unlockedCards.Contains(cardID)) {
+                    allOptions.Add(m_allCards[cardID]);
                 }
             }
 
@@ -83,6 +81,7 @@ namespace Zavala.Cards
                     CardData newCard = ConvertDefToCard(str);
 
                     m_allCards.Add(newCard.CardID, newCard);
+                    m_unlockedCards.Add(newCard.CardID); // temp hack
 
                     // add card to list of cards that should appear for the given sim id (queried when slot is selected)
                     List<string> relevant = m_cardMap[newCard.SimID];

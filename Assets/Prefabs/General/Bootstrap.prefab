@@ -4536,6 +4536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6769dab68153fc48860e2208d657ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SlotCardPrefab: {fileID: 0}
   m_cardDefs: {fileID: 4900000, guid: 4672093da0a89ce41966c9735fca4c7a, type: 3}
 --- !u!1 &4097381387167823435
 GameObject:
@@ -5099,7 +5100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8782287880836962334
 RectTransform:
   m_ObjectHideFlags: 0

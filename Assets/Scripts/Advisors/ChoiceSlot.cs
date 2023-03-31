@@ -17,6 +17,8 @@ namespace Zavala
 
         [SerializeField] private SlotClickable m_slotClickable;
 
+        private SlotCard m_selection;
+
         private void OnEnable() {
             m_button.onClick.AddListener(HandleClick);
         }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Events;
 using Zavala.Sim;
 
 namespace Zavala.Cards
@@ -31,7 +32,6 @@ namespace Zavala.Cards
         }
     }
 
-    [RequireComponent(typeof(SlotClickable))]
     public class SlotCard : MonoBehaviour
     {
         [SerializeField] private TMP_Text m_header;
@@ -40,13 +40,20 @@ namespace Zavala.Cards
 
         [SerializeField] private CardData m_data;
         [SerializeField] private Button m_button;
+        [SerializeField] private Canvas m_canvas;
 
         [SerializeField] private Sprite m_severityNone, m_severityLow, m_severityMed, m_severityHigh;
 
-        [SerializeField] private SlotClickable m_slotClickable;
+        private bool m_activated;
 
-        public void Init(CardData data) {
+        private AdvisorUI m_parentUI;
+
+        private SlotClickable m_baseSlot;
+
+        public void Init(CardData data, AdvisorUI parentUI, SlotClickable baseSlot) {
             m_header.text = data.Header;
+            m_parentUI = parentUI;
+            m_header.color = parentUI.ColorTheme;
 
             switch(data.Severity) {
                 case Severity.None:
@@ -68,8 +75,29 @@ namespace Zavala.Cards
                 default:
                     break;
             }
+            m_image.color = parentUI.ColorTheme;
+            m_secondaryText.color = parentUI.ColorTheme;
 
             m_data = data;
+
+            m_baseSlot = baseSlot;
+        }
+
+        public void SetInSlot() {
+            m_activated = true;
+            m_canvas.sortingOrder--;
+        }
+
+        public bool GetActivated() {
+            return m_activated;
+        }
+
+        public CardData GetCardData() {
+            return m_data;
+        }
+
+        public void RemoveFromSlot() {
+            m_canvas.sortingOrder++;
         }
 
         private void OnEnable() {
@@ -81,7 +109,13 @@ namespace Zavala.Cards
         }
 
         private void HandleClick() {
-            m_slotClickable.HandleClick(m_data.SimID);
+            if (!m_activated) {
+                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceSlotUpdated, new ChoiceSlotEventArgs(this));
+                SetInSlot();
+            }
+            else {
+                m_baseSlot.HandleClick(m_data.SimID);
+            }
         }
     }
 }
