@@ -239,7 +239,7 @@ MonoBehaviour:
       InternalFertilizer: 0
       ExternalManure: 0
       ExternalFertilizer: 0
-    SittingManureTax: 100
+    SittingManureTax: 0
     CAFOMinSellThreshold: 0
     ImportCosts:
       Grain: 5
@@ -256,6 +256,7 @@ MonoBehaviour:
       CAFOManure: 0
       CAFOMilk: 0
       DigesterFertilizer: 0
+  Advisors: []
 --- !u!114 &7554210868739939794
 MonoBehaviour:
   m_ObjectHideFlags: 0
