@@ -50,7 +50,9 @@ namespace Zavala.Cards
 
         private SlotClickable m_baseSlot;
 
-        public void Init(CardData data, AdvisorUI parentUI, SlotClickable baseSlot) {
+        private bool m_isGlobal;
+
+        public void Init(CardData data, AdvisorUI parentUI, SlotClickable baseSlot, bool isGlobal) {
             m_header.text = data.Header;
             m_parentUI = parentUI;
             m_header.color = parentUI.ColorTheme;
@@ -81,6 +83,8 @@ namespace Zavala.Cards
             m_data = data;
 
             m_baseSlot = baseSlot;
+
+            m_isGlobal = isGlobal;
         }
 
         public void SetInSlot() {
@@ -110,11 +114,11 @@ namespace Zavala.Cards
 
         private void HandleClick() {
             if (!m_activated) {
-                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceSlotUpdated, new ChoiceSlotEventArgs(this, RegionMgr.Instance.CurrRegion.GetRegionNum()));
+                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceSlotUpdated, new ChoiceSlotEventArgs(this, RegionMgr.Instance.CurrRegion.GetRegionNum(), m_isGlobal));
                 SetInSlot();
             }
             else {
-                m_baseSlot.HandleClick(m_data.SimID);
+                m_baseSlot.HandleClick(m_data.SimID, m_isGlobal);
             }
         }
     }

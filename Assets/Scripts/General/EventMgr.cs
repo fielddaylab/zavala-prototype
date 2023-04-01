@@ -161,10 +161,12 @@ namespace Zavala.Events
     {
         public SlotCard Card;
         public int RegionNum;
+        public bool IsGlobal;
 
-        public ChoiceSlotEventArgs(SlotCard card, int regionNum) {
+        public ChoiceSlotEventArgs(SlotCard card, int regionNum, bool isGlobal) {
             Card = card;
             RegionNum = regionNum;
+            IsGlobal = isGlobal;
         }
     }
 

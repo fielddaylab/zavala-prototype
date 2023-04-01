@@ -17,12 +17,21 @@ namespace Zavala
         public CanvasGroup Root;
         public AnimatedElement AnimElement;
 
+        [SerializeField] private bool m_IsGlobal;
+
         [SerializeField] private ChoiceSlot[] m_ChoiceSlots;
         [SerializeField] private Button m_CloseButton;
         [SerializeField] private TMP_Text m_SummaryText;
+
         public Color ColorTheme;
 
         private Routine m_TransitionRoutine;
+
+        private void OnEnable() {
+            for (int i = 0; i < m_ChoiceSlots.Length; i++) {
+                m_ChoiceSlots[i].SetGlobal(m_IsGlobal);
+            }
+        }
 
         public void Show() {
             m_TransitionRoutine.Replace(ShowRoutine());

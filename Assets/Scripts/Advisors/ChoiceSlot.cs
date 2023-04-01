@@ -17,6 +17,8 @@ namespace Zavala
 
         [SerializeField] private SlotClickable m_slotClickable;
 
+        private bool m_isGlobal;
+
         private SlotCard m_selection;
 
         private void OnEnable() {
@@ -28,7 +30,11 @@ namespace Zavala
         }
 
         private void HandleClick() {
-            m_slotClickable.HandleClick(m_slotType);
+            m_slotClickable.HandleClick(m_slotType, m_isGlobal);
+        }
+
+        public void SetGlobal(bool global) {
+            m_isGlobal = global;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Zavala
             m_advisorUI = ui;
         }
 
-        public void HandleClick(SimLeverID slotType) {
+        public void HandleClick(SimLeverID slotType, bool isGlobal) {
             // show selections to replace
             if (m_handVisible) {
                 HideHand();
@@ -54,7 +54,7 @@ namespace Zavala
                     GameObject cardObj = Instantiate(CardMgr.Instance.SlotCardPrefab, this.transform);
                     SlotCard card = cardObj.GetComponent<SlotCard>();
 
-                    card.Init(data, m_advisorUI, this);
+                    card.Init(data, m_advisorUI, this, isGlobal);
                     m_displayCards.Add(card);
                 }
 

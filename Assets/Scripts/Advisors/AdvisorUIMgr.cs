@@ -10,54 +10,104 @@ namespace Zavala
 {
     public class AdvisorUIMgr : MonoBehaviour
     {
-        [SerializeField] private AdvisorButton[] m_Buttons;
+        [SerializeField] private AdvisorButton[] m_GlobalButtons;
+        [SerializeField] private AdvisorButton[] m_RegionalButtons;
+
+        [SerializeField] AdvisorGroup[] m_GlobalAdvisors;
+
+        private Routine m_RefreshGlobalAdvisorsRoutine;
+        private Routine m_GlobalTransitionRoutine;
 
         private Routine m_SwitchRegionRoutine;
-        private Routine m_TransitionRoutine;
+        private Routine m_RegionalTransitionRoutine;
 
-        private int m_NumActiveButtons;
+        private int m_NumActiveButtonsRegional;
+        private int m_NumActiveButtonsGlobal;
 
         public void Init() {
             EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
-            m_NumActiveButtons = 0;
+            m_NumActiveButtonsRegional = m_NumActiveButtonsGlobal = 0;
+
+            m_RefreshGlobalAdvisorsRoutine.Replace(RefreshGlobalAdvisors());
         }
 
-        private IEnumerator SwitchRegion(AdvisorGroup[] advisors) {
+        private IEnumerator RefreshGlobalAdvisors() {
             // hide old buttons
-            yield return m_TransitionRoutine.Replace(HideButtons());
+            yield return m_GlobalTransitionRoutine.Replace(HideGlobalButtons());
 
             // set new buttons
-            for (int i = 0; i < m_Buttons.Length; i++) {
-                if (i < advisors.Length) {
-                    AdvisorGroup group = advisors[i];
-                    m_Buttons[i].LoadData(group.ButtonData);
+            for (int i = 0; i < m_GlobalButtons.Length; i++) {
+                if (i < m_GlobalAdvisors.Length) {
+                    AdvisorGroup group = m_GlobalAdvisors[i];
+                    m_GlobalButtons[i].LoadData(group.ButtonData);
                     Debug.Log("[AdvisorUIMgr] loaded button " + i + " with audio " + group.ButtonData.Shout.name);
                 }
             }
 
-            m_NumActiveButtons = advisors.Length;
+            m_NumActiveButtonsGlobal = m_GlobalAdvisors.Length;
 
             // show new buttons
-            yield return m_TransitionRoutine.Replace(ShowButtons(advisors.Length));
+            yield return m_GlobalTransitionRoutine.Replace(ShowGlobalButtons(m_GlobalAdvisors.Length));
         }
 
-        private IEnumerator HideButtons() {
+        private IEnumerator HideGlobalButtons() {
             float time = 0.25f;
             float delay = 0.1f;
 
-            for(int i = m_NumActiveButtons - 1; i >= 0; i--) {
-                Routine.Start(m_Buttons[i].Root.AnchorPosTo(-100, time, Axis.Y).Ease(Curve.CubeIn).DelayBy(delay * (m_NumActiveButtons - 1 - i)));
+            for (int i = m_NumActiveButtonsGlobal - 1; i >= 0; i--) {
+                Routine.Start(m_GlobalButtons[i].Root.AnchorPosTo(-100, time, Axis.Y).Ease(Curve.CubeIn).DelayBy(delay * (m_NumActiveButtonsGlobal - 1 - i)));
             }
 
-            yield return (m_NumActiveButtons * delay + time + 0.05f);
+            yield return (m_NumActiveButtonsGlobal * delay + time + 0.05f);
         }
 
-        private IEnumerator ShowButtons(int num) {
+        private IEnumerator ShowGlobalButtons(int num) {
             float time = 0.25f;
             float delay = 0.1f;
 
             for (int i = 0; i < num; i++) {
-                Routine.Start(m_Buttons[i].Root.AnchorPosTo(0, time, Axis.Y).Ease(Curve.CubeOut).DelayBy(delay * i));
+                Routine.Start(m_GlobalButtons[i].Root.AnchorPosTo(0, time, Axis.Y).Ease(Curve.CubeOut).DelayBy(delay * i));
+            }
+
+            yield return (num * delay + time + 0.05f);
+        }
+
+        private IEnumerator SwitchRegion(AdvisorGroup[] advisors) {
+            // hide old buttons
+            yield return m_RegionalTransitionRoutine.Replace(HideRegionalButtons());
+
+            // set new buttons
+            for (int i = 0; i < m_RegionalButtons.Length; i++) {
+                if (i < advisors.Length) {
+                    AdvisorGroup group = advisors[i];
+                    m_RegionalButtons[i].LoadData(group.ButtonData);
+                    Debug.Log("[AdvisorUIMgr] loaded button " + i + " with audio " + group.ButtonData.Shout.name);
+                }
+            }
+
+            m_NumActiveButtonsRegional = advisors.Length;
+
+            // show new buttons
+            yield return m_RegionalTransitionRoutine.Replace(ShowRegionalButtons(advisors.Length));
+        }
+
+        private IEnumerator HideRegionalButtons() {
+            float time = 0.25f;
+            float delay = 0.1f;
+
+            for(int i = m_NumActiveButtonsRegional - 1; i >= 0; i--) {
+                Routine.Start(m_RegionalButtons[i].Root.AnchorPosTo(-100, time, Axis.Y).Ease(Curve.CubeIn).DelayBy(delay * (m_NumActiveButtonsRegional - 1 - i)));
+            }
+
+            yield return (m_NumActiveButtonsRegional * delay + time + 0.05f);
+        }
+
+        private IEnumerator ShowRegionalButtons(int num) {
+            float time = 0.25f;
+            float delay = 0.1f;
+
+            for (int i = 0; i < num; i++) {
+                Routine.Start(m_RegionalButtons[i].Root.AnchorPosTo(0, time, Axis.Y).Ease(Curve.CubeOut).DelayBy(delay * i));
             }
 
             yield return (num * delay + time + 0.05f);
@@ -66,7 +116,7 @@ namespace Zavala
         #region Handlers
 
         private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
-            if (args.NewRegion.Advisors.Length > m_Buttons.Length) {
+            if (args.NewRegion.Advisors.Length > m_RegionalButtons.Length) {
                 Debug.Log("[AdvisorUIMgr] Not enough allocated buttons for the nubmer of advisors in curr region!");
                 return;
             }

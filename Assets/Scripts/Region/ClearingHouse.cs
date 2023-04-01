@@ -13,6 +13,7 @@ namespace Zavala.Sim
 {
     public enum SimLeverID
     {
+        None,
         RunoffPenalty,
         ExportTax,
         GooseRace

@@ -219,9 +219,15 @@ namespace Zavala
         }
 
         private void HandleChoiceSlotUpdated(object sender, ChoiceSlotEventArgs args) {
-            if (args.RegionNum != m_regionNum) {
-                return;
+            Debug.Log("[LevelRegion] Is global: " + args.IsGlobal);
+            if (!args.IsGlobal) {
+                if (args.RegionNum != m_regionNum) {
+                    return;
+                }
             }
+
+            Debug.Log("[LevelRegion] settings global");
+
 
             CardData data = args.Card.GetCardData();
 
