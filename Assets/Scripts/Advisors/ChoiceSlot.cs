@@ -17,6 +17,12 @@ namespace Zavala
 
         [SerializeField] private SlotClickable m_slotClickable;
 
+        [SerializeField] private Image m_image;
+        [SerializeField] private Sprite m_lockedSprite;
+        [SerializeField] private Sprite m_unlockedSprite;
+
+
+
         private bool m_isGlobal;
 
         private SlotCard m_selection;
@@ -32,6 +38,13 @@ namespace Zavala
         public void ActivateButton() {
             m_button.onClick.AddListener(HandleClick);
             m_button.interactable = true;
+
+            if (CardMgr.Instance.GetOptions(m_slotType).Count == 0) {
+                m_image.sprite = m_lockedSprite;
+            }
+            else {
+                m_image.sprite = m_unlockedSprite;
+            }
         }
 
         public void DeactivateButton() {

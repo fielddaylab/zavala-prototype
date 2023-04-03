@@ -4997,6 +4997,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1706285254}
     m_Modifications:
+    - target: {fileID: 70155904067959633, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1009692684298747061, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_IsActive
@@ -5228,6 +5233,11 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4280439668
       objectReference: {fileID: 0}
+    - target: {fileID: 4591817326566192180, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4812343151441707520, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
@@ -5290,6 +5300,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 55ad706142c2a5c439b003f796fbb7b5,
         type: 3}
+    - target: {fileID: 7928786360573901261, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8787466382066750625, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_Color.b
@@ -16670,6 +16685,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1706285254}
     m_Modifications:
+    - target: {fileID: 70155904067959633, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1062948439955879365, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: ButtonData.Shout
@@ -16984,6 +17004,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.23137257
       objectReference: {fileID: 0}
+    - target: {fileID: 4591817326566192180, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4812343151441707520, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
@@ -17061,6 +17086,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: ae527754be3d9d244afb049a2bd05a73,
         type: 3}
+    - target: {fileID: 7928786360573901261, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8787466382066750625, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_Color.b

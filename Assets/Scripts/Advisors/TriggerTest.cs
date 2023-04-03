@@ -12,24 +12,13 @@ namespace Zavala {
         [SerializeField] private Button[] m_buttons;
 
         private void Start() {
-            m_buttons[0].onClick.AddListener(HandleB0);
-            m_buttons[1].onClick.AddListener(HandleB1);
-            m_buttons[2].onClick.AddListener(HandleB2);
-            m_buttons[3].onClick.AddListener(HandleB3);
-            m_buttons[4].onClick.AddListener(HandleB4);
+            m_buttons[0].onClick.AddListener(RunoffEvent);
+            m_buttons[1].onClick.AddListener(ExportTaxEvent);
         }
 
         #region Handlers (Triggers)
 
-        private void HandleB0() {
-            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("This is a blurb from the ecology advisor!", Advisors.AdvisorID.Ecology));
-        }
-
-        private void HandleB1() {
-            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("This is a silent update!", Advisors.AdvisorID.Ecology, true));
-        }
-
-        private void HandleB2() {
+        private void RunoffEvent() {
             List<string> unlockList = new List<string>();
 
             List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.RunoffPenalty);
@@ -41,7 +30,15 @@ namespace Zavala {
             EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("The Lake has gotten bad. I recommend nipping the problem in the bud, at the source: CAFOS.", Advisors.AdvisorID.Ecology, unlockList));
         }
 
-        private void HandleB3() {
+
+        private void HandleB0() {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("This is a blurb from the ecology advisor!", Advisors.AdvisorID.Ecology));
+        }
+
+        private void HandleB1() {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("This is a silent update!", Advisors.AdvisorID.Ecology, true));
+        }
+        private void ExportTaxEvent() {
             List<string> unlockList = new List<string>();
 
             List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.ExportTax);

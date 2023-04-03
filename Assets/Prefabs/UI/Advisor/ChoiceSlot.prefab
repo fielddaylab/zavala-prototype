@@ -94,6 +94,9 @@ MonoBehaviour:
   m_slotType: 0
   m_button: {fileID: 5076744025247887119}
   m_slotClickable: {fileID: 7283042880983278034}
+  m_image: {fileID: 4575186332173189375}
+  m_lockedSprite: {fileID: 21300000, guid: d30833ea202ca2049891f04365869009, type: 3}
+  m_unlockedSprite: {fileID: 21300000, guid: 2fc0bafe2b6e2f542b48c6a2fc348d3b, type: 3}
 --- !u!114 &5076744025247887119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,3 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74a2ad405fb8e2a418433c80daa063ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_advisorUI: {fileID: 0}

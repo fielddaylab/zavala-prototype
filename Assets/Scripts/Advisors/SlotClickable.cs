@@ -44,9 +44,6 @@ namespace Zavala
                 // query cardmgr for relevant cards for this slot type
                 List<CardData> availableCards = CardMgr.Instance.GetOptions(slotType);
 
-
-                Debug.Log("[SlotCard] Available cards: " + JsonConvert.SerializeObject(availableCards));
-
                 m_displayCards = new List<SlotCard>();
 
                 foreach (CardData data in availableCards) {
