@@ -100,7 +100,6 @@ namespace Zavala.Cards
                     CardData newCard = ConvertDefToCard(str);
 
                     m_allCards.Add(newCard.CardID, newCard);
-                    // m_unlockedCards.Add(newCard.CardID); // temp hack
 
                     // add card to list of cards that should appear for the given sim id (queried when slot is selected)
                     List<string> relevant = m_cardMap[newCard.SimID];
