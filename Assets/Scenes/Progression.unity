@@ -7379,6 +7379,11 @@ PrefabInstance:
       propertyPath: ColorTheme.r
       value: 0.5471698
       objectReference: {fileID: 0}
+    - target: {fileID: 1644397098260988807, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_DefaultText
+      value: The price of getting what you want is getting what you once wanted.
+      objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_text
@@ -17854,6 +17859,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ColorTheme.r
       value: 0.2901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 1644397098260988807, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_DefaultText
+      value: '*rattle* *rattle*'
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
