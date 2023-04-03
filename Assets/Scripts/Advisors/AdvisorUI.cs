@@ -9,8 +9,6 @@ using System.Linq;
 using Zavala.Events;
 using System;
 using Zavala.Cards;
-using Newtonsoft.Json;
-using UnityEditor.ShaderGraph.Internal;
 
 namespace Zavala.Advisors
 {
