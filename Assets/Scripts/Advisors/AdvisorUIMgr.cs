@@ -40,7 +40,6 @@ namespace Zavala.Advisors
                 if (i < m_GlobalAdvisors.Length) {
                     AdvisorGroup group = m_GlobalAdvisors[i];
                     m_GlobalButtons[i].LoadData(group.ButtonData);
-                    Debug.Log("[AdvisorUIMgr] loaded button " + i + " with audio " + group.ButtonData.Shout.name);
                 }
             }
 

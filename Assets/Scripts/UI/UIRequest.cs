@@ -34,6 +34,8 @@ namespace Zavala
 
         private Cycles m_cycleSync;
 
+        private Routine m_TransitionRoutine;
+
         private void InitBasics(Resources.Type resourceType, int units, bool visible, bool continuous) {
             if (visible) {
                 m_resourceIcon.sprite = GameDB.Instance.GetResourceRequestIcon(resourceType);
@@ -73,7 +75,7 @@ namespace Zavala
 
             if (m_rootTransform != null) {
                 m_rootTransform.SetScale(0);
-                Routine.Start(ShowRoutine());
+                m_TransitionRoutine.Replace(ShowRoutine());
             }
 
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
@@ -81,12 +83,16 @@ namespace Zavala
             //m_uiTimer.TimerCompleted += HandleTimerCompleted;
         }
 
+        private void OnDisable() {
+            m_TransitionRoutine.Stop();
+        }
+
         private IEnumerator ShowRoutine() {
             yield return m_rootTransform.ScaleTo(1, 1f).Ease(Curve.CubeIn);
         }
 
         public IEnumerator Fulfill() {
-            yield return Routine.Start(FulfillRoutine());
+            yield return m_TransitionRoutine.Replace(FulfillRoutine());
         }
 
         private IEnumerator FulfillRoutine() {
@@ -94,7 +100,7 @@ namespace Zavala
         }
 
         public IEnumerator Fade() {
-            yield return Routine.Start(FadeRoutine());
+            yield return m_TransitionRoutine.Replace(FadeRoutine());
         }
 
         private IEnumerator FadeRoutine() {
