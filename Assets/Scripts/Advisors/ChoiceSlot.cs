@@ -22,11 +22,21 @@ namespace Zavala
         private SlotCard m_selection;
 
         private void OnEnable() {
-            m_button.onClick.AddListener(HandleClick);
+            ActivateButton();
         }
 
         private void OnDisable() {
+            DeactivateButton();
+        }
+
+        public void ActivateButton() {
+            m_button.onClick.AddListener(HandleClick);
+            m_button.interactable = true;
+        }
+
+        public void DeactivateButton() {
             m_button.onClick.RemoveAllListeners();
+            m_button.interactable = false;
         }
 
         private void HandleClick() {

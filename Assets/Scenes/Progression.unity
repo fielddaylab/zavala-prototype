@@ -5149,6 +5149,11 @@ PrefabInstance:
       propertyPath: m_advisorID
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1644397098260988807, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_DefaulText
+      value: Looking to refine some of our policies?
+      objectReference: {fileID: 0}
     - target: {fileID: 1658117815152105021, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_Color.b
@@ -7037,6 +7042,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ColorTheme.r
       value: 0.7735849
+      objectReference: {fileID: 0}
+    - target: {fileID: 1644397098260988807, guid: 307ccbae07a652c46acff2c98da41538,
+        type: 3}
+      propertyPath: m_DefaultText
+      value: The citizenry are clamoring for a holiday, and the geese need running.
       objectReference: {fileID: 0}
     - target: {fileID: 1658117815152105021, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}

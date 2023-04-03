@@ -14,7 +14,8 @@ using UnityEditor.ShaderGraph.Internal;
 
 namespace Zavala.Advisors
 {
-    public enum AdvisorID {
+    public enum AdvisorID
+    {
         Other,
         Ecology,
         Economic,
@@ -38,6 +39,7 @@ namespace Zavala.Advisors
         [SerializeField] private ChoiceSlot[] m_ChoiceSlots;
         [SerializeField] private Button m_CloseButton;
         [SerializeField] private TMP_Text m_SummaryText;
+        [SerializeField] private string m_DefaultText;
 
         public AudioClip Shout;
 
@@ -56,8 +58,9 @@ namespace Zavala.Advisors
 
             EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
             EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
-            EventMgr.Instance.AdvisorHidden += HandleAdvisorHidden;
             EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
+
+            m_SummaryText.text = m_DefaultText;
         }
 
         public void Show() {
@@ -67,6 +70,18 @@ namespace Zavala.Advisors
         }
 
         public void Hide() {
+            // remove unlocked cards, if any
+            if (m_newCards != null) {
+                for (int i = 0; i < m_newCards.Count; i++) {
+                    Destroy(m_newCards[i].gameObject);
+                }
+
+                for (int i = 0; i < m_ChoiceSlots.Count(); i++) {
+                    m_ChoiceSlots[i].ActivateButton();
+                }
+            }
+            m_newCards = null;
+
             m_TransitionRoutine.Replace(HideRoutine());
 
             m_CloseButton.onClick.RemoveListener(Hide);
@@ -84,6 +99,8 @@ namespace Zavala.Advisors
 
         private IEnumerator HideRoutine() {
             yield return Rect.AnchorPosTo(-660, 0.3f, Axis.Y).Ease(Curve.CubeIn);
+
+            m_SummaryText.text = m_DefaultText;
         }
 
         #endregion // Routines
@@ -126,22 +143,13 @@ namespace Zavala.Advisors
                 m_newCards.Add(card);
             }
 
+            for (int i = 0; i < m_ChoiceSlots.Count(); i++) {
+                m_ChoiceSlots[i].DeactivateButton();
+            }
+
             m_SummaryText.text = args.Text;
 
             Show();
-        }
-
-        private void HandleAdvisorHidden(object sender, AdvisorEventArgs args) {
-            if (args.AdvisorID == m_advisorID) {
-                // remove unlocked cards, if any
-                if (m_newCards != null) {
-                    for (int i = 0; i < m_newCards.Count; i++) {
-                        Destroy(m_newCards[i].gameObject);
-                    }
-                }
-
-                m_newCards = null;
-            }
         }
 
         private void HandleAdvisorShown(object sender, AdvisorEventArgs args) {

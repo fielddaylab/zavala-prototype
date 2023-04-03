@@ -95,6 +95,7 @@ MonoBehaviour:
   - {fileID: 5457012377787784323}
   m_CloseButton: {fileID: 3736844321628815968}
   m_SummaryText: {fileID: 2043568088893664584}
+  m_DefaultText: Looking to refine some of our policies?
   Shout: {fileID: 0}
   m_AudioSrc: {fileID: 4992074790259071419}
   ColorTheme: {r: 0.85882354, g: 0.6901961, b: 0.43137255, a: 1}

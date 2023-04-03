@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
 using Zavala.Sim;
 
 namespace Zavala.Cards
@@ -47,6 +48,8 @@ namespace Zavala.Cards
             InitCardMap();
 
             PopulateCards();
+
+            EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
         }
 
         public List<CardData> GetOptions(SimLeverID slotType) {
@@ -54,10 +57,22 @@ namespace Zavala.Cards
 
             List<string> cardIDs = m_cardMap[slotType];
 
-            foreach(string cardID in cardIDs) {
+            foreach (string cardID in cardIDs) {
                 if (m_unlockedCards.Contains(cardID)) {
                     allOptions.Add(m_allCards[cardID]);
                 }
+            }
+
+            return allOptions;
+        }
+
+        public List<CardData> GetAllOptions(SimLeverID slotType) {
+            List<CardData> allOptions = new List<CardData>();
+
+            List<string> cardIDs = m_cardMap[slotType];
+
+            foreach (string cardID in cardIDs) {
+                allOptions.Add(m_allCards[cardID]);
             }
 
             return allOptions;
@@ -72,7 +87,7 @@ namespace Zavala.Cards
         private void InitCardMap() {
             m_cardMap = new Dictionary<SimLeverID, List<string>>();
 
-            foreach(SimLeverID lever in Enum.GetValues(typeof(SimLeverID))) {
+            foreach (SimLeverID lever in Enum.GetValues(typeof(SimLeverID))) {
                 m_cardMap.Add(lever, new List<string>());
             }
         }
@@ -85,7 +100,7 @@ namespace Zavala.Cards
                     CardData newCard = ConvertDefToCard(str);
 
                     m_allCards.Add(newCard.CardID, newCard);
-                    m_unlockedCards.Add(newCard.CardID); // temp hack
+                    // m_unlockedCards.Add(newCard.CardID); // temp hack
 
                     // add card to list of cards that should appear for the given sim id (queried when slot is selected)
                     List<string> relevant = m_cardMap[newCard.SimID];
@@ -123,7 +138,7 @@ namespace Zavala.Cards
             else {
                 // syntax error
                 Debug.Log("[CardMgr] header syntax error!");
-                
+
                 throw new Exception("Header");
             }
 
@@ -163,5 +178,14 @@ namespace Zavala.Cards
         }
 
         #endregion // Helpers
+
+        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
+            for (int i = 0; i < args.ToUnlock.Count; i++) {
+                if (m_unlockedCards.Contains(args.ToUnlock[i])) {
+                    continue;
+                }
+                m_unlockedCards.Add(args.ToUnlock[i]);
+            }
+        }
     }
 }

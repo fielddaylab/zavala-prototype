@@ -82,7 +82,9 @@ namespace Zavala.Cards
 
             m_data = data;
 
-            m_button.onClick.RemoveAllListeners();
+            m_canvas.sortingOrder += 2;
+
+            Destroy(this.gameObject.GetComponent<Button>());
         }
 
         public void Init(CardData data, AdvisorUI parentUI, SlotClickable baseSlot, bool isGlobal) {
