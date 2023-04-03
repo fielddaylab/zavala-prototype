@@ -28,7 +28,7 @@ jobs:
     steps:
       
     - name: Install OpenConnect
-      run: sudo add-apt-repository ppa:phusen/openconnect && sudo apt-get update && sudo apt-get install openconnect
+      run: sudo apt-get update && sudo apt-get install openconnect
       
     - name: Connect to VPN
       run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
