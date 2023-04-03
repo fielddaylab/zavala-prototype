@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Advisors;
 using Zavala.Cards;
 using Zavala.Settings;
 
@@ -45,8 +47,12 @@ namespace Zavala.Events
         // Phosph
         PipsGenerated,
 
-        // Choice Slots
-        ChoiceSlotUpdated
+        // Advisors
+        ChoiceSlotUpdated,
+        AdvisorBlurb,
+        ChoiceUnlock,
+        AdvisorHidden,
+        AdvisorShown
     }
 
     #endregion // Enums
@@ -170,6 +176,41 @@ namespace Zavala.Events
         }
     }
 
+    public class AdvisorBlurbEventArgs : EventArgs
+    {
+        public string Text;
+        public AdvisorID AdvisorID;
+        public bool IsSilent;
+
+        public AdvisorBlurbEventArgs(string text, AdvisorID advisorID, bool isSilent = false) {
+            Text = text;
+            AdvisorID = advisorID;
+            IsSilent = isSilent;
+        }
+    }
+
+    public class ChoiceUnlockEventArgs : EventArgs
+    {
+        public string Text;
+        public AdvisorID AdvisorID;
+        public List<string> ToUnlock;
+
+        public ChoiceUnlockEventArgs(string text, AdvisorID advisorID, List<string> toUnlock) {
+            Text = text;
+            AdvisorID = advisorID;
+            ToUnlock = toUnlock;
+        }
+    }
+
+    public class AdvisorEventArgs : EventArgs
+    {
+        public AdvisorID AdvisorID;
+
+        public AdvisorEventArgs(AdvisorID advisorID) {
+            AdvisorID = advisorID;
+        }
+    }
+
 
     #endregion // EventArgs
 
@@ -241,11 +282,15 @@ namespace Zavala.Events
         #endregion // Lenses
 
 
-        #region Choice Slots
+        #region Advisor
 
         public event EventHandler<ChoiceSlotEventArgs> ChoiceSlotUpdated;
+        public event EventHandler<AdvisorBlurbEventArgs> AdvisorBlurb;
+        public event EventHandler<ChoiceUnlockEventArgs> ChoiceUnlock;
+        public event EventHandler<AdvisorEventArgs> AdvisorHidden;
+        public event EventHandler<AdvisorEventArgs> AdvisorShown;
 
-        #endregion // ChoiceSlots
+        #endregion // Advisor
 
 
         public void Init() {
@@ -310,6 +355,18 @@ namespace Zavala.Events
                     break;
                 case Events.ID.ChoiceSlotUpdated:
                     ChoiceSlotUpdated?.Invoke(this, (ChoiceSlotEventArgs)args);
+                    break;
+                case Events.ID.AdvisorBlurb:
+                    AdvisorBlurb?.Invoke(this, (AdvisorBlurbEventArgs)args);
+                    break;
+                case Events.ID.ChoiceUnlock:
+                    ChoiceUnlock?.Invoke(this, (ChoiceUnlockEventArgs)args);
+                    break;
+                case Events.ID.AdvisorHidden:
+                    AdvisorHidden?.Invoke(this, (AdvisorEventArgs)args);
+                    break;
+                case Events.ID.AdvisorShown:
+                    AdvisorShown?.Invoke(this, (AdvisorEventArgs)args);
                     break;
                 default:
                     break;

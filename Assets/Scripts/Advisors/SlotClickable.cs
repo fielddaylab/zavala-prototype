@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Advisors;
 using Zavala.Cards;
 using Zavala.Events;
 using Zavala.Sim;

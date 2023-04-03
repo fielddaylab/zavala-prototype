@@ -63,6 +63,10 @@ namespace Zavala.Cards
             return allOptions;
         }
 
+        public CardData GetCardData(string cardID) {
+            return m_allCards[cardID];
+        }
+
         #region Helpers
 
         private void InitCardMap() {

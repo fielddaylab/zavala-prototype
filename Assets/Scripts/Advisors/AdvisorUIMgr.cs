@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zavala.Events;
 
-namespace Zavala
+namespace Zavala.Advisors
 {
     public class AdvisorUIMgr : MonoBehaviour
     {

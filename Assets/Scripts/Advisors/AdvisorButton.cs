@@ -5,12 +5,12 @@ using UnityEngine.UI;
 using BeauRoutine;
 using BeauUtil;
 using static System.TimeZoneInfo;
-using static Zavala.AdvisorGroup;
+using static Zavala.Advisors.AdvisorGroup;
+using Zavala.Events;
 
-namespace Zavala
+namespace Zavala.Advisors
 {
     [RequireComponent(typeof(Button))]
-    [RequireComponent(typeof(AudioSource))]
     public class AdvisorButton : MonoBehaviour
     {
         public Button Button;
@@ -21,24 +21,20 @@ namespace Zavala
 
         public RectTransform Root;
 
-        [SerializeField] private AudioSource m_AudioSrc;
-
         private Routine m_HoverRoutine;
 
         public void LoadData(AdvisorButtonData data) {
             Button.onClick.RemoveAllListeners();
 
-            Shout = data.Shout;
             IconImage.sprite = data.m_AdvisorImage;
             IconImage.SetNativeSize();
             Base.color = data.BaseColor;
             Outline.color = data.OutlineColor;
-            Button.onClick.AddListener(delegate { data.m_UI.Show(); });
-            Button.onClick.AddListener(PlayShout);
+            Button.onClick.AddListener(delegate { HandleClick(data.m_AdvisorID); });
         }
 
-        private void PlayShout() {
-            m_AudioSrc.PlayOneShot(Shout);
+        private void HandleClick(AdvisorID id) {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(id));
         }
 
         public void BeginHoverRoutine() {

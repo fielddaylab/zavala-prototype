@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Advisors;
 using Zavala.Events;
 using Zavala.Sim;
 
@@ -51,6 +52,38 @@ namespace Zavala.Cards
         private SlotClickable m_baseSlot;
 
         private bool m_isGlobal;
+
+        public void Display(CardData data, AdvisorUI parentUI) {
+            m_header.text = data.Header;
+            m_header.color = parentUI.ColorTheme;
+
+            switch (data.Severity) {
+                case Severity.None:
+                    m_image.sprite = m_severityNone;
+                    m_secondaryText.text = "NONE";
+                    break;
+                case Severity.Low:
+                    m_image.sprite = m_severityLow;
+                    m_secondaryText.text = "LOW";
+                    break;
+                case Severity.Medium:
+                    m_image.sprite = m_severityMed;
+                    m_secondaryText.text = "MEDIUM";
+                    break;
+                case Severity.High:
+                    m_image.sprite = m_severityHigh;
+                    m_secondaryText.text = "HIGH";
+                    break;
+                default:
+                    break;
+            }
+            m_image.color = parentUI.ColorTheme;
+            m_secondaryText.color = parentUI.ColorTheme;
+
+            m_data = data;
+
+            m_button.onClick.RemoveAllListeners();
+        }
 
         public void Init(CardData data, AdvisorUI parentUI, SlotClickable baseSlot, bool isGlobal) {
             m_header.text = data.Header;

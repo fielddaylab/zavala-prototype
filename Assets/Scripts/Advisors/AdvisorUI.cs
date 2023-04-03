@@ -6,22 +6,44 @@ using BeauRoutine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using Zavala.Events;
+using System;
+using Zavala.Cards;
+using Newtonsoft.Json;
+using UnityEditor.ShaderGraph.Internal;
 
-namespace Zavala
+namespace Zavala.Advisors
 {
+    public enum AdvisorID {
+        Other,
+        Ecology,
+        Economic,
+        Goose,
+        Dream,
+        Kami
+    }
+
     [RequireComponent(typeof(CanvasGroup))]
     [RequireComponent(typeof(AnimatedElement))]
+    [RequireComponent(typeof(AudioSource))]
     public class AdvisorUI : MonoBehaviour
     {
         public RectTransform Rect;
         public CanvasGroup Root;
         public AnimatedElement AnimElement;
 
+        [SerializeField] private AdvisorID m_advisorID;
         [SerializeField] private bool m_IsGlobal;
 
         [SerializeField] private ChoiceSlot[] m_ChoiceSlots;
         [SerializeField] private Button m_CloseButton;
         [SerializeField] private TMP_Text m_SummaryText;
+
+        public AudioClip Shout;
+
+        [SerializeField] private AudioSource m_AudioSrc;
+
+        private List<SlotCard> m_newCards;
 
         public Color ColorTheme;
 
@@ -31,17 +53,27 @@ namespace Zavala
             for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                 m_ChoiceSlots[i].SetGlobal(m_IsGlobal);
             }
+
+            EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
+            EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
+            EventMgr.Instance.AdvisorHidden += HandleAdvisorHidden;
+            EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
         }
 
         public void Show() {
             m_TransitionRoutine.Replace(ShowRoutine());
             m_CloseButton.onClick.AddListener(Hide);
+            PlayShout();
         }
 
         public void Hide() {
             m_TransitionRoutine.Replace(HideRoutine());
 
             m_CloseButton.onClick.RemoveListener(Hide);
+        }
+
+        private void PlayShout() {
+            m_AudioSrc.PlayOneShot(Shout);
         }
 
         #region Routines
@@ -55,5 +87,72 @@ namespace Zavala
         }
 
         #endregion // Routines
+
+        #region Handlers
+
+        private void HandleAdvisorBlurb(object sender, AdvisorBlurbEventArgs args) {
+            if (args.AdvisorID != m_advisorID) {
+                // hide this so only blurbing advisor is showing
+                Hide();
+                return;
+            }
+
+            m_SummaryText.text = args.Text;
+
+            if (!args.IsSilent) {
+                Show();
+            }
+        }
+
+        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
+            if (args.AdvisorID != m_advisorID) {
+                // hide this so only blurbing advisor is showing
+                Hide();
+                return;
+            }
+
+            // generate instances of unlocked cards
+            List<CardData> availableCards = new List<CardData>();
+
+            m_newCards = new List<SlotCard>();
+
+            for (int i = 0; i < args.ToUnlock.Count; i++) {
+                CardData data = CardMgr.Instance.GetCardData(args.ToUnlock[i]);
+
+                GameObject cardObj = Instantiate(CardMgr.Instance.SlotCardPrefab, m_ChoiceSlots[i].transform);
+                SlotCard card = cardObj.GetComponent<SlotCard>();
+
+                card.Display(data, this);
+                m_newCards.Add(card);
+            }
+
+            m_SummaryText.text = args.Text;
+
+            Show();
+        }
+
+        private void HandleAdvisorHidden(object sender, AdvisorEventArgs args) {
+            if (args.AdvisorID == m_advisorID) {
+                // remove unlocked cards, if any
+                if (m_newCards != null) {
+                    for (int i = 0; i < m_newCards.Count; i++) {
+                        Destroy(m_newCards[i].gameObject);
+                    }
+                }
+
+                m_newCards = null;
+            }
+        }
+
+        private void HandleAdvisorShown(object sender, AdvisorEventArgs args) {
+            if (args.AdvisorID == m_advisorID) {
+                Show();
+            }
+            else {
+                Hide();
+            }
+        }
+
+        #endregion // Handlers
     }
 }
