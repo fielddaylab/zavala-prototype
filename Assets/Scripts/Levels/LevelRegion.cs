@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -86,6 +87,7 @@ namespace Zavala
         }
 
         [SerializeField] private GameObject m_regionContainer;
+        [SerializeField] private SpriteRenderer m_boundsRenderer;
         [SerializeField] private int m_regionNum;
         [SerializeField] private bool m_startsActive;
         [SerializeField] private RegionBounds m_bounds;
@@ -118,6 +120,7 @@ namespace Zavala
             EventMgr.Instance.ProduceMoney += HandleProduceMoney;
             EventMgr.Instance.PurchaseSuccessful += HandlePurchaseSuccessful;
             EventMgr.Instance.LevelRestarted += HandleLevelRestarted;
+            EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
             m_activeRegion = true;
 
@@ -217,6 +220,10 @@ namespace Zavala
 
         private void HandleLevelRestarted(object sender, EventArgs args) {
             ResetMoney();
+        }
+
+        private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
+            m_boundsRenderer.enabled = args.NewRegion == this;
         }
 
         private void HandleChoiceSlotUpdated(object sender, ChoiceSlotEventArgs args) {
