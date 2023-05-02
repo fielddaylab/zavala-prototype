@@ -39,6 +39,10 @@ namespace Zavala
             m_button.onClick.AddListener(HandleClick);
             m_button.interactable = true;
 
+            UpdateLocked();
+        }
+
+        public void UpdateLocked() {
             if (CardMgr.Instance.GetOptions(m_slotType).Count == 0) {
                 m_image.sprite = m_lockedSprite;
             }
@@ -50,6 +54,10 @@ namespace Zavala
         public void DeactivateButton() {
             m_button.onClick.RemoveAllListeners();
             m_button.interactable = false;
+        }
+
+        public void HideHandImmediate() {
+            m_slotClickable.HideHandImmediate();
         }
 
         private void HandleClick() {

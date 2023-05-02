@@ -72,6 +72,23 @@ namespace Zavala
             }
         }
 
+        public void HideHandImmediate() {
+            if (m_displayCards == null || m_displayCards.Count == 0) {
+                return;
+            }
+
+            EventMgr.Instance.ChoiceSlotUpdated -= HandleChoiceSlotUpdated;
+
+            for (int i = 0; i < m_displayCards.Count; i++) {
+                if (!m_displayCards[i].GetActivated()) {
+                    Destroy(m_displayCards[i].gameObject);
+                }
+            }
+            m_displayCards.Clear();
+
+            m_handVisible = false;
+        }
+
 
         private IEnumerator ShowHandRoutine() {
             float offset = 0.5f;

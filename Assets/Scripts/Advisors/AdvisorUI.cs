@@ -32,6 +32,7 @@ namespace Zavala.Advisors
         public AnimatedElement AnimElement;
 
         [SerializeField] private AdvisorID m_advisorID;
+        [SerializeField] [Required] private LevelRegion m_parentRegion;
         [SerializeField] private bool m_IsGlobal;
 
         [SerializeField] private ChoiceSlot[] m_ChoiceSlots;
@@ -57,6 +58,7 @@ namespace Zavala.Advisors
             EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
             EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
             EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
+            EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
             m_SummaryText.text = m_DefaultText;
         }
@@ -65,6 +67,10 @@ namespace Zavala.Advisors
             m_TransitionRoutine.Replace(ShowRoutine());
             m_CloseButton.onClick.AddListener(Hide);
             PlayShout();
+
+            for (int i = 0; i < m_ChoiceSlots.Length; i++) {
+                m_ChoiceSlots[i].UpdateLocked();
+            }
         }
 
         public void Hide() {
@@ -74,10 +80,15 @@ namespace Zavala.Advisors
                     Destroy(m_newCards[i].gameObject);
                 }
 
-                for (int i = 0; i < m_ChoiceSlots.Count(); i++) {
+                for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                     m_ChoiceSlots[i].ActivateButton();
                 }
             }
+
+            for (int i = 0; i < m_ChoiceSlots.Length; i++) {
+                m_ChoiceSlots[i].HideHandImmediate();
+            }
+
             m_newCards = null;
 
             m_TransitionRoutine.Replace(HideRoutine());
@@ -120,7 +131,7 @@ namespace Zavala.Advisors
         }
 
         private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
-            if (args.AdvisorID != m_advisorID) {
+            if (args.AdvisorID != m_advisorID || RegionMgr.Instance.CurrRegion.name != m_parentRegion.name) {
                 // hide this so only blurbing advisor is showing
                 Hide();
                 return;
@@ -151,10 +162,16 @@ namespace Zavala.Advisors
         }
 
         private void HandleAdvisorShown(object sender, AdvisorEventArgs args) {
-            if (args.AdvisorID == m_advisorID) {
+            if ((args.AdvisorID == m_advisorID) && (m_IsGlobal || RegionMgr.Instance.CurrRegion.name == m_parentRegion.name)) {
                 Show();
             }
             else {
+                Hide();
+            }
+        }
+
+        private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
+            if (!m_IsGlobal && args.NewRegion.name != m_parentRegion.name) {
                 Hide();
             }
         }
