@@ -2712,7 +2712,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a92d43b2bfacb048a9abc5205c45728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_lensButton: {fileID: 4707827327674378670}
   m_phosphGreyscale: {fileID: 8693520200102812775}
 --- !u!1 &2453652750304789500
 GameObject:
@@ -7644,7 +7643,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &746919778224119324
 RectTransform:
   m_ObjectHideFlags: 0

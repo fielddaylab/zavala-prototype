@@ -65,12 +65,17 @@ namespace Zavala.Advisors
 
         public void Show() {
             m_TransitionRoutine.Replace(ShowRoutine());
-            m_CloseButton.onClick.AddListener(Hide);
+            m_CloseButton.onClick.AddListener(HideWithoutReplacement);
             PlayShout();
 
             for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                 m_ChoiceSlots[i].UpdateLocked();
             }
+        }
+
+        public void HideWithoutReplacement() {
+            Hide();
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorNoReplacement, EventArgs.Empty);
         }
 
         public void Hide() {
@@ -93,7 +98,7 @@ namespace Zavala.Advisors
 
             m_TransitionRoutine.Replace(HideRoutine());
 
-            m_CloseButton.onClick.RemoveListener(Hide);
+            m_CloseButton.onClick.RemoveListener(HideWithoutReplacement);
         }
 
         private void PlayShout() {
@@ -172,7 +177,7 @@ namespace Zavala.Advisors
 
         private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
             if (!m_IsGlobal && args.NewRegion.name != m_parentRegion.name) {
-                Hide();
+                HideWithoutReplacement();
             }
         }
 

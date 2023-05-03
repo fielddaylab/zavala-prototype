@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zavala.Events;
 using Zavala.Functionalities;
+using Zavala.Lenses;
 
 namespace Zavala
 {
@@ -56,6 +58,10 @@ namespace Zavala
             UpdateUnitsText();
 
             m_remainingCycles = -1;
+
+            if (LensMgr.Instance.GetLensMode() != Mode.Default) {
+                HideUI();
+            }
         }
 
         // no timeout
@@ -78,6 +84,8 @@ namespace Zavala
                 m_TransitionRoutine.Replace(ShowRoutine());
             }
 
+            EventMgr.Instance.LensModeUpdated += HandleLensModeUpdated;
+
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
             //m_uiTimer.Init(requestTimeout, false);
             //m_uiTimer.TimerCompleted += HandleTimerCompleted;
@@ -85,6 +93,8 @@ namespace Zavala
 
         private void OnDisable() {
             m_TransitionRoutine.Stop();
+
+            EventMgr.Instance.LensModeUpdated -= HandleLensModeUpdated;
         }
 
         private IEnumerator ShowRoutine() {
@@ -169,6 +179,14 @@ namespace Zavala
             // m_bg.color = GameDB.Instance.UIRequestExpiringColor;
         }
 
+        private void ShowUI() {
+            m_group.alpha = 1;
+        }
+
+        private void HideUI() {
+            m_group.alpha = 0;
+        }
+
         #region Handlers
 
         /*
@@ -196,6 +214,17 @@ namespace Zavala
                         MarkUrgent();
                     }
                 }
+            }
+        }
+
+        private void HandleLensModeUpdated(object sender, LensModeEventArgs args) {
+            switch (args.Mode) {
+                case Lenses.Mode.Default:
+                    ShowUI();
+                    break;
+                default:
+                    HideUI();
+                    break;
             }
         }
 

@@ -50,13 +50,11 @@ namespace Zavala
 
         private void HandleLensModeUpdated(object sender, LensModeEventArgs args) {
             switch(args.Mode) {
-                case Lenses.Mode.Default:
-                    m_renderer.enabled = false;
-                    break;
                 case Lenses.Mode.Phosphorus:
                     m_renderer.enabled = true;
                     break;
                 default:
+                    m_renderer.enabled = false;
                     break;
             }
         }

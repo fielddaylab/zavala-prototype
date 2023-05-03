@@ -52,7 +52,8 @@ namespace Zavala.Events
         AdvisorBlurb,
         ChoiceUnlock,
         AdvisorHidden,
-        AdvisorShown
+        AdvisorShown,
+        AdvisorNoReplacement
     }
 
     #endregion // Enums
@@ -289,6 +290,7 @@ namespace Zavala.Events
         public event EventHandler<ChoiceUnlockEventArgs> ChoiceUnlock;
         public event EventHandler<AdvisorEventArgs> AdvisorHidden;
         public event EventHandler<AdvisorEventArgs> AdvisorShown;
+        public event EventHandler AdvisorsNoReplacement;
 
         #endregion // Advisor
 
@@ -367,6 +369,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.AdvisorShown:
                     AdvisorShown?.Invoke(this, (AdvisorEventArgs)args);
+                    break;
+                case Events.ID.AdvisorNoReplacement:
+                    AdvisorsNoReplacement?.Invoke(this, args);
                     break;
                 default:
                     break;
