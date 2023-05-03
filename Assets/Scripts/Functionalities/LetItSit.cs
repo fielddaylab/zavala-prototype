@@ -12,6 +12,7 @@ namespace Zavala.Functionalities
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(GeneratesPhosphorus))]
+    [RequireComponent(typeof(TriggersEvents))]
     // [RequireComponent(typeof(Inspectable))]
     public class LetItSit : MonoBehaviour
     {
@@ -20,6 +21,7 @@ namespace Zavala.Functionalities
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
         private GeneratesPhosphorus m_generatesComponent;
+        private TriggersEvents m_triggersEventsComponent;
         //private Inspectable m_inspectComponent;
 
         public void Init() {
@@ -27,6 +29,7 @@ namespace Zavala.Functionalities
             m_storesComponent = this.GetComponent<StoresProduct>();
             m_cyclesComponent = this.GetComponent<Cycles>();
             m_generatesComponent = this.GetComponent<GeneratesPhosphorus>();
+            m_triggersEventsComponent = this.GetComponent<TriggersEvents>();
             //m_inspectComponent = this.GetComponent<Inspectable>();
 
             RequestsComp.RequestFulfilled += HandleRequestFulfilled;
@@ -43,6 +46,8 @@ namespace Zavala.Functionalities
             for (int i = 0; i < iterations; i++) {
                 m_generatesComponent.GeneratePipBatch(onTile, resourceType);
             }
+
+            m_triggersEventsComponent.QueueEvent(SimEventType.ExcessRunoff);
         }
 
         #region Handlers

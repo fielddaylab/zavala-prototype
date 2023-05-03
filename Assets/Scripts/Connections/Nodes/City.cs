@@ -16,6 +16,7 @@ namespace Zavala
     [RequireComponent(typeof(Cycles))]
     [RequireComponent(typeof(BloomAffectable))]
     [RequireComponent(typeof(Inspectable))]
+    [RequireComponent(typeof(TriggersEvents))]
     public class City : MonoBehaviour, IAllVars
     {
         private ConnectionNode m_connectionNodeComponent;
@@ -25,6 +26,7 @@ namespace Zavala
         private Cycles m_cyclesComponent;
         private BloomAffectable m_bloomAffectableComponent;
         private Inspectable m_inspectComponent;
+        private TriggersEvents m_triggersEventsComponent;
 
         private bool m_firstCycle; // whether this is first cycle. Produces product for free after first cycle
 
@@ -45,6 +47,7 @@ namespace Zavala
             m_cyclesComponent = this.GetComponent<Cycles>();
             m_bloomAffectableComponent = this.GetComponent<BloomAffectable>();
             m_inspectComponent = this.GetComponent<Inspectable>();
+            m_triggersEventsComponent = this.GetComponent<TriggersEvents>();
 
             m_requestsComponent.RequestFulfilled += HandleRequestFulfilled;
             m_requestsComponent.RequestExpired += HandleRequestExpired;
@@ -126,6 +129,7 @@ namespace Zavala
             }
             else {
                 m_population--;
+                m_triggersEventsComponent.QueueEvent(SimEventType.PopDecline);
 
                 // remove most recent district
                 /*

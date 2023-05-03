@@ -15,6 +15,7 @@ namespace Zavala
         public GameObject UITimerPrefabDefault;
         public GameObject UIRequestPrefab;
         public GameObject UIStoredProductPrefab;
+        public GameObject UIEventPrefab;
         public GameObject PipPrefab;
         public GameObject UIBlurbIconPrefab;
         public GameObject UIInspectPrefab;
@@ -25,6 +26,9 @@ namespace Zavala
 
         public Sprite UIRequestBGIcon;
         public Sprite UIRequestExpiringBGIcon;
+
+        public Sprite UIEventEcologyIcon;
+        public Sprite UIEventEconomicIcon;
 
 
         [Space(5)]

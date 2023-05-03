@@ -233,6 +233,8 @@ MonoBehaviour:
     type: 3}
   UIStoredProductPrefab: {fileID: 5921135475564647786, guid: 3d71bfe705e0c61489d53b1df7eae81c,
     type: 3}
+  UIEventPrefab: {fileID: 3721555233604598377, guid: 272c29ea23c9c9a4e8d36cb55a8b59ee,
+    type: 3}
   PipPrefab: {fileID: 4357794432993358881, guid: db65f557e1b6cb94c9ea2ad670189fa1,
     type: 3}
   UIBlurbIconPrefab: {fileID: 6226420018551096720, guid: c57da804202c2c84db3255092066625f,
@@ -244,6 +246,9 @@ MonoBehaviour:
   UIRequestExpiringColor: {r: 0.7924528, g: 0.26201424, b: 0.055322148, a: 1}
   UIRequestBGIcon: {fileID: 21300000, guid: ad4fbd3e15139d44c8662a898eec79bd, type: 3}
   UIRequestExpiringBGIcon: {fileID: 21300000, guid: 2116539c3e8ce8d45a4e3a14e8dfd0b3,
+    type: 3}
+  UIEventEcologyIcon: {fileID: 21300000, guid: 297ca88e51b8d694797904d53fc137f8, type: 3}
+  UIEventEconomicIcon: {fileID: 21300000, guid: ca1e772ddb664b54080c6c45eadd972f,
     type: 3}
   NoneIcon: {fileID: 21300000, guid: 427fd88dd7eaa044e8f0f2213562049e, type: 3}
   FertilizerIcon: {fileID: 21300000, guid: 442e58d2fd6d6664f9bec585946ceb06, type: 3}

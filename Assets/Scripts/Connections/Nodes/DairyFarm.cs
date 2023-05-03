@@ -17,7 +17,6 @@ namespace Zavala
     [RequireComponent(typeof(Produces))]
     [RequireComponent(typeof(StoresProduct))]
     [RequireComponent(typeof(Cycles))]
-    //[RequireComponent(typeof(GeneratesPhosphorus))]
     [RequireComponent(typeof(Tile))]
     [RequireComponent(typeof(GeneratesBlurbs))]
     [RequireComponent(typeof(Inspectable))]
@@ -28,7 +27,6 @@ namespace Zavala
         private Produces m_producesComponent;
         private StoresProduct m_storesComponent;
         private Cycles m_cyclesComponent;
-        //private GeneratesPhosphorus m_generatesComponent;
         private GeneratesBlurbs m_generatesBlurbsComponent;
         private Tile m_tileComponent;
         private Inspectable m_inspectComponent;
