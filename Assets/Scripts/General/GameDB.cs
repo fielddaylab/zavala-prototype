@@ -24,6 +24,9 @@ namespace Zavala
         public Color UIRequestEnRouteColor;
         public Color UIRequestExpiringColor;
 
+        public Color UIEventEcologyColor;
+        public Color UIEventEconomicColor;
+
         public Sprite UIRequestBGIcon;
         public Sprite UIRequestExpiringBGIcon;
 
