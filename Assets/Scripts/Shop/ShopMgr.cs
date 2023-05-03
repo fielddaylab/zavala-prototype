@@ -37,10 +37,12 @@ namespace Zavala
             if (m_itemUIs.Length != ShopItems.Length) {
                 Debug.Log("[ShopMgr] Unequal number of data defs and ui slots!");
             }
-            else {
-                for (int i = 0; i < ShopItems.Length; i++) {
-                    m_itemUIs[i].InitData(ShopItems[i]);
-                }
+
+            for (int i = 0; i < ShopItems.Length; i++) {
+                m_itemUIs[i].InitData(ShopItems[i]);
+            }
+            for (int i = ShopItems.Length; i < m_itemUIs.Length; i++) {
+                m_itemUIs[i].gameObject.SetActive(false);
             }
 
             m_toggleButton.onClick.AddListener(ToggleShopExpand);

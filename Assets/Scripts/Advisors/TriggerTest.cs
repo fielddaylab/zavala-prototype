@@ -14,6 +14,7 @@ namespace Zavala {
         private void Start() {
             m_buttons[0].onClick.AddListener(RunoffEvent);
             m_buttons[1].onClick.AddListener(ExportTaxEvent);
+            m_buttons[2].onClick.AddListener(SkimmersEvent);
         }
 
         #region Handlers (Triggers)
@@ -48,6 +49,18 @@ namespace Zavala {
             }
 
             EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("If we don’t make enough revenue, we won’t be able to afford roads, let alone fancy skimmers.", Advisors.AdvisorID.Economic, unlockList));
+        }
+
+        private void SkimmersEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.Skimmers);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("It may be a band-aid solution, but we need to start implementing skimmers.", Advisors.AdvisorID.Ecology, unlockList));
         }
 
         private void HandleB4() {

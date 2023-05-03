@@ -16,6 +16,7 @@ namespace Zavala.Sim
         None,
         RunoffPenalty,
         ExportTax,
+        Skimmers,
         GooseRace
     }
 

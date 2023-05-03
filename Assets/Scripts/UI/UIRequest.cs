@@ -62,6 +62,8 @@ namespace Zavala
             if (LensMgr.Instance.GetLensMode() != Mode.Default) {
                 HideUI();
             }
+
+            EventMgr.Instance.LensModeUpdated += HandleLensModeUpdated;
         }
 
         // no timeout
@@ -83,8 +85,6 @@ namespace Zavala
                 m_rootTransform.SetScale(0);
                 m_TransitionRoutine.Replace(ShowRoutine());
             }
-
-            EventMgr.Instance.LensModeUpdated += HandleLensModeUpdated;
 
             //m_uiTimer = Instantiate(GameDB.Instance.UITimerPrefabDefault, this.transform).GetComponent<UITimer>();
             //m_uiTimer.Init(requestTimeout, false);

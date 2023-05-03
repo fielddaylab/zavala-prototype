@@ -93,6 +93,7 @@ namespace Zavala
         [SerializeField] private RegionBounds m_bounds;
         public GridMgr GridMgr;
         [SerializeField] private ClearingHouse m_clearingHouse;
+        [SerializeField] private SkimmerMgr m_skimmerMgr;
 
         [SerializeField] private int m_startingMoney = 1000;
         private int m_moneyUnits;
@@ -123,6 +124,7 @@ namespace Zavala
             EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
             m_activeRegion = true;
+            m_skimmerMgr.SetSkimmerPolicy(Severity.None);
 
             if (!m_startsActive) {
                 DeactivateRegion();
@@ -281,6 +283,11 @@ namespace Zavala
                         default:
                             break;
                     }
+
+                    break;
+                case SimLeverID.Skimmers:
+                    m_skimmerMgr.SetSkimmerPolicy(data.Severity);
+
                     break;
                 default:
                     break;

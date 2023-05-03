@@ -43,6 +43,29 @@
 @Severity	high
 @SimId	ExportTax
 
+// Skimmers
+
+::skimmers-none
+@Header	Skimmers
+@Severity	none
+@SimId	Skimmers
+
+::skimmers-low
+@Header	Skimmers
+@Severity	low
+@SimId	Skimmers
+
+::skimmers-med
+@Header	Skimmers
+@Severity	medium
+@SimId	Skimmers
+
+::skimmers-high
+@Header	Skimmers
+@Severity	high
+@SimId	Skimmers
+
+
 // Arbitary Policies
 
 ::arbitrary-geese-none
