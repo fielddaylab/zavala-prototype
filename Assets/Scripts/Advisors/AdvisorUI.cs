@@ -50,6 +50,8 @@ namespace Zavala.Advisors
 
         private Routine m_TransitionRoutine;
 
+        private Boolean m_showing;
+
         private void OnEnable() {
             for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                 m_ChoiceSlots[i].SetGlobal(m_IsGlobal);
@@ -71,6 +73,7 @@ namespace Zavala.Advisors
             for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                 m_ChoiceSlots[i].UpdateLocked();
             }
+            m_showing = true;
         }
 
         public void HideWithoutReplacement() {
@@ -93,6 +96,8 @@ namespace Zavala.Advisors
             for (int i = 0; i < m_ChoiceSlots.Length; i++) {
                 m_ChoiceSlots[i].HideHandImmediate();
             }
+
+            m_showing = false;
 
             m_newCards = null;
 
@@ -176,8 +181,16 @@ namespace Zavala.Advisors
         }
 
         private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
+           
             if (!m_IsGlobal && args.NewRegion.name != m_parentRegion.name) {
-                HideWithoutReplacement();
+                bool wasShowing = m_showing;
+
+                Hide(); // note: will fail if a region-specific advisor without an equivalent advisor in next region. For that, use HideNoReplacement();
+
+                if (wasShowing) {
+                    // try to open same advisor in new region
+                    EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(m_advisorID));
+                }
             }
         }
 

@@ -43,6 +43,7 @@ namespace Zavala.Events
         RegionSwitched,
         CameraMoved,
         RegionActivationCompleted,
+        PanToRegion,
 
         // Phosph
         PipsGenerated,
@@ -267,6 +268,7 @@ namespace Zavala.Events
         public event EventHandler<RegionSwitchedEventArgs> RegionSwitched;
         public event EventHandler<EventArgs> RegionActivationCompleted;
         public event EventHandler<EventArgs> CameraMoved;
+        public event EventHandler<RegionSwitchedEventArgs> PanToRegion;
 
         #endregion // Region
 
@@ -351,6 +353,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.CameraMoved:
                     CameraMoved?.Invoke(this, args);
+                    break;
+                case Events.ID.PanToRegion:
+                    PanToRegion?.Invoke(this, (RegionSwitchedEventArgs)args);
                     break;
                 case Events.ID.PipsGenerated:
                     PipsGenerated?.Invoke(this, (PipsGeneratedEventArgs)args);

@@ -6497,6 +6497,16 @@ PrefabInstance:
       objectReference: {fileID: 1867642966}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: m_regionCenter.x
+      value: -21
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: Advisors.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -14255,6 +14265,16 @@ PrefabInstance:
       objectReference: {fileID: 1867642966}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: m_regionCenter.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.z
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: Advisors.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -15314,6 +15334,16 @@ PrefabInstance:
       propertyPath: m_clearingHouse
       value: 
       objectReference: {fileID: 1867642966}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.x
+      value: -14.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.z
+      value: 7.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
       propertyPath: Advisors.Array.size
@@ -25159,6 +25189,16 @@ PrefabInstance:
       objectReference: {fileID: 1867642966}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
+      propertyPath: m_regionCenter.x
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.z
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
       propertyPath: Advisors.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -28000,6 +28040,21 @@ PrefabInstance:
       propertyPath: m_clearingHouse
       value: 
       objectReference: {fileID: 1867642966}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.x
+      value: -14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
+        type: 3}
+      propertyPath: m_regionCenter.z
+      value: -1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 7554210868739939795, guid: 2dab4952a12f25444b43c47dc5c031d5,
         type: 3}
       propertyPath: Advisors.Array.size

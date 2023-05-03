@@ -1,3 +1,4 @@
+using BeauRoutine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,10 @@ namespace Zavala
         private float m_camStartZoom;
         private float m_camPerspStartZoom;
 
+        private bool m_inputsEnabled;
+
+        private Routine m_PanRoutine;
+
         private void Awake() {
             if (m_cam == null) {
                 m_cam = this.GetComponent<Camera>();
@@ -27,6 +32,9 @@ namespace Zavala
             m_camStartZoom = m_cam.orthographicSize;
             m_camPerspStartZoom = m_cam.fieldOfView;
 
+            m_inputsEnabled = true;
+
+            EventMgr.Instance.PanToRegion += HandlePanToRegion;
         }
 
         private void Update() {
@@ -40,88 +48,90 @@ namespace Zavala
                 timeDelta = Time.deltaTime / Time.timeScale;
             }
 
-            if (Input.GetKey(KeyCode.W)) {
-                // forward / up
-                moveVector = new Vector3(1, 0, 0) * m_panSpeed * timeDelta;
-               
-                if ((m_cam.transform.position + moveVector).x > m_camStartPos.x + m_verticalBounds) {
-                    m_cam.transform.position = new Vector3(
-                        m_camStartPos.x + m_verticalBounds,
-                        m_cam.transform.position.y,
-                        m_cam.transform.position.z
+            if (m_inputsEnabled) {
+                if (Input.GetKey(KeyCode.W)) {
+                    // forward / up
+                    moveVector = new Vector3(1, 0, 0) * m_panSpeed * timeDelta;
+
+                    if ((m_cam.transform.position + moveVector).x > m_camStartPos.x + m_verticalBounds) {
+                        m_cam.transform.position = new Vector3(
+                            m_camStartPos.x + m_verticalBounds,
+                            m_cam.transform.position.y,
+                            m_cam.transform.position.z
+                            );
+                    }
+                    else {
+                        m_cam.transform.position += moveVector;
+                    }
+                }
+                if (Input.GetKey(KeyCode.S)) {
+                    // backward / down
+                    moveVector = new Vector3(-1, 0, 0) * m_panSpeed * timeDelta;
+
+                    if ((m_cam.transform.position + moveVector).x < m_camStartPos.x - m_verticalBounds) {
+                        m_cam.transform.position = new Vector3(
+                            m_camStartPos.x - m_verticalBounds,
+                            m_cam.transform.position.y,
+                            m_cam.transform.position.z
+                            );
+                    }
+                    else {
+                        m_cam.transform.position += moveVector;
+                    }
+                }
+                if (Input.GetKey(KeyCode.A)) {
+                    // left
+                    moveVector = new Vector3(0, 0, 1) * m_panSpeed * timeDelta;
+
+                    if ((m_cam.transform.position + moveVector).z > m_camStartPos.z + m_horizontalBounds) {
+                        m_cam.transform.position = new Vector3(
+                            m_cam.transform.position.x,
+                            m_cam.transform.position.y,
+                            m_camStartPos.z + m_horizontalBounds
+                            );
+                    }
+                    else {
+                        m_cam.transform.position += moveVector;
+                    }
+                }
+                if (Input.GetKey(KeyCode.D)) {
+                    // right
+                    moveVector = new Vector3(0, 0, -1) * m_panSpeed * timeDelta;
+
+                    if ((m_cam.transform.position + moveVector).z < m_camStartPos.z - m_horizontalBounds) {
+                        m_cam.transform.position = new Vector3(
+                            m_cam.transform.position.x,
+                            m_cam.transform.position.y,
+                            m_camStartPos.z - m_horizontalBounds
+                            );
+                    }
+                    else {
+                        m_cam.transform.position += moveVector;
+                    }
+                }
+                if (Input.GetKey(KeyCode.J)) {
+                    // zoom in
+                    m_cam.orthographicSize = Mathf.Max(
+                        m_cam.orthographicSize - 1 * m_panSpeed * timeDelta,
+                        m_camStartZoom - m_zoomLimits
+                        );
+                    m_cam.fieldOfView = Mathf.Max(
+                        m_cam.fieldOfView - 1 * m_panSpeed * 3 * timeDelta,
+                        m_camPerspStartZoom - m_perspZoomLimits
+                        );
+
+                }
+                if (Input.GetKey(KeyCode.K)) {
+                    // zoom out
+                    m_cam.orthographicSize = Mathf.Min(
+                        m_cam.orthographicSize + 1 * m_panSpeed * timeDelta,
+                        m_camStartZoom + m_zoomLimits
+                        );
+                    m_cam.fieldOfView = Mathf.Min(
+                        m_cam.fieldOfView + 1 * m_panSpeed * 3 * timeDelta,
+                        m_camPerspStartZoom + m_perspZoomLimits
                         );
                 }
-                else {
-                    m_cam.transform.position += moveVector;
-                }
-            }
-            if (Input.GetKey(KeyCode.S)) {
-                // backward / down
-                moveVector = new Vector3(-1, 0, 0) * m_panSpeed * timeDelta;
-
-                if ((m_cam.transform.position + moveVector).x < m_camStartPos.x - m_verticalBounds) {
-                    m_cam.transform.position = new Vector3(
-                        m_camStartPos.x - m_verticalBounds,
-                        m_cam.transform.position.y,
-                        m_cam.transform.position.z
-                        );
-                }
-                else {
-                    m_cam.transform.position += moveVector;
-                }
-            }
-            if (Input.GetKey(KeyCode.A)) {
-                // left
-                moveVector = new Vector3(0, 0, 1) * m_panSpeed * timeDelta;
-
-                if ((m_cam.transform.position + moveVector).z > m_camStartPos.z + m_horizontalBounds) {
-                    m_cam.transform.position = new Vector3(
-                        m_cam.transform.position.x,
-                        m_cam.transform.position.y,
-                        m_camStartPos.z + m_horizontalBounds
-                        );
-                }
-                else {
-                    m_cam.transform.position += moveVector;
-                }
-            }
-            if (Input.GetKey(KeyCode.D)) {
-                // right
-                moveVector = new Vector3(0, 0, -1) * m_panSpeed * timeDelta;
-
-                if ((m_cam.transform.position + moveVector).z < m_camStartPos.z - m_horizontalBounds) {
-                    m_cam.transform.position = new Vector3(
-                        m_cam.transform.position.x,
-                        m_cam.transform.position.y,
-                        m_camStartPos.z - m_horizontalBounds
-                        );
-                }
-                else {
-                    m_cam.transform.position += moveVector;
-                }
-            }
-            if (Input.GetKey(KeyCode.J)) {
-                // zoom in
-                m_cam.orthographicSize = Mathf.Max(
-                    m_cam.orthographicSize - 1 * m_panSpeed * timeDelta,
-                    m_camStartZoom - m_zoomLimits
-                    );
-                m_cam.fieldOfView = Mathf.Max(
-                    m_cam.fieldOfView - 1 * m_panSpeed * 3 * timeDelta,
-                    m_camPerspStartZoom - m_perspZoomLimits
-                    );
-
-            }
-            if (Input.GetKey(KeyCode.K)) {
-                // zoom out
-                m_cam.orthographicSize = Mathf.Min(
-                    m_cam.orthographicSize + 1 * m_panSpeed * timeDelta,
-                    m_camStartZoom + m_zoomLimits
-                    );
-                m_cam.fieldOfView = Mathf.Min(
-                    m_cam.fieldOfView + 1 * m_panSpeed * 3 * timeDelta,
-                    m_camPerspStartZoom + m_perspZoomLimits
-                    );
             }
 
             if (moveVector != Vector3.zero) {
@@ -129,6 +139,24 @@ namespace Zavala
 
                 EventMgr.Instance.TriggerEvent(ID.CameraMoved, EventArgs.Empty);
             }
+        }
+
+        private void HandlePanToRegion(object sender, RegionSwitchedEventArgs args) {
+            Vector3 dest = args.NewRegion.GetCenter();
+
+            m_inputsEnabled = false;
+
+            m_PanRoutine.Replace(PanCamera(dest));
+        }
+
+        private IEnumerator PanCamera(Vector3 dest) {
+            yield return m_cam.transform.MoveTo(dest, 1f, Axis.XZ);
+
+            EventMgr.Instance.TriggerEvent(ID.CameraMoved, EventArgs.Empty);
+
+            m_inputsEnabled = true;
+
+            yield return null;
         }
     }
 }

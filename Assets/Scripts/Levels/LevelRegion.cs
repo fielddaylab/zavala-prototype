@@ -88,6 +88,7 @@ namespace Zavala
 
         [SerializeField] private GameObject m_regionContainer;
         [SerializeField] private SpriteRenderer m_boundsRenderer;
+        [SerializeField] private Vector3 m_regionCenter; // for camera panning
         [SerializeField] private int m_regionNum;
         [SerializeField] private bool m_startsActive;
         [SerializeField] private RegionBounds m_bounds;
@@ -193,6 +194,10 @@ namespace Zavala
 
         public int GetRegionNum() {
             return m_regionNum;
+        }
+
+        public Vector3 GetCenter() {
+            return m_regionCenter;
         }
 
         #endregion // Helpers

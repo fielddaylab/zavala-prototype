@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zavala.Events;
 using Zavala.Functionalities;
@@ -6,12 +7,14 @@ using Zavala.Lenses;
 
 namespace Zavala
 {
-    public class UIEvent : MonoBehaviour
+    public class UIEvent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Transform m_rootTransform;
         [SerializeField] private CanvasGroup m_group;
 
         [SerializeField] private Image m_bg;
+        [SerializeField] private Button m_button;
+
         private SimEventType m_eventType;
 
         public void Init(SimEventType type) {
@@ -36,6 +39,8 @@ namespace Zavala
             m_bg.sprite = eventSprite;
 
             m_eventType = type;
+
+            m_button.onClick.AddListener(HandleClick);
 
             EventMgr.Instance.LensModeUpdated += HandleLensModeUpdated;
         }
@@ -87,5 +92,29 @@ namespace Zavala
                     break;
             }
         }
+
+        #region Handlers
+
+        private void HandleClick() {
+            // navigate to center of region
+            LevelRegion thisRegion = RegionMgr.Instance.GetRegionByPos(new Vector3(this.transform.position.x, 0, this.transform.position.z));
+            if (thisRegion != RegionMgr.Instance.CurrRegion) {
+                EventMgr.Instance.TriggerEvent(ID.PanToRegion, new RegionSwitchedEventArgs(thisRegion));
+            }
+
+            // TODO: open advisor for this event
+        }
+
+        public void OnPointerEnter(PointerEventData eventData) {
+            // TODO: show banner / embiggen
+
+        }
+
+        public void OnPointerExit(PointerEventData eventData) {
+            // TODO: show banner / embiggen
+
+        }
+
+        #endregion // Handlers
     }
 }
