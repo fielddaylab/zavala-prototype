@@ -15,6 +15,7 @@ namespace Zavala {
             m_buttons[0].onClick.AddListener(RunoffEvent);
             m_buttons[1].onClick.AddListener(ExportTaxEvent);
             m_buttons[2].onClick.AddListener(SkimmersEvent);
+            m_buttons[3].onClick.AddListener(HandleB0);
         }
 
         #region Handlers (Triggers)

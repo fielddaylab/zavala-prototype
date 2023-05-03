@@ -127,6 +127,11 @@ namespace Zavala.Settings
             EventMgr.Instance.NarrativeBlurbTriggered += HandleNarrativeBlurbTriggered;
             EventMgr.Instance.NarrativeBlurbClosed += HandleNarrativeBlurbClosed;
 
+            // Note: cannot pause game here with current implementation. Must distinguish between UI movement timescale and simulation timescale.
+            // EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
+            // EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
+
+
             m_adjustActivateButton.onClick.AddListener(HandleAdjustActivateClicked);
             m_restartButton.onClick.AddListener(HandleRestartClicked);
 
@@ -190,6 +195,19 @@ namespace Zavala.Settings
         }
 
         private void HandleNarrativeBlurbClosed(object sender, EventArgs args) {
+            if (!m_stashedPaused) {
+                UnpauseSequence();
+            }
+        }
+
+        private void HandleAdvisorBlurb(object sender, AdvisorBlurbEventArgs args) {
+            m_stashedPaused = m_paused;
+            if (!m_paused) {
+                PauseSequence();
+            }
+        }
+
+        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
             if (!m_stashedPaused) {
                 UnpauseSequence();
             }

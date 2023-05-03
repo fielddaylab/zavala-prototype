@@ -57,8 +57,8 @@ namespace Zavala.Advisors
                 m_ChoiceSlots[i].SetGlobal(m_IsGlobal);
             }
 
-            EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
-            EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
+            // EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
+            EventMgr.Instance.ViewNewPolicies += HandleViewNewPolicies;
             EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
             EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
@@ -140,7 +140,7 @@ namespace Zavala.Advisors
             }
         }
 
-        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
+        private void HandleViewNewPolicies(object sender, ChoiceUnlockEventArgs args) {
             if (args.AdvisorID != m_advisorID || RegionMgr.Instance.CurrRegion.name != m_parentRegion.name) {
                 // hide this so only blurbing advisor is showing
                 Hide();

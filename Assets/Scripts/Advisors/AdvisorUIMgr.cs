@@ -1,4 +1,5 @@
 using BeauRoutine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Zavala.Advisors
 
         [SerializeField] AdvisorGroup[] m_GlobalAdvisors;
 
+        [SerializeField] private AdvisorBlurbBox m_AdvisorBlurb;
+
         private Routine m_RefreshGlobalAdvisorsRoutine;
         private Routine m_GlobalTransitionRoutine;
 
@@ -29,6 +32,10 @@ namespace Zavala.Advisors
             m_NumActiveButtonsRegional = m_NumActiveButtonsGlobal = 0;
 
             m_RefreshGlobalAdvisorsRoutine.Replace(RefreshGlobalAdvisors());
+
+            EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
+            EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
+            EventMgr.Instance.AdvisorButtonClicked += HandleAdvisorButtonClicked;
         }
 
         private IEnumerator RefreshGlobalAdvisors() {
@@ -123,6 +130,31 @@ namespace Zavala.Advisors
             Debug.Log("[AdvisorUIMgr] Switching regions");
 
             m_SwitchRegionRoutine.Replace(SwitchRegion(args.NewRegion.Advisors));
+        }
+
+        private void HandleAdvisorButtonClicked(object sender, AdvisorEventArgs args) {
+            // if showing blurb, clicking button will close blurb
+            if (m_AdvisorBlurb.IsShowing()) {
+                m_AdvisorBlurb.CloseBlurb();
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorNoReplacement, EventArgs.Empty);
+
+                // if not same advisor, show other advisor
+                if (m_AdvisorBlurb.ControllingAdvisor() != args.AdvisorID) {
+                    EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(args.AdvisorID));
+                }
+            }
+            else {
+                // else advisor lens should be shown
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(args.AdvisorID));
+            }
+        }
+
+        private void HandleAdvisorBlurb(object sender, AdvisorBlurbEventArgs args) {
+            m_AdvisorBlurb.ShowBlurb(args);
+        }
+
+        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
+            m_AdvisorBlurb.ShowChoiceUnlockBlurb(args);
         }
 
         #endregion // Handlers

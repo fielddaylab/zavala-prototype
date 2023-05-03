@@ -34,7 +34,7 @@ namespace Zavala.Advisors
         }
 
         private void HandleClick(AdvisorID id) {
-            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(id));
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorButtonClicked, new AdvisorEventArgs(id));
         }
 
         public void BeginHoverRoutine() {

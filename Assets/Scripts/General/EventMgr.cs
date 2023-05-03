@@ -52,8 +52,10 @@ namespace Zavala.Events
         ChoiceSlotUpdated,
         AdvisorBlurb,
         ChoiceUnlock,
+        ViewNewPolicies,
         AdvisorHidden,
         AdvisorShown,
+        AdvisorButtonClicked,
         AdvisorNoReplacement
     }
 
@@ -290,8 +292,10 @@ namespace Zavala.Events
         public event EventHandler<ChoiceSlotEventArgs> ChoiceSlotUpdated;
         public event EventHandler<AdvisorBlurbEventArgs> AdvisorBlurb;
         public event EventHandler<ChoiceUnlockEventArgs> ChoiceUnlock;
+        public event EventHandler<ChoiceUnlockEventArgs> ViewNewPolicies;
         public event EventHandler<AdvisorEventArgs> AdvisorHidden;
         public event EventHandler<AdvisorEventArgs> AdvisorShown;
+        public event EventHandler<AdvisorEventArgs> AdvisorButtonClicked;
         public event EventHandler AdvisorsNoReplacement;
 
         #endregion // Advisor
@@ -369,11 +373,17 @@ namespace Zavala.Events
                 case Events.ID.ChoiceUnlock:
                     ChoiceUnlock?.Invoke(this, (ChoiceUnlockEventArgs)args);
                     break;
+                case Events.ID.ViewNewPolicies:
+                    ViewNewPolicies?.Invoke(this, (ChoiceUnlockEventArgs)args);
+                    break;
                 case Events.ID.AdvisorHidden:
                     AdvisorHidden?.Invoke(this, (AdvisorEventArgs)args);
                     break;
                 case Events.ID.AdvisorShown:
                     AdvisorShown?.Invoke(this, (AdvisorEventArgs)args);
+                    break;
+                case Events.ID.AdvisorButtonClicked:
+                    AdvisorButtonClicked?.Invoke(this, (AdvisorEventArgs)args);
                     break;
                 case Events.ID.AdvisorNoReplacement:
                     AdvisorsNoReplacement?.Invoke(this, args);
