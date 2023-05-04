@@ -13,7 +13,10 @@ namespace Zavala.Functionalities
     {
         ExcessRunoff,
         PopDecline,
-        Skimmers
+        Skimmers,
+        ImportTax,
+        ExportTax,
+        HaltOperations
     }
 
     public class TriggersEvents : MonoBehaviour

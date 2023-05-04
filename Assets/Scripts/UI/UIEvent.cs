@@ -27,7 +27,8 @@ namespace Zavala
         public void Init(SimEventType type, TriggersEvents parentTriggers) {
             Sprite eventSprite = null;
             m_parentTriggers = parentTriggers;
-            switch(type) {
+            switch (type) {
+                // ECOLOGICAL
                 case SimEventType.ExcessRunoff:
                     eventSprite = GameDB.Instance.UIEventEcologyIcon;
                     m_banner.color = GameDB.Instance.UIEventEcologyColor;
@@ -44,6 +45,16 @@ namespace Zavala
                         HideUI();
                     }
                     break;
+                case SimEventType.HaltOperations:
+                    eventSprite = GameDB.Instance.UIEventEcologyIcon;
+                    m_banner.color = GameDB.Instance.UIEventEcologyColor;
+                    m_bannerText.text = "Halt\nNeeded";
+                    if (LensMgr.Instance.GetLensMode() != Mode.Phosphorus) {
+                        HideUI();
+                    }
+                    break;
+
+                // ECONOMIC
                 case SimEventType.PopDecline:
                     eventSprite = GameDB.Instance.UIEventEconomicIcon;
                     m_banner.color = GameDB.Instance.UIEventEconomicColor;
@@ -52,6 +63,8 @@ namespace Zavala
                         HideUI();
                     }
                     break;
+                // Import Tax happens auto
+                // Export Tax happens auto
                 default:
                     break;
             }
@@ -87,7 +100,7 @@ namespace Zavala
         private void HandleLensModeUpdated(object sender, LensModeEventArgs args) {
             switch (args.Mode) {
                 case Lenses.Mode.Default:
-                    switch(m_eventType) {
+                    switch (m_eventType) {
                         default:
                             HideUI();
                             break;
@@ -97,6 +110,7 @@ namespace Zavala
                     switch (m_eventType) {
                         case SimEventType.ExcessRunoff:
                         case SimEventType.Skimmers:
+                        case SimEventType.HaltOperations:
                             ShowUI();
                             break;
                         default:
@@ -108,6 +122,7 @@ namespace Zavala
                 case Lenses.Mode.Economic:
                     switch (m_eventType) {
                         case SimEventType.PopDecline:
+                            // import/export taxes happen auto
                             ShowUI();
                             break;
                         default:
@@ -131,7 +146,7 @@ namespace Zavala
             }
 
             // open advisor for this event
-            switch(m_eventType) {
+            switch (m_eventType) {
                 case SimEventType.ExcessRunoff:
                     RunoffEvent();
                     break;
@@ -141,6 +156,10 @@ namespace Zavala
                 case SimEventType.Skimmers:
                     SkimmersEvent();
                     break;
+                case SimEventType.HaltOperations:
+                    HaltOperationsEvent();
+                    break;
+                // import/export taxes happen auto
                 default:
                     break;
             }
@@ -198,6 +217,37 @@ namespace Zavala
                 // first time still only blurb
                 EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("People have begun to move away from this city due to the algae blooms! Better find a solution to that.", Advisors.AdvisorID.Economic));
             }
+        }
+
+        private void HaltOperationsEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.HaltOperations);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            if (TriggerTracker.Instance.IsTriggerExpended(SimEventType.HaltOperations)) {
+                // subsequent times only blurbs
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("This CAFO is out of control. DNR has authorized shutting it down until the lakes are cleaner.", Advisors.AdvisorID.Ecology));
+            }
+            else {
+                // first time unlocks choices
+                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("This CAFO is out of control. DNR has authorized shutting it down until the lakes are cleaner.", Advisors.AdvisorID.Ecology, unlockList));
+            }
+        }
+
+        private void ImportTaxEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.ImportTax);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("This commercial phosphorus is too cheap, it's keeping our digesters from becoming competitive. Let's tax 'em.", Advisors.AdvisorID.Economic, unlockList));
         }
 
         private void ExportTaxEvent() {

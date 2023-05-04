@@ -290,6 +290,29 @@ namespace Zavala
                     }
 
                     break;
+                case SimLeverID.ImportTax:
+                    switch (data.Severity) {
+                        case Severity.None:
+                            SimKnobs.ImportCosts.Grain = 0;
+                            SimKnobs.ImportCosts.Manure = 0;
+                            break;
+                        case Severity.Low:
+                            SimKnobs.ImportCosts.Grain = 5;
+                            SimKnobs.ImportCosts.Manure = 5;
+                            break;
+                        case Severity.Medium:
+                            SimKnobs.ImportCosts.Grain = 25;
+                            SimKnobs.ImportCosts.Manure = 25;
+                            break;
+                        case Severity.High:
+                            SimKnobs.ImportCosts.Grain = 100;
+                            SimKnobs.ImportCosts.Manure = 100;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
                 case SimLeverID.Skimmers:
                     m_skimmerMgr.SetSkimmerPolicy(data.Severity);
 

@@ -50,6 +50,10 @@ namespace Zavala.Functionalities
             if (iterations >= 1) {
                 m_triggersEventsComponent.QueueEvent(SimEventType.ExcessRunoff);
             }
+
+            if (iterations >= 9) {
+                m_triggersEventsComponent.QueueEvent(SimEventType.HaltOperations);
+            }
         }
 
         #region Handlers

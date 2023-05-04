@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zavala.Cards;
 using Zavala.Events;
+using Zavala.Functionalities;
 using Zavala.Tiles;
 
 namespace Zavala
 {
+    [RequireComponent(typeof(TriggersEvents))]
     public class PhosphMgr : MonoBehaviour
     {
+        private TriggersEvents m_triggersEventsComponent;
+
         [SerializeField] private float m_movePercent; // what proportion of pips should move
 
         [SerializeField] private float m_tickTime; // time between simulation ticks
@@ -47,6 +52,8 @@ namespace Zavala
         private bool m_waterIteration;
 
         public void Init() {
+            m_triggersEventsComponent = this.GetComponent<TriggersEvents>();
+
             m_tickTimer = 0;
             m_tickCount = 0;
             m_waterIteration = false;
@@ -242,6 +249,36 @@ namespace Zavala
                         Debug.Log("[PhosphMgr] [Density] Unlocking level " + levelIndex + 1);
 
                         EventMgr.Instance.TriggerEvent(ID.RegionToggled, new RegionToggleEventArgs(levelIndex));
+
+                        if (levelIndex == 2) {
+                            // unlock import taxes
+                            if (!TriggerTracker.Instance.IsTriggerExpended(SimEventType.ImportTax)) {
+                                List<string> unlockList = new List<string>();
+
+                                List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.ImportTax);
+
+                                foreach (CardData data in unlockCards) {
+                                    unlockList.Add(data.CardID);
+                                }
+
+                                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("You can buy digesters now. Let's use import taxes to keep them competitive.", Advisors.AdvisorID.Economic, unlockList));
+                                TriggerTracker.Instance.SetTriggerExpended(SimEventType.ImportTax);
+                            }
+                        }
+                        if (levelIndex == 4) {
+                            if (!TriggerTracker.Instance.IsTriggerExpended(SimEventType.ExportTax)) {
+                                List<string> unlockList = new List<string>();
+
+                                List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.ExportTax);
+
+                                foreach (CardData data in unlockCards) {
+                                    unlockList.Add(data.CardID);
+                                }
+
+                                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("You now have access to export depots. We'll need to manage them using export taxes.", Advisors.AdvisorID.Economic, unlockList));
+                                TriggerTracker.Instance.SetTriggerExpended(SimEventType.ExportTax);
+                            }
+                        }
                     }
 
                     toRemove.Add(threshold);

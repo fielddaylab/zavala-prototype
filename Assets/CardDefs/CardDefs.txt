@@ -20,6 +20,40 @@
 @Severity	high
 @SimId	RunoffPenalty
 
+// Halt Operations
+
+::halt-none
+@Header	Halt CAFO
+@Severity	none
+@SimId	HaltOperations
+
+::halt-allowed
+@Header	Halt CAFO
+@Severity	high
+@SimId	HaltOperations
+
+
+// Import Tax
+
+::import-tax-none
+@Header	Import Tax
+@Severity	none
+@SimId	ImportTax
+
+::import-tax-low
+@Header	Import Tax
+@Severity	low
+@SimId	ImportTax
+
+::import-tax-med
+@Header	Import Tax
+@Severity	medium
+@SimId	ImportTax
+
+::import-tax-high
+@Header	Import Tax
+@Severity	high
+@SimId	ImportTax
 
 // Export Tax
 

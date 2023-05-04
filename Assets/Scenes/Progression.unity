@@ -2371,7 +2371,7 @@ PrefabInstance:
     - target: {fileID: 1995865310391878261, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -3069,7 +3069,7 @@ PrefabInstance:
     - target: {fileID: 2662448746079784208, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2712635815091596358, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -8798,7 +8798,7 @@ PrefabInstance:
     - target: {fileID: 2662448746079784208, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2712635815091596358, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -9517,7 +9517,7 @@ PrefabInstance:
     - target: {fileID: 1995865310391878261, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -11426,7 +11426,7 @@ PrefabInstance:
     - target: {fileID: 2662448746079784208, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2712635815091596358, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -12926,7 +12926,7 @@ PrefabInstance:
     - target: {fileID: 2662448746079784208, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2712635815091596358, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -13468,7 +13468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4014751909295292, guid: 38123c71f1f557445b02dcba566f17e1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.012634218
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4014751909295292, guid: 38123c71f1f557445b02dcba566f17e1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17808,7 +17808,7 @@ PrefabInstance:
     - target: {fileID: 2662448746079784208, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2712635815091596358, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -21747,7 +21747,7 @@ PrefabInstance:
     - target: {fileID: 1995865310391878261, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -23249,7 +23249,7 @@ PrefabInstance:
     - target: {fileID: 1995865310391878261, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -26839,7 +26839,7 @@ PrefabInstance:
     - target: {fileID: 1995865310391878261, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
       propertyPath: m_slotType
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2153958422595714631, guid: 307ccbae07a652c46acff2c98da41538,
         type: 3}
@@ -27429,6 +27429,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Threshold
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
       propertyPath: m_unlockThresholds.Array.data[0].Regions.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -27445,6 +27450,16 @@ PrefabInstance:
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_unlockThresholds.Array.data[1].Unlocks.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Regions.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Unlocks.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
@@ -27480,6 +27495,26 @@ PrefabInstance:
     - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
         type: 3}
       propertyPath: m_unlockThresholds.Array.data[1].Unlocks.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Regions.Array.data[0]
+      value: 
+      objectReference: {fileID: 287066898}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Regions.Array.data[1]
+      value: 
+      objectReference: {fileID: 1690881454}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Unlocks.Array.data[0]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081667942044642640, guid: 1765eb1e8e052464c9bea8c57851e397,
+        type: 3}
+      propertyPath: m_unlockThresholds.Array.data[2].Unlocks.Array.data[1]
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6108037079655914776, guid: 1765eb1e8e052464c9bea8c57851e397,
