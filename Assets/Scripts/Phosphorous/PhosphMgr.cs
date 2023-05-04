@@ -143,6 +143,8 @@ namespace Zavala
             for (int t = 0; t < allTiles.Count; t++) {
                 allTiles[t].ApplyStagedTransfer();
             }
+
+            EventMgr.Instance.TriggerEvent(ID.PipMovementCompleted, EventArgs.Empty);
         }
 
         private Tile FindLowestNeighbor(Tile centerTile) {

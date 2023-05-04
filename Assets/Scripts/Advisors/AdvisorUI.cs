@@ -62,6 +62,8 @@ namespace Zavala.Advisors
             EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
             EventMgr.Instance.RegionSwitched += HandleRegionSwitched;
 
+            EventMgr.Instance.AdvisorSelectToggle += HandleAdvisorSelectToggle;
+
             m_SummaryText.text = m_DefaultText;
         }
 
@@ -177,6 +179,13 @@ namespace Zavala.Advisors
             }
             else {
                 Hide();
+            }
+        }
+
+        private void HandleAdvisorSelectToggle(object sender, AdvisorEventArgs args) {
+            if (m_showing && (args.AdvisorID == m_advisorID)) {
+                Hide();
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorNoReplacement, EventArgs.Empty);
             }
         }
 

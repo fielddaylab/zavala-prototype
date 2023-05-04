@@ -47,6 +47,7 @@ namespace Zavala.Events
 
         // Phosph
         PipsGenerated,
+        PipMovementCompleted,
 
         // Advisors
         ChoiceSlotUpdated,
@@ -279,6 +280,7 @@ namespace Zavala.Events
         #region Phosph 
 
         public event EventHandler<PipsGeneratedEventArgs> PipsGenerated;
+        public event EventHandler PipMovementCompleted;
 
         #endregion // Phosph
 
@@ -367,6 +369,9 @@ namespace Zavala.Events
                     break;
                 case Events.ID.PipsGenerated:
                     PipsGenerated?.Invoke(this, (PipsGeneratedEventArgs)args);
+                    break;
+                case Events.ID.PipMovementCompleted:
+                    PipMovementCompleted?.Invoke(this, args);
                     break;
                 case Events.ID.ChoiceSlotUpdated:
                     ChoiceSlotUpdated?.Invoke(this, (ChoiceSlotEventArgs)args);

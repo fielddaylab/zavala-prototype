@@ -47,7 +47,9 @@ namespace Zavala.Functionalities
                 m_generatesComponent.GeneratePipBatch(onTile, resourceType);
             }
 
-            m_triggersEventsComponent.QueueEvent(SimEventType.ExcessRunoff);
+            if (iterations >= 1) {
+                m_triggersEventsComponent.QueueEvent(SimEventType.ExcessRunoff);
+            }
         }
 
         #region Handlers

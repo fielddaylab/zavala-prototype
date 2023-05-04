@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 64823877294788634}
   - component: {fileID: 8691588430566084661}
   - component: {fileID: 8755220413754132025}
+  - component: {fileID: 59945544141720774}
   m_Layer: 6
   m_Name: Water
   m_TagString: Untagged
@@ -129,6 +130,21 @@ MonoBehaviour:
   m_greenifyRate: 10
   m_bloomObj: {fileID: 8504759255186440218}
   m_bloomThreshold: 6
+  m_skimmerTriggerThreshold: 7
+--- !u!114 &59945544141720774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389125948638888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f89bac8c13b2604db8cc5bacedfd227, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconOffsetZ: 0.25
+  m_queueEvents: 0
 --- !u!1 &2154089508849942271
 GameObject:
   m_ObjectHideFlags: 0

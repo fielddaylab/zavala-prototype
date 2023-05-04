@@ -3512,7 +3512,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9201987004617379700
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8926,6 +8926,50 @@ Transform:
   m_Father: {fileID: 1638901157607927979}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7477375016764656826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7219918627052484086}
+  - component: {fileID: 8795637943680210951}
+  m_Layer: 0
+  m_Name: TriggerTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7219918627052484086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7477375016764656826}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7247391418410769891}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8795637943680210951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7477375016764656826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6547d12141b045149872417eacf89dd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7521307186348835839
 GameObject:
   m_ObjectHideFlags: 0
@@ -10330,6 +10374,7 @@ Transform:
   - {fileID: 7889469525470954199}
   - {fileID: 4794851697502187229}
   - {fileID: 7856579468613910186}
+  - {fileID: 7219918627052484086}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10360,6 +10405,7 @@ MonoBehaviour:
   m_levelMgr: {fileID: 6488004990372198234}
   m_cardMgr: {fileID: 4130700240130961243}
   m_advisorUIMgr: {fileID: 4167202851792643701}
+  m_triggerTracker: {fileID: 8795637943680210951}
 --- !u!1 &8898837801189486746
 GameObject:
   m_ObjectHideFlags: 0

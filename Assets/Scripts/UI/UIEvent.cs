@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Zavala.Cards;
 using Zavala.Events;
 using Zavala.Functionalities;
 using Zavala.Lenses;
@@ -20,13 +22,24 @@ namespace Zavala
 
         private SimEventType m_eventType;
 
-        public void Init(SimEventType type) {
+        private TriggersEvents m_parentTriggers;
+
+        public void Init(SimEventType type, TriggersEvents parentTriggers) {
             Sprite eventSprite = null;
+            m_parentTriggers = parentTriggers;
             switch(type) {
                 case SimEventType.ExcessRunoff:
                     eventSprite = GameDB.Instance.UIEventEcologyIcon;
                     m_banner.color = GameDB.Instance.UIEventEcologyColor;
                     m_bannerText.text = "Excessive\nRunoff";
+                    if (LensMgr.Instance.GetLensMode() != Mode.Phosphorus) {
+                        HideUI();
+                    }
+                    break;
+                case SimEventType.Skimmers:
+                    eventSprite = GameDB.Instance.UIEventEcologyIcon;
+                    m_banner.color = GameDB.Instance.UIEventEcologyColor;
+                    m_bannerText.text = "Gathering\nBloom";
                     if (LensMgr.Instance.GetLensMode() != Mode.Phosphorus) {
                         HideUI();
                     }
@@ -83,6 +96,7 @@ namespace Zavala
                 case Lenses.Mode.Phosphorus:
                     switch (m_eventType) {
                         case SimEventType.ExcessRunoff:
+                        case SimEventType.Skimmers:
                             ShowUI();
                             break;
                         default:
@@ -116,7 +130,23 @@ namespace Zavala
                 EventMgr.Instance.TriggerEvent(ID.PanToRegion, new RegionSwitchedEventArgs(thisRegion));
             }
 
-            // TODO: open advisor for this event
+            // open advisor for this event
+            switch(m_eventType) {
+                case SimEventType.ExcessRunoff:
+                    RunoffEvent();
+                    break;
+                case SimEventType.PopDecline:
+                    PopulationDeclineEvent();
+                    break;
+                case SimEventType.Skimmers:
+                    SkimmersEvent();
+                    break;
+                default:
+                    break;
+            }
+
+            TriggerTracker.Instance.SetTriggerExpended(m_eventType);
+            m_parentTriggers.RemoveEvent(this);
         }
 
         private void HandleRegionSwitched(object sender, RegionSwitchedEventArgs args) {
@@ -137,5 +167,63 @@ namespace Zavala
         }
 
         #endregion // Handlers
+
+        #region Events
+
+        private void RunoffEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.RunoffPenalty);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            if (TriggerTracker.Instance.IsTriggerExpended(SimEventType.ExcessRunoff)) {
+                // subsequent times only blurbs
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("The Lake has gotten bad. I recommend nipping the problem in the bud, at the source: CAFOS.", Advisors.AdvisorID.Ecology));
+            }
+            else {
+                // first time unlocks choices
+                EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("The Lake has gotten bad. I recommend nipping the problem in the bud, at the source: CAFOS.", Advisors.AdvisorID.Ecology, unlockList));
+            }
+        }
+
+        private void PopulationDeclineEvent() {
+            if (TriggerTracker.Instance.IsTriggerExpended(SimEventType.PopDecline)) {
+                // subsequent times only blurbs
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("People have begun to move away from this city due to the algae blooms! Better find a solution to that.", Advisors.AdvisorID.Economic));
+            }
+            else {
+                // first time still only blurb
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorBlurb, new AdvisorBlurbEventArgs("People have begun to move away from this city due to the algae blooms! Better find a solution to that.", Advisors.AdvisorID.Economic));
+            }
+        }
+
+        private void ExportTaxEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.ExportTax);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("If we don’t make enough revenue, we won’t be able to afford roads, let alone fancy skimmers.", Advisors.AdvisorID.Economic, unlockList));
+        }
+
+        private void SkimmersEvent() {
+            List<string> unlockList = new List<string>();
+
+            List<CardData> unlockCards = CardMgr.Instance.GetAllOptions(Sim.SimLeverID.Skimmers);
+
+            foreach (CardData data in unlockCards) {
+                unlockList.Add(data.CardID);
+            }
+
+            EventMgr.Instance.TriggerEvent(Events.ID.ChoiceUnlock, new ChoiceUnlockEventArgs("It may be a band-aid solution, but we need to start implementing skimmers.", Advisors.AdvisorID.Ecology, unlockList));
+        }
+
+        #endregion // Events
     }
 }

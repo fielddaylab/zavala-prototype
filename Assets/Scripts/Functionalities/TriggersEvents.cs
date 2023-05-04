@@ -9,9 +9,11 @@ using static Zavala.Functionalities.Requests;
 
 namespace Zavala.Functionalities
 {
-    public enum SimEventType {
+    public enum SimEventType
+    {
         ExcessRunoff,
-        PopDecline
+        PopDecline,
+        Skimmers
     }
 
     public class TriggersEvents : MonoBehaviour
@@ -43,12 +45,19 @@ namespace Zavala.Functionalities
             QueueEventCore(type);
         }
 
+        public void RemoveEvent(UIEvent eventIcon) {
+            if (m_activeEvents.Contains(eventIcon)) {
+                m_activeEvents.Remove(eventIcon);
+                Destroy(eventIcon.gameObject);
+            }
+        }
+
         private void QueueEventCore(SimEventType type) {
             // init and display
             Debug.Log("[Instantiate] Instantiating UIEvent prefab");
             UIEvent newEvent = Instantiate(GameDB.Instance.UIEventPrefab, this.transform).GetComponent<UIEvent>();
 
-            newEvent.Init(type);
+            newEvent.Init(type, this);
 
             if (!m_queueEvents) {
                 if (m_activeEvents.Count > 0) {

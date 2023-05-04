@@ -2,24 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zavala.Events;
+using Zavala.Functionalities;
 using Zavala.Tiles;
 
 namespace Zavala
 {
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(Tile))]
+    [RequireComponent(typeof(TriggersEvents))]
+
     public class Water : MonoBehaviour
     {
         [SerializeField] private int m_greenifyRate;
         [SerializeField] private GameObject m_bloomObj;
         [SerializeField] private int m_bloomThreshold;
+        [SerializeField] private int m_skimmerTriggerThreshold;
         private Color m_baseColor;
 
         private MeshRenderer m_rendererComponent;
+        private TriggersEvents m_triggersEventsComponent;
         private Tile m_tileComponent;
 
         private void Awake() {
             m_rendererComponent = GetComponent<MeshRenderer>();
+            m_triggersEventsComponent = this.GetComponent<TriggersEvents>();
 
             m_tileComponent = GetComponent<Tile>();
             m_tileComponent.OnPhosphRefresh += HandlePhosphRefresh;
@@ -27,6 +34,8 @@ namespace Zavala
             m_baseColor = m_rendererComponent.material.color;
 
             m_bloomObj.SetActive(false);
+
+            EventMgr.Instance.PipMovementCompleted += HandlePipMovementCompleted;
         }
 
         public bool TrySkim(int skimAmt) {
@@ -55,6 +64,16 @@ namespace Zavala
             }
             else {
                 m_bloomObj.SetActive(false);
+            }
+        }
+        
+        private void HandlePipMovementCompleted(object sender, EventArgs args) {
+            // check for excessive bloom (need skimmers!)
+            if (m_tileComponent.GetPipCount() > m_skimmerTriggerThreshold) {
+                if (!TriggerTracker.Instance.IsTriggerExpended(SimEventType.Skimmers)) {
+                    m_triggersEventsComponent.QueueEvent(SimEventType.Skimmers);
+                    TriggerTracker.Instance.SetTriggerExpended(SimEventType.Skimmers);
+                }
             }
         }
 

@@ -31,6 +31,7 @@ namespace Zavala
         [SerializeField] private LevelMgr m_levelMgr;
         [SerializeField] private CardMgr m_cardMgr;
         [SerializeField] private AdvisorUIMgr m_advisorUIMgr;
+        [SerializeField] private TriggerTracker m_triggerTracker;
 
         private void Awake() {
             if (Instance == null) {
@@ -58,6 +59,7 @@ namespace Zavala
             m_levelMgr.Init();
             m_cardMgr.Init();
             m_advisorUIMgr.Init();
+            m_triggerTracker.Init();
         }
 
         private void Update() {
