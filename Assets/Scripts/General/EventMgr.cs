@@ -55,6 +55,8 @@ namespace Zavala.Events
         ViewNewPolicies,
         AdvisorHidden,
         AdvisorShown,
+        AdvisorSelected,
+        AdvisorSelectToggle,
         AdvisorButtonClicked,
         AdvisorNoReplacement
     }
@@ -294,7 +296,9 @@ namespace Zavala.Events
         public event EventHandler<ChoiceUnlockEventArgs> ChoiceUnlock;
         public event EventHandler<ChoiceUnlockEventArgs> ViewNewPolicies;
         public event EventHandler<AdvisorEventArgs> AdvisorHidden;
-        public event EventHandler<AdvisorEventArgs> AdvisorShown;
+        public event EventHandler<AdvisorEventArgs> AdvisorShown; // with policies
+        public event EventHandler<AdvisorEventArgs> AdvisorSelected; // only lens change, forces selection
+        public event EventHandler<AdvisorEventArgs> AdvisorSelectToggle; // only lens change, toggles selection
         public event EventHandler<AdvisorEventArgs> AdvisorButtonClicked;
         public event EventHandler AdvisorsNoReplacement;
 
@@ -381,6 +385,12 @@ namespace Zavala.Events
                     break;
                 case Events.ID.AdvisorShown:
                     AdvisorShown?.Invoke(this, (AdvisorEventArgs)args);
+                    break;
+                case Events.ID.AdvisorSelected:
+                    AdvisorSelected?.Invoke(this, (AdvisorEventArgs)args);
+                    break;
+                case Events.ID.AdvisorSelectToggle:
+                    AdvisorSelectToggle?.Invoke(this, (AdvisorEventArgs)args);
                     break;
                 case Events.ID.AdvisorButtonClicked:
                     AdvisorButtonClicked?.Invoke(this, (AdvisorEventArgs)args);

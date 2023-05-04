@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using BeauRoutine;
 using BeauUtil;
-using static System.TimeZoneInfo;
 using static Zavala.Advisors.AdvisorGroup;
 using Zavala.Events;
 
@@ -19,7 +18,10 @@ namespace Zavala.Advisors
         public Image Outline;
         public AudioClip Shout;
 
-        public RectTransform Root;
+        public RectTransform Root; // advisor button group
+
+        [SerializeField] private Button m_policyButton;
+        [SerializeField] private RectTransform m_policyButtonRect;
 
         private Routine m_HoverRoutine;
 
@@ -31,18 +33,15 @@ namespace Zavala.Advisors
             Base.color = data.BaseColor;
             Outline.color = data.OutlineColor;
             Button.onClick.AddListener(delegate { HandleClick(data.m_AdvisorID); });
+            m_policyButton.onClick.AddListener(delegate { HandlePolicyClick(data.m_AdvisorID); });
         }
 
         private void HandleClick(AdvisorID id) {
             EventMgr.Instance.TriggerEvent(Events.ID.AdvisorButtonClicked, new AdvisorEventArgs(id));
         }
 
-        public void BeginHoverRoutine() {
-            Routine.Start(Root.AnchorPosTo(15, 0.15f, Axis.Y).Ease(Curve.CubeOut));
-        }
-
-        public void EndHoverRoutine() {
-            Routine.Start(Root.AnchorPosTo(0, 0.15f, Axis.Y).Ease(Curve.CubeOut));
+        private void HandlePolicyClick(AdvisorID id) {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(id));
         }
     }
 }

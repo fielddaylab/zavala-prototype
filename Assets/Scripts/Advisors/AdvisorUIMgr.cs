@@ -140,20 +140,22 @@ namespace Zavala.Advisors
 
                 // if not same advisor, show other advisor
                 if (m_AdvisorBlurb.ControllingAdvisor() != args.AdvisorID) {
-                    EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(args.AdvisorID));
+                    EventMgr.Instance.TriggerEvent(Events.ID.AdvisorSelectToggle, new AdvisorEventArgs(args.AdvisorID));
                 }
             }
             else {
                 // else advisor lens should be shown
-                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorShown, new AdvisorEventArgs(args.AdvisorID));
+                EventMgr.Instance.TriggerEvent(Events.ID.AdvisorSelectToggle, new AdvisorEventArgs(args.AdvisorID));
             }
         }
 
         private void HandleAdvisorBlurb(object sender, AdvisorBlurbEventArgs args) {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorSelected, new AdvisorEventArgs(args.AdvisorID));
             m_AdvisorBlurb.ShowBlurb(args);
         }
 
         private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
+            EventMgr.Instance.TriggerEvent(Events.ID.AdvisorSelected, new AdvisorEventArgs(args.AdvisorID));
             m_AdvisorBlurb.ShowChoiceUnlockBlurb(args);
         }
 

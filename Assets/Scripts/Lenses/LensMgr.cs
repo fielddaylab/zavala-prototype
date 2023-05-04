@@ -28,9 +28,8 @@ namespace Zavala.Lenses
             m_currMode = Mode.Default;
             m_phosphGreyscale.enabled = false;
 
-            EventMgr.Instance.AdvisorBlurb += HandleAdvisorBlurb;
-            EventMgr.Instance.ChoiceUnlock += HandleChoiceUnlock;
-            EventMgr.Instance.AdvisorShown += HandleAdvisorShown;
+            EventMgr.Instance.AdvisorSelected += HandleAdvisorSelected;
+            EventMgr.Instance.AdvisorSelectToggle += HandleAdvisorSelectToggle;
             EventMgr.Instance.AdvisorsNoReplacement += HandleAdvisorsNoReplacement;
         }
 
@@ -40,29 +39,29 @@ namespace Zavala.Lenses
 
         #region Handlers 
 
-        private void HandleAdvisorShown(object sender, AdvisorEventArgs args) {
-            UpdateLens(args.AdvisorID);
+        private void HandleAdvisorSelected(object sender, AdvisorEventArgs args) {
+            UpdateLens(args.AdvisorID, false);
         }
 
-        private void HandleAdvisorBlurb(object sender, AdvisorBlurbEventArgs args) {
-            UpdateLens(args.AdvisorID);
+        private void HandleAdvisorSelectToggle(object sender, AdvisorEventArgs args) {
+            UpdateLens(args.AdvisorID, true);
         }
 
-        private void HandleChoiceUnlock(object sender, ChoiceUnlockEventArgs args) {
-            UpdateLens(args.AdvisorID);
-        }
-
-        private void UpdateLens(AdvisorID id) {
+        private void UpdateLens(AdvisorID id, bool toggle) {
             m_phosphGreyscale.enabled = false;
 
             switch (id) {
                 case Advisors.AdvisorID.Ecology:
+                    if (toggle && m_currMode == Mode.Phosphorus) { SetDefaultLens(); break; }
+
                     m_currMode = Mode.Phosphorus;
                     m_phosphGreyscale.enabled = true;
 
                     EventMgr.Instance.TriggerEvent(Events.ID.LensModeUpdated, new LensModeEventArgs(Lenses.Mode.Phosphorus));
                     break;
                 case Advisors.AdvisorID.Economic:
+                    if (toggle && m_currMode == Mode.Economic) { SetDefaultLens(); break; }
+
                     m_currMode = Mode.Economic;
 
                     EventMgr.Instance.TriggerEvent(Events.ID.LensModeUpdated, new LensModeEventArgs(Lenses.Mode.Economic));
@@ -70,6 +69,12 @@ namespace Zavala.Lenses
                 default:
                     break;
             }
+        }
+
+        private void SetDefaultLens() {
+            m_currMode = Mode.Default;
+
+            EventMgr.Instance.TriggerEvent(Events.ID.LensModeUpdated, new LensModeEventArgs(Lenses.Mode.Default));
         }
 
         private void HandleAdvisorsNoReplacement(object sender, EventArgs args) {
