@@ -382,7 +382,7 @@ namespace Zavala.Sim
                 // Apply GrainFarm Manure offer
                 willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.GrainFarmManure;
             }
-            else if (candData.ParentRegion.GetComponent<Digester>() != null) {
+            else if (candData.RequestCandidate.GetComponent<Digester>() != null) {
                 // Apply Digester Manure offer
                 willingToPay = candData.ParentRegion.SimKnobs.BidBuyPrices.DigesterManure;
             }
